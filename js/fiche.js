@@ -14,6 +14,15 @@
  * à l'historique du navigateur (`pushState`), et `popstate` la défait. Passer
  * d'une fiche à une fiche voisine en ajoute une aussi : « retour » ramène à la
  * fiche précédente, comme sur un site.
+ *
+ * ── La prononciation ───────────────────────────────────────────────────────
+ *
+ * Ces mots, on les lit en anglais sans toujours savoir les dire : « cache »,
+ * « queue », « sudo ». Le bouton « Écouter » les fait prononcer par la synthèse
+ * vocale du système — et seulement par une voix *locale* : certaines voix de
+ * navigateur envoient le texte à un serveur pour le lire, et l'application
+ * promet de ne rien envoyer nulle part. Sans voix anglaise locale, pas de
+ * bouton.
  */
 (function (racine) {
 
@@ -25,9 +34,19 @@
     ouverte: false,
     notes: [],         // les notes du terme affiché
     suivi: null,
+    avant: null,       // ce qui avait le focus avant l'ouverture, pour le lui rendre
   };
   let conteneur = null;
   let corps = null;
+  let voix = null;
+  let guetteur = null;   // surveille le titre, pour le montrer dans la barre une fois sorti de l'écran
+
+  /* Relance une animation CSS : retirer la classe, forcer un calcul, la remettre. */
+  function animer(noeud, classe) {
+    noeud.classList.remove(classe);
+    void noeud.offsetWidth;
+    noeud.classList.add(classe);
+  }
 
   // ── Ouverture et fermeture ────────────────────────────────────────────────
 
@@ -39,9 +58,14 @@
     etat.pile.push(ref);
     try { racine.history.pushState({ fiche: etat.pile.length }, ''); } catch (erreur) { /* historique indisponible */ }
     if (!deja) {
+      const actif = document.activeElement;
+      etat.avant = actif && actif.tagName === 'BUTTON' ? { noeud: actif, ref: actif.getAttribute('data-ref') } : null;
       etat.ouverte = true;
       conteneur.hidden = false;
       document.body.classList.add('fiche-ouverte');
+      animer(conteneur, 'entree');
+    } else {
+      animer(corps, 'change');
     }
     dessiner(opt.defiler);
     Store.consulter(ref).catch(() => {});
@@ -54,6 +78,7 @@
     if (!etat.ouverte) return;
     if (n <= 0) { fermerSansHistorique(); return; }
     etat.pile.length = Math.min(etat.pile.length, n);
+    animer(corps, 'change');
     dessiner();
   }
 
@@ -61,8 +86,24 @@
     etat.pile = [];
     etat.ouverte = false;
     if (conteneur) conteneur.hidden = true;
+    if (guetteur) { guetteur.disconnect(); guetteur = null; }
+    if (racine.speechSynthesis) racine.speechSynthesis.cancel();
     document.body.classList.remove('fiche-ouverte');
     document.dispatchEvent(new CustomEvent('fiche-fermee'));
+    rendreLeFocus();
+  }
+
+  /* Au clavier, on revient là d'où l'on est parti. La liste a pu être
+   * redessinée entre-temps : on retrouve alors la ligne par sa référence. */
+  function rendreLeFocus() {
+    const avant = etat.avant;
+    etat.avant = null;
+    if (!avant) return;
+    let cible = avant.noeud.isConnected ? avant.noeud : null;
+    if (!cible && avant.ref) {
+      cible = Array.from(document.querySelectorAll('.terme-ligne')).find((b) => b.getAttribute('data-ref') === avant.ref) || null;
+    }
+    if (cible && !cible.closest('[hidden]')) cible.focus({ preventScroll: true });
   }
 
   /* Le bouton « Fermer » : on recule d'autant d'entrées que la pile en compte. */
@@ -76,6 +117,82 @@
   function retour() {
     if (etat.pile.length > 1) racine.history.back();
     else fermer();
+  }
+
+  // ── Écouter, partager ─────────────────────────────────────────────────────
+
+  function choisirVoix() {
+    const synthese = racine.speechSynthesis;
+    if (!synthese) return;
+    const locales = synthese.getVoices().filter((v) => v.localService && /^en([-_]|$)/i.test(v.lang));
+    voix = locales.find((v) => /^en[-_]US/i.test(v.lang)) || locales.find((v) => /^en[-_]GB/i.test(v.lang)) || locales[0] || null;
+  }
+
+  /* Le mot à dire en anglais : le terme lui-même, sauf quand son nom est
+   * français (« Empreinte ») — on dit alors son équivalent (« fingerprint »). */
+  function motAnglais(terme) {
+    return terme.ne && !terme.nf ? Glossaire.nom(terme, 'en') : terme.n;
+  }
+
+  function boutonEcouter(terme) {
+    const mot = motAnglais(terme);
+    const b = bouton('bouton-ecouter', '', () => {
+      const synthese = racine.speechSynthesis;
+      synthese.cancel();
+      const phrase = new SpeechSynthesisUtterance(mot);
+      phrase.voice = voix;
+      phrase.lang = voix.lang;
+      phrase.rate = 0.9;
+      phrase.onend = () => b.classList.remove('parle');
+      phrase.onerror = phrase.onend;
+      b.classList.add('parle');
+      synthese.speak(phrase);
+    });
+    b.setAttribute('aria-label', t('fiche.ecouter', { mot }));
+    b.setAttribute('title', t('fiche.ecouter', { mot }));
+    const icone = svg('svg', { class: 'icone', viewBox: '0 0 24 24', 'aria-hidden': 'true', focusable: 'false' });
+    icone.appendChild(svg('path', { d: 'M4 9.5h3.5L12 5.5v13l-4.5-4H4z' }));
+    icone.appendChild(svg('path', { class: 'onde onde-1', d: 'M15.5 9.2a4 4 0 0 1 0 5.6' }));
+    icone.appendChild(svg('path', { class: 'onde onde-2', d: 'M18.2 6.6a7.6 7.6 0 0 1 0 10.8' }));
+    b.appendChild(icone);
+    return b;
+  }
+
+  /* Le lien d'un terme ouvre sa fiche (`?terme=`), dans l'application si elle
+   * est installée. Un terme à soi n'existe que sur cet appareil : pas de lien. */
+  async function partager(terme) {
+    const adresse = Installer.ADRESSE + '?terme=' + encodeURIComponent(terme.id);
+    const contenu = { title: terme.n + ' — ' + t('app.nom'), text: Glossaire.apercu(terme, App.langueDef()), url: adresse };
+    if (racine.navigator.share) {
+      try { await racine.navigator.share(contenu); return; } catch (erreur) {
+        if (erreur && erreur.name === 'AbortError') return;
+      }
+    }
+    const ok = await Outils.copier(adresse);
+    Outils.annoncer(ok ? t('fiche.lien-copie') : adresse);
+  }
+
+  function boutonPartager(terme) {
+    const b = bouton('fiche-partager', '', () => partager(terme));
+    b.setAttribute('aria-label', t('fiche.partager'));
+    b.setAttribute('title', t('fiche.partager'));
+    const icone = svg('svg', { class: 'icone', viewBox: '0 0 24 24', 'aria-hidden': 'true', focusable: 'false' });
+    icone.appendChild(svg('path', { d: 'M12 3.5v11' }));
+    icone.appendChild(svg('path', { d: 'M7.5 8 12 3.5 16.5 8' }));
+    icone.appendChild(svg('path', { d: 'M5.5 12.5v5.5a2 2 0 0 0 2 2h9a2 2 0 0 0 2-2v-5.5' }));
+    b.appendChild(icone);
+    return b;
+  }
+
+  /* Le nom du terme vient se loger dans la barre du haut quand le titre sort
+   * de l'écran : on sait toujours quelle fiche on lit. */
+  function guetterTitre(titre, barre) {
+    if (guetteur) guetteur.disconnect();
+    if (!racine.IntersectionObserver) return;
+    guetteur = new IntersectionObserver(([entree]) => {
+      barre.classList.toggle('titre-parti', !entree.isIntersecting && entree.boundingClientRect.top < 80);
+    }, { root: conteneur, rootMargin: '-56px 0px 0px 0px' });
+    guetteur.observe(titre);
   }
 
   // ── Dessin ────────────────────────────────────────────────────────────────
@@ -219,7 +336,9 @@
     return carte;
   }
 
-  async function dessiner(defiler) {
+  /* `anime` : le bouton qu'on vient de toucher ('favori', 'revoir'), pour
+   * qu'il marque le coup. */
+  async function dessiner(defiler, anime) {
     const ref = etat.pile[etat.pile.length - 1];
     const terme = Glossaire.parId(ref);
     corps.textContent = '';
@@ -227,13 +346,15 @@
       corps.appendChild(element('p', 'vide', t('fiche.introuvable')));
       return;
     }
-    const langue = I18n.langue;
 
-    // Barre du haut : retour, favori, à revoir
+    // Barre du haut : retour, le nom (quand le titre a défilé), partager, fermer
     const barre = element('div', 'fiche-tete');
     const precedente = etat.pile.length > 1 ? Glossaire.parId(etat.pile[etat.pile.length - 2]) : null;
     barre.appendChild(bouton('fiche-retour', precedente ? '← ' + precedente.n : '← ' + t('fiche.retour'), retour));
-    barre.appendChild(element('span', 'espace'));
+    const nomBarre = element('span', 'espace fiche-tete-nom', terme.n);
+    nomBarre.setAttribute('aria-hidden', 'true');
+    barre.appendChild(nomBarre);
+    if (!terme.perso) barre.appendChild(boutonPartager(terme));
     const fermer_ = bouton('fiche-fermer', '✕', fermer);
     fermer_.setAttribute('aria-label', t('fiche.fermer'));
     barre.appendChild(fermer_);
@@ -241,7 +362,11 @@
 
     // Titre
     const tete = element('header', 'fiche-titre');
-    tete.appendChild(element('h2', 'terme-nom', terme.n));
+    const ligneTitre = element('div', 'titre-ligne');
+    const titre = element('h2', 'terme-nom', terme.n);
+    ligneTitre.appendChild(titre);
+    if (voix) ligneTitre.appendChild(boutonEcouter(terme));
+    tete.appendChild(ligneTitre);
     if (terme.dev) {
       const dev = element('p', 'terme-dev');
       dev.appendChild(element('span', 'discret', t('fiche.sigle') + ' '));
@@ -267,7 +392,7 @@
     }
     corps.appendChild(tete);
 
-    // Actions : favori, à revoir
+    // Actions : favori, à revoir, partager
     const suivi = await Store.lireSuivi(ref).catch(() => null);
     etat.suivi = suivi;
     const actions = element('div', 'actions-fiche');
@@ -275,16 +400,18 @@
       (suivi && suivi.favori ? '★ ' + t('fiche.favori-oui') : '☆ ' + t('fiche.favori')), async () => {
         await Store.modifierSuivi(ref, (s) => { s.favori = !s.favori; });
         document.dispatchEvent(new CustomEvent('suivi-change'));
-        dessiner(false);
+        dessiner(false, 'favori');
       });
     favori.setAttribute('aria-pressed', suivi && suivi.favori ? 'true' : 'false');
     const revoir = bouton('bouton-etat' + (suivi && suivi.aRevoir ? ' actif revoir' : ''),
       (suivi && suivi.aRevoir ? '⚑ ' + t('fiche.a-revoir-oui') : '⚐ ' + t('fiche.a-revoir')), async () => {
         await Store.modifierSuivi(ref, (s) => { s.aRevoir = !s.aRevoir; if (!s.aRevoir) s.serie = 0; });
         document.dispatchEvent(new CustomEvent('suivi-change'));
-        dessiner(false);
+        dessiner(false, 'revoir');
       });
     revoir.setAttribute('aria-pressed', suivi && suivi.aRevoir ? 'true' : 'false');
+    if (anime === 'favori') favori.classList.add('pop');
+    if (anime === 'revoir') revoir.classList.add('pop');
     actions.appendChild(favori);
     actions.appendChild(revoir);
     corps.appendChild(actions);
@@ -320,11 +447,24 @@
     if (defiler !== false) conteneur.scrollTop = defiler === 'notes'
       ? (document.getElementById('mes-notes') ? document.getElementById('mes-notes').offsetTop - 60 : 0) : 0;
     conteneur.setAttribute('aria-label', terme.n);
+    guetterTitre(titre, barre);
   }
 
   function brancher() {
     conteneur = document.getElementById('fiche');
     corps = document.getElementById('fiche-contenu');
+    conteneur.addEventListener('animationend', () => conteneur.classList.remove('entree'));
+    corps.addEventListener('animationend', () => corps.classList.remove('change'));
+    const synthese = racine.speechSynthesis;
+    if (synthese && synthese.addEventListener && racine.SpeechSynthesisUtterance) {
+      choisirVoix();
+      // Les voix arrivent souvent après le démarrage : on redessine si le bouton devient possible.
+      synthese.addEventListener('voiceschanged', () => {
+        const avant = voix;
+        choisirVoix();
+        if (!avant !== !voix && etat.ouverte) dessiner(false);
+      });
+    }
     document.addEventListener('langue-changee', () => { if (etat.ouverte) dessiner(false); });
     document.addEventListener('notes-changees', () => { if (etat.ouverte) dessiner(false); });
     document.addEventListener('perso-change', () => { if (etat.ouverte) dessiner(false); });
@@ -332,7 +472,7 @@
   }
 
   racine.Fiche = {
-    brancher, ouvrir, fermer, revenirA, fermerSansHistorique,
+    brancher, ouvrir, fermer, retour, revenirA, fermerSansHistorique,
     get ouverte() { return etat.ouverte; },
     get ref() { return etat.pile[etat.pile.length - 1] || null; },
     get profondeur() { return etat.pile.length; },

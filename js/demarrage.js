@@ -45,7 +45,7 @@
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
         .then((enregistrement) => MiseAJour.surveiller(enregistrement))
-        .catch((erreur) => console.warn('Code en clair : service worker non installé —', erreur));
+        .catch((erreur) => console.warn('Lexicode : service worker non installé —', erreur));
     }
   }
 

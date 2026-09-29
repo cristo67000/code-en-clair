@@ -1,5 +1,5 @@
 /*
- * Code en clair — couleurs et polices.
+ * Lexicode — couleurs et polices.
  *
  * Trois jeux de variables : le thème clair (par défaut), le thème sombre suivi
  * automatiquement quand le téléphone est en mode sombre, et les deux forcés
@@ -35,6 +35,8 @@
   --info: #0a7d8c;
   --info-fond: #dff3f6;
   --ombre: 0 1px 3px rgba(24, 32, 51, .08), 0 6px 20px rgba(24, 32, 51, .06);
+  --ombre-bord: 0 10px 14px -12px rgba(24, 32, 51, .45);
+  --surligne: #fde9a2;
   --rayon: 12px;
 
   /* un bloc de code est sombre dans les deux thèmes : c'est un terminal */
@@ -88,6 +90,8 @@
     --info: #5fd0de;
     --info-fond: #0f2c31;
     --ombre: 0 1px 3px rgba(0, 0, 0, .5), 0 6px 20px rgba(0, 0, 0, .35);
+    --ombre-bord: 0 10px 14px -12px rgba(0, 0, 0, .9);
+    --surligne: #5a4515;
     --code-fond: #0a0f1c;
     --c-git: #ff922b;
     --c-shell: #69db7c;
@@ -131,6 +135,8 @@
   --info: #5fd0de;
   --info-fond: #0f2c31;
   --ombre: 0 1px 3px rgba(0, 0, 0, .5), 0 6px 20px rgba(0, 0, 0, .35);
+  --ombre-bord: 0 10px 14px -12px rgba(0, 0, 0, .9);
+  --surligne: #5a4515;
   --code-fond: #0a0f1c;
   --c-git: #ff922b;
   --c-shell: #69db7c;

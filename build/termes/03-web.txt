@@ -29,7 +29,7 @@ alias: balise, tag html, .html, markup, langage de balisage, hypertexte
 fr: Langage de balisage qui décrit la structure d'une page web : titres, paragraphes, liens, images, formulaires. Le navigateur le lit et en construit la page.
 en: The markup language that describes a web page's structure: headings, paragraphs, links, images, forms. The browser reads it and builds the page from it.
 ex: html
-| <h1>Code en clair</h1>
+| <h1>Lexicode</h1>
 | <p>Un glossaire du <a href="/codage">codage</a>.</p>
 | <img src="logo.png" alt="Logo">
 ex-fr: Un titre, un paragraphe contenant un lien, une image avec son texte alternatif.
@@ -190,8 +190,8 @@ fr: Fichier JSON (manifest.webmanifest) qui décrit une application web au navig
 en: A JSON file (manifest.webmanifest) that describes a web app to the browser: its name, icons, color, start page and display mode. It is what makes the app installable.
 ex: json
 | {
-|   "name": "Code en clair",
-|   "short_name": "Code",
+|   "name": "Lexicode — glossaire du codage",
+|   "short_name": "Lexicode",
 |   "start_url": "./",
 |   "display": "standalone",
 |   "theme_color": "#16213e",
@@ -205,9 +205,9 @@ fr: Fichier obligatoire de toute application Android : il déclare son identifia
 en: The mandatory file of every Android app: it declares its identifier (package), its screens (activities), the permissions it requests and the web links it knows how to open.
 ex: xml
 | <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-|           package="io.exemple.codeenclair">
+|           package="io.exemple.lexicode">
 |   <uses-permission android:name="android.permission.INTERNET" />
-|   <application android:label="Code en clair" />
+|   <application android:label="Lexicode" />
 | </manifest>
 ex-fr: Un AndroidManifest minimal : l'identifiant du paquet, une permission d'accès à Internet et le nom de l'application.
 ex-en: A minimal AndroidManifest: the package identifier, an Internet access permission and the app's name.
@@ -475,7 +475,7 @@ alias: og:title, og:image, twitter card, aperçu de lien, link preview, méta-do
 fr: Ensemble de balises meta placées dans le HTML (og:title, og:description, og:image) qui définissent l'aperçu affiché quand un lien est partagé dans une messagerie ou un réseau social.
 en: A set of meta tags placed in the HTML (og:title, og:description, og:image) that define the preview shown when a link is shared in a messaging app or social network.
 ex: html
-| <meta property="og:title" content="Code en clair">
+| <meta property="og:title" content="Lexicode">
 | <meta property="og:image" content="https://exemple.org/apercu.png">
 ex-fr: Le titre et l'image de l'aperçu ; l'adresse de l'image doit être complète, car un robot la lit hors contexte.
 ex-en: The preview's title and image; the image address must be complete, because a robot reads it out of context.

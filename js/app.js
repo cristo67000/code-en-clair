@@ -5,8 +5,8 @@
  * Quatre onglets (Glossaire, Quiz, Carnet, Réglages), une fiche et un éditeur
  * qui s'ouvrent par-dessus. Ce module tient les réglages en mémoire (les autres
  * modules les lisent par `App.reglages`), les applique au document — langue,
- * thème, taille du texte —, aiguille le geste « retour » du téléphone, et
- * branche chaque écran une fois.
+ * thème, taille du texte —, aiguille le geste « retour » du téléphone et les
+ * raccourcis du clavier, et branche chaque écran une fois.
  */
 (function (racine) {
 
@@ -53,6 +53,7 @@
     if (nom === 'carnet') Carnet.dessiner();
     if (nom === 'reglages') Reglages.dessiner();
     racine.scrollTo(0, 0);
+    document.dispatchEvent(new CustomEvent('vue-changee'));
   }
 
   // ── Le geste « retour » ───────────────────────────────────────────────────
@@ -67,6 +68,27 @@
       if (s.fiche) Fiche.revenirA(s.fiche);
       else Fiche.fermerSansHistorique();
     }
+  }
+
+  // ── Le clavier ────────────────────────────────────────────────────────────
+
+  /* Sur un ordinateur : « / » ou Ctrl+K (⌘K) pour chercher, Échap pour
+   * refermer. Échap ne ferme pas un éditeur où l'on a commencé d'écrire :
+   * une touche de trop ne doit pas coûter une note. */
+  function surTouche(e) {
+    if (e.defaultPrevented || e.altKey) return;
+    if (e.key === 'Escape') {
+      if (Editeur.ouvert) { if (!Editeur.modifie) { e.preventDefault(); Editeur.fermer(); } return; }
+      if (Fiche.ouverte) { e.preventDefault(); Fiche.fermer(); }
+      return;
+    }
+    const chercher = ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k')
+      || (e.key === '/' && !e.ctrlKey && !e.metaKey && !Outils.saisieEnCours(e));
+    if (!chercher || Editeur.ouvert) return;
+    e.preventDefault();
+    if (Fiche.ouverte) Fiche.fermer();
+    if (vue !== 'glossaire') aller('glossaire');
+    Liste.focaliser();
   }
 
   function brancher(donnees) {
@@ -88,6 +110,7 @@
       });
     }
     racine.addEventListener('popstate', surRetour);
+    document.addEventListener('keydown', surTouche);
     /* Un rechargement garde l'état de l'historique : on repart d'une entrée
      * neutre, sans quoi « retour » rouvrirait une fiche que rien n'affiche. */
     try { racine.history.replaceState(null, ''); } catch (erreur) { /* rien */ }

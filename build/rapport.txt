@@ -1,6 +1,6 @@
 Glossaire construit le 2026-09-29
 399 termes, 409 sens, 227 avec exemple, 207 avec schéma (165 schémas utilisés / 165 définis)
-410829 octets de JSON
+410827 octets de JSON
 
   git       50
   shell     28

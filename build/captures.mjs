@@ -36,6 +36,8 @@ async function jouer(langue) {
   const onglet = await ouvrirOnglet(chrome, 'about:blank');
   // 360 × 640 points à trois pixels par point : 1080 × 1920
   await onglet.envoyer('Emulation.setDeviceMetricsOverride', { width: 360, height: 640, deviceScaleFactor: 3, mobile: true });
+  // un écran tactile : sans cela, les rappels de raccourcis clavier (« / », 1 à 4) s'affichent
+  await onglet.envoyer('Emulation.setTouchEmulationEnabled', { enabled: true, maxTouchPoints: 5 });
   await onglet.envoyer('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-color-scheme', value: 'light' }] });
   await onglet.naviguer('http://127.0.0.1:' + PORT_WEB + '/index.html');
   const js = (s) => onglet.evaluer(s);

@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Génère les icônes et l'image d'aperçu de Code en clair.
+"""Génère les icônes et l'image d'aperçu de Lexicode.
 
 Dessin : deux accolades « { } » crème sur le bleu nuit de l'application, avec
 en dessous le trait vert d'un curseur de terminal — le signe du code, et de ce
@@ -73,7 +73,7 @@ def apercu():
     logo = icone(360).resize((520, 520), Image.LANCZOS)
     image.paste(logo, (150, (h * 2 - 520) // 2))
     titre = police(150)
-    dessin.text((780, 330), "Code en clair", font=titre, fill=CREME)
+    dessin.text((780, 330), "Lexicode", font=titre, fill=CREME)
     sous = police(60, grasse=False)
     lignes = ["Le glossaire du codage, FR · EN",
               "Git · web · terminal · sécurité · IA",

@@ -11,22 +11,22 @@
   <meta name="theme-color" content="#16213e">
   <!-- La version de la coquille, la même que dans sw.js : à l'installation,
        le service worker refuse une page d'une autre version. -->
-  <meta name="application-version" content="v1.0.0">
-  <title>Code en clair — glossaire du codage FR · EN</title>
+  <meta name="application-version" content="v1.1.0">
+  <title>Lexicode — glossaire du codage FR · EN</title>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-title" content="Code en clair">
+  <meta name="apple-mobile-web-app-title" content="Lexicode">
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
 
   <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Code en clair">
-  <meta property="og:title" content="Code en clair — glossaire du codage FR · EN">
+  <meta property="og:site_name" content="Lexicode">
+  <meta property="og:title" content="Lexicode — glossaire du codage FR · EN">
   <meta property="og:description" content="Amend, blob, hash, headless, service worker, token… définis clairement en français et en anglais, avec schémas, exemples, notes et quiz. Hors ligne.">
   <meta property="og:url" content="https://cristo67000.github.io/code-en-clair/">
   <meta property="og:image" content="https://cristo67000.github.io/code-en-clair/icons/apercu-1200x630.png">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
-  <meta property="og:image:alt" content="Code en clair — glossaire du codage en français et en anglais">
+  <meta property="og:image:alt" content="Lexicode — glossaire du codage en français et en anglais">
   <meta property="og:locale" content="fr_FR">
   <meta property="og:locale:alternate" content="en_GB">
   <meta name="twitter:card" content="summary_large_image">
@@ -41,12 +41,12 @@
 <body>
 
   <div id="demarrage" role="status">
-    <div class="marque">{ Code en clair }</div>
+    <div class="marque">{ Lexicode }</div>
     <p data-t="demarrage.ouverture">Ouverture du glossaire…</p>
   </div>
 
   <header id="barre">
-    <h1><span class="marque-petite">{ Code en clair }</span></h1>
+    <h1><span class="marque-petite">{ Lexicode }</span></h1>
     <p class="sous-titre" data-t="app.sous-titre">le glossaire du codage</p>
   </header>
 
@@ -59,6 +59,7 @@
                autocorrect="off" spellcheck="false" enterkeyhint="search"
                data-t-ph="chercher.placeholder" data-t-aria="chercher.aria"
                placeholder="Un terme : amend, hash…" aria-label="Chercher un terme">
+        <kbd id="q-raccourci" class="raccourci" aria-hidden="true">/</kbd>
         <button id="q-vider" type="button" data-t-aria="effacer" aria-label="Effacer" hidden>✕</button>
       </div>
 
@@ -69,11 +70,24 @@
         <div id="recents"></div>
       </div>
 
-      <p id="compte" class="discret compte"></p>
+      <div class="ligne-compte">
+        <p id="compte" class="discret compte"></p>
+        <button id="b-hasard" type="button" class="bouton-hasard">
+          <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><rect x="4" y="4" width="16" height="16" rx="3.5"/><circle cx="9" cy="9" r="1.1" class="plein"/><circle cx="15" cy="15" r="1.1" class="plein"/><circle cx="15" cy="9" r="1.1" class="plein"/><circle cx="9" cy="15" r="1.1" class="plein"/></svg>
+          <span data-t="hasard">Au hasard</span>
+        </button>
+      </div>
       <div id="liste"></div>
+
+      <nav id="index-lettres" class="index-lettres" data-t-aria="index.aria" aria-label="Aller à une lettre" hidden></nav>
+      <div id="index-bulle" class="index-bulle" aria-hidden="true" hidden></div>
 
       <div id="rien" hidden>
         <p class="rien-titre" data-t="rien.titre">Aucun terme ne correspond.</p>
+        <div id="suggestions" class="suggestions" hidden>
+          <p class="discret" data-t="rien.suggestions">Vouliez-vous dire :</p>
+          <div id="suggestions-liste" class="voisins"></div>
+        </div>
         <p class="discret" data-t="rien.conseil"></p>
         <button id="b-ajouter-depuis-recherche" type="button" class="bouton-discret ajouter-terme"></button>
       </div>
@@ -88,11 +102,11 @@
     <section id="vue-carnet" class="vue" hidden>
       <h2 data-t="carnet.titre">Mon carnet</h2>
       <div class="segments segments-carnet" role="group" id="carnet-onglets" data-t-aria="carnet.rubriques" aria-label="Rubriques du carnet">
-        <button type="button" data-rubrique="favoris" data-t="carnet.favoris" aria-pressed="true">Favoris</button>
-        <button type="button" data-rubrique="a-revoir" data-t="carnet.a-revoir" aria-pressed="false">À revoir</button>
-        <button type="button" data-rubrique="notes" data-t="carnet.notes" aria-pressed="false">Notes</button>
-        <button type="button" data-rubrique="exemples" data-t="carnet.exemples" aria-pressed="false">Exemples</button>
-        <button type="button" data-rubrique="termes" data-t="carnet.termes" aria-pressed="false">Mes termes</button>
+        <button type="button" data-rubrique="favoris" aria-pressed="true"><span data-t="carnet.favoris">Favoris</span><span class="nombre-rubrique" hidden></span></button>
+        <button type="button" data-rubrique="a-revoir" aria-pressed="false"><span data-t="carnet.a-revoir">À revoir</span><span class="nombre-rubrique" hidden></span></button>
+        <button type="button" data-rubrique="notes" aria-pressed="false"><span data-t="carnet.notes">Notes</span><span class="nombre-rubrique" hidden></span></button>
+        <button type="button" data-rubrique="exemples" aria-pressed="false"><span data-t="carnet.exemples">Exemples</span><span class="nombre-rubrique" hidden></span></button>
+        <button type="button" data-rubrique="termes" aria-pressed="false"><span data-t="carnet.termes">Mes termes</span><span class="nombre-rubrique" hidden></span></button>
       </div>
       <input id="carnet-filtre" type="search" autocomplete="off" autocapitalize="off"
              spellcheck="false" data-t-ph="carnet.filtre" data-t-aria="carnet.filtre-aria"
@@ -168,6 +182,7 @@
   <script src="js/fiche.js"></script>
   <script src="js/liste.js"></script>
   <script src="js/carnet.js"></script>
+  <script src="js/cartes.js"></script>
   <script src="js/quiz.js"></script>
   <script src="js/sauvegarde.js"></script>
   <script src="js/installer.js"></script>

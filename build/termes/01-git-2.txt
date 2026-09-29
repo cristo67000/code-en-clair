@@ -130,7 +130,7 @@ en: A comparison of two versions of a text: the list of added, removed or change
 +en: In the usual display, removed lines start with - and added lines with +. Each block of changes (a hunk) is introduced by an @@ line giving its position.
 ex: diff
 | @@ -1,3 +1,3 @@
-|  <h1>Code en clair</h1>
+|  <h1>Lexicode</h1>
 | -<p>Bienvenu</p>
 | +<p>Bienvenue</p>
 |  <footer></footer>

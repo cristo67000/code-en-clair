@@ -48,6 +48,78 @@
       .trim();
   }
 
+  /* Les passages d'un texte qui répondent à une requête, pour les surligner :
+   * [[début, fin], …], positions dans le texte tel qu'il s'affiche. On compare
+   * comme `normaliser` (sans accents ni majuscules), mais signe à signe, pour
+   * savoir où tombe le passage trouvé dans le texte d'origine. La requête
+   * entière d'abord ; à défaut, chacun de ses mots. */
+  function plages(texte, requete) {
+    const q = normaliser(requete);
+    if (!q || !texte) return [];
+    let nu = '';
+    const debuts = [];
+    const fins = [];
+    let pos = 0;
+    for (const signe of String(texte)) {
+      const n = signe.toLowerCase().normalize('NFD').replace(/\p{M}/gu, '').replace(/[’‘`]/g, "'").replace(/\s/g, ' ');
+      for (let i = 0; i < n.length; i += 1) { debuts.push(pos); fins.push(pos + signe.length); }
+      nu += n;
+      pos += signe.length;
+    }
+    const trouver = (motif) => {
+      const i = nu.indexOf(motif);
+      return i === -1 ? null : [debuts[i], fins[i + motif.length - 1]];
+    };
+    const entiere = trouver(q);
+    if (entiere) return [entiere];
+    const morceaux = q.split(' ').filter((m) => m.length >= 2).map(trouver).filter(Boolean);
+    morceaux.sort((a, b) => a[0] - b[0]);
+    const fusion = [];
+    for (const p of morceaux) {
+      const dernier = fusion[fusion.length - 1];
+      if (dernier && p[0] <= dernier[1]) dernier[1] = Math.max(dernier[1], p[1]);
+      else fusion.push(p.slice());
+    }
+    return fusion;
+  }
+
+  /* Le texte, avec en <mark> les passages qui répondent à la requête. */
+  function surligner(texte, requete) {
+    const fragment = document.createDocumentFragment();
+    let pos = 0;
+    for (const [debut, fin] of plages(texte, requete)) {
+      if (debut > pos) fragment.appendChild(document.createTextNode(texte.slice(pos, debut)));
+      fragment.appendChild(element('mark', 'trouve', texte.slice(debut, fin)));
+      pos = fin;
+    }
+    if (pos < texte.length) fragment.appendChild(document.createTextNode(texte.slice(pos)));
+    return fragment;
+  }
+
+  /* Distance d'édition entre deux mots : insertions, suppressions,
+   * substitutions, et l'inversion de deux lettres voisines, la faute de frappe
+   * la plus courante (« comimt »). Passé `plafond`, on s'arrête : il suffit de
+   * savoir que c'est loin. */
+  function distance(a, b, plafond) {
+    if (Math.abs(a.length - b.length) > plafond) return plafond + 1;
+    let avantAvant = null;
+    let avant = Array.from({ length: b.length + 1 }, (x, j) => j);
+    for (let i = 1; i <= a.length; i += 1) {
+      const ligne = [i];
+      let mini = i;
+      for (let j = 1; j <= b.length; j += 1) {
+        let v = Math.min(avant[j] + 1, ligne[j - 1] + 1, avant[j - 1] + (a[i - 1] === b[j - 1] ? 0 : 1));
+        if (i > 1 && j > 1 && a[i - 1] === b[j - 2] && a[i - 2] === b[j - 1]) v = Math.min(v, avantAvant[j - 2] + 1);
+        ligne.push(v);
+        if (v < mini) mini = v;
+      }
+      if (mini > plafond) return plafond + 1;
+      avantAvant = avant;
+      avant = ligne;
+    }
+    return avant[b.length];
+  }
+
   /* Une taille lisible : « 30,1 Ko » ou « 30.1 KB » selon la langue. */
   function humain(octets, langue) {
     const unites = langue === 'en' ? ['B', 'KB', 'MB', 'GB'] : ['o', 'Ko', 'Mo', 'Go'];
@@ -131,6 +203,14 @@
     }
   }
 
+  /* Vrai si une touche arrive dans un champ où l'on écrit : les raccourcis
+   * clavier (« / », 1 à 4 au quiz…) ne doivent pas y voler de lettres. */
+  function saisieEnCours(e) {
+    const cible = e && e.target;
+    if (!cible || !cible.tagName) return false;
+    return /^(INPUT|TEXTAREA|SELECT)$/.test(cible.tagName) || cible.isContentEditable;
+  }
+
   /* Recule dans l'historique de `n` entrées, *après* avoir déjà refermé
    * l'écran qui les avait ajoutées. Le navigateur annoncera ce recul par un
    * événement `popstate` un peu plus tard ; si la personne a ouvert autre
@@ -145,8 +225,8 @@
   }
 
   racine.Outils = {
-    element, bouton, svg, normaliser, humain, dateLisible, melanger, identifiant,
-    jourCourant, annoncer, copier, reculer,
+    element, bouton, svg, normaliser, plages, surligner, distance, humain, dateLisible, melanger,
+    identifiant, jourCourant, annoncer, copier, reculer, saisieEnCours,
   };
 
 })(window);

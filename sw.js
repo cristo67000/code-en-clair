@@ -16,7 +16,7 @@
  * `build/essais.mjs` compare les deux et échoue à la moindre différence.
  */
 
-const VERSION = 'v1.0.0';
+const VERSION = 'v1.1.0';
 const COQUILLE = 'code-en-clair-coquille-' + VERSION;
 
 const FICHIERS = [
@@ -52,6 +52,7 @@ const FICHIERS = [
   'js/fiche.js',
   'js/liste.js',
   'js/carnet.js',
+  'js/cartes.js',
   'js/quiz.js',
   'js/sauvegarde.js',
   'js/installer.js',

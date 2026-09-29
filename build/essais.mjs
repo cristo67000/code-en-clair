@@ -9,12 +9,14 @@
  * l'application se relance hors ligne. Elle échoue à la moindre erreur de page,
  * exception ou violation de la politique de sécurité.
  */
+import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { lancerChrome, fermerChrome, ouvrirOnglet } from './pilote_chrome.mjs';
 import { demarrerServeur } from './serveur_local.mjs';
 
 const RACINE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const VERSION_SW = /const VERSION = '([^']+)'/.exec(fs.readFileSync(path.join(RACINE, 'sw.js'), 'utf-8'))[1];
 const PORT_WEB = 8199;
 const PORT_CHROME = 9351;
 const BASE = 'http://127.0.0.1:' + PORT_WEB + '/';
@@ -106,6 +108,55 @@ try {
   await js("document.querySelectorAll('#filtres .filtre')[0].click(); return 1");
   await attendre("document.getElementById('compte').textContent === '399 termes'", 3000, 'retour à tous les termes');
 
+  // ── Ce que la recherche montre et propose ─────────────────────────────────
+  const tape = (texte) => js("const q = document.getElementById('q'); q.value = " + JSON.stringify(texte) + "; q.dispatchEvent(new Event('input')); return 1");
+  await tape('hachage');
+  await attendre("document.querySelector('#liste .terme-ligne[data-ref=hash] .via-alias')", 3000, 'Hash trouvé par « hachage »');
+  ok(await js("return document.querySelector('#liste .terme-ligne[data-ref=hash] .via-alias').textContent") === 'hachage', 'un terme trouvé par un autre nom montre ce nom');
+  ok(await js("return document.querySelector('#liste .terme-ligne[data-ref=hash] .via-alias mark.trouve')?.textContent") === 'hachage', 'ce qui correspond est surligné');
+  await tape('dichotomique');
+  await attendre("document.querySelector('#liste .terme-ligne[data-ref=bisect] .apercu mark')", 3000, 'surlignage dans la définition');
+  ok(await js("return document.querySelector('#liste .terme-ligne[data-ref=bisect] .apercu mark').textContent.toLowerCase()") === 'dichotomique', 'un mot trouvé dans la définition y est surligné');
+  await tape('comitt');
+  await attendre("document.getElementById('suggestions').hidden === false", 3000, 'suggestions');
+  ok(await js("return [...document.querySelectorAll('#suggestions-liste .voisin')].some((b) => b.textContent === 'Commit')"), 'une faute de frappe propose le bon terme (« comitt » → Commit)');
+  ok(await js("return Glossaire.suggerer('rebsae')[0]?.id") === 'rebase', 'une inversion de lettres est pardonnée (« rebsae » → Rebase)');
+  ok(await js("return Glossaire.suggerer('zzzzqq').length") === 0, 'une requête absurde ne suggère rien');
+  await js("document.querySelectorAll('#filtres .filtre')[1].click(); return 1");
+  await tape('webp');
+  await attendre("document.querySelector('#suggestions-liste .partout')", 3000, 'chercher partout');
+  await js("document.querySelector('#suggestions-liste .partout').click(); return 1");
+  await attendre("document.querySelector('#liste .terme-ligne[data-ref=webp]')", 3000, 'WebP hors du filtre Git');
+  ok(await js("return document.querySelectorAll('#filtres .filtre')[0].getAttribute('aria-pressed')") === 'true', '« chercher partout » retire le filtre de catégorie');
+  // au clavier : ↓ descend dans les résultats, ↑ remonte au champ, Entrée ouvre le terme exact
+  await tape('commit');
+  await pause(250);
+  await js("document.getElementById('q').dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true })); return 1");
+  ok(await js("return document.activeElement.classList.contains('terme-ligne')"), '↓ passe du champ au premier résultat');
+  await js("document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowUp', bubbles: true })); return 1");
+  ok(await js("return document.activeElement.id") === 'q', '↑ depuis le premier résultat revient au champ');
+  await js("document.getElementById('q').dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true })); return 1");
+  await attendre("Fiche.ouverte && Fiche.ref === 'commit'", 3000, 'Entrée ouvre Commit');
+  await js("document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); return 1");
+  await attendre('Fiche.ouverte === false', 3000, 'Échap ferme la fiche');
+  await js("document.getElementById('q').dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); return 1");
+  await attendre("document.getElementById('q').value === '' && document.getElementById('accueil').hidden === false", 3000, 'Échap efface la recherche');
+  await js("document.getElementById('q').blur(); document.body.dispatchEvent(new KeyboardEvent('keydown', { key: '/', bubbles: true })); return 1");
+  ok(await js("return document.activeElement.id") === 'q', '« / » met le curseur dans la recherche');
+  await js("document.getElementById('q').blur(); return 1");
+  // la réglette des lettres et le hasard
+  ok(await js("return document.querySelectorAll('#index-lettres button').length === document.querySelectorAll('#liste .lettre').length && document.getElementById('index-lettres').hidden === false"), 'la réglette a un bouton par lettre de la liste');
+  await js("document.querySelector('#index-lettres [data-lettre=M]').click(); return 1");
+  await pause(150);
+  const sautM = await js("const g = document.getElementById('lettre-M').nextElementSibling.getBoundingClientRect().top; const r = document.getElementById('bloc-recherche').getBoundingClientRect().bottom; return { g, r, y: scrollY }");
+  ok(sautM.y > 1000 && sautM.g > sautM.r && sautM.g - sautM.r < 80, 'la réglette amène la lettre M juste sous la recherche (' + JSON.stringify(sautM) + ')');
+  ok(await js("return document.getElementById('bloc-recherche').getBoundingClientRect().top") === 0, 'la recherche reste collée en haut en parcourant la liste');
+  await js("window.scrollTo(0, 0); document.getElementById('b-hasard').click(); return 1");
+  await attendre('Fiche.ouverte', 3000, 'un terme au hasard');
+  ok(await js("return !!Glossaire.parId(Fiche.ref)"), '« Au hasard » ouvre un terme du glossaire');
+  await js('Fiche.fermer(); return 1');
+  await attendre('Fiche.ouverte === false', 3000);
+
   // ── La fiche ──────────────────────────────────────────────────────────────
   await js("Fiche.ouvrir('amend'); return 1");
   await attendre("document.querySelector('#fiche .terme-nom')", 3000, 'fiche Amend');
@@ -133,6 +184,40 @@ try {
   ok(await js("return document.querySelectorAll('#fiche .sens-bloc').length") === 3, 'un terme à trois sens en montre trois');
   await js('Fiche.fermer(); return 1');
   await attendre('Fiche.ouverte === false', 3000);
+  // partager : le lien ouvre la fiche du terme
+  const partage = await js(`
+    let recu = null;
+    const avant = navigator.share;
+    navigator.share = async (d) => { recu = d; };
+    Fiche.ouvrir('amend');
+    for (let i = 0; i < 30 && !document.querySelector('#fiche .fiche-partager'); i += 1) await new Promise((r) => setTimeout(r, 50));
+    document.querySelector('#fiche .fiche-partager').click();
+    await new Promise((r) => setTimeout(r, 50));
+    navigator.share = avant;
+    return recu;
+  `);
+  ok(partage && /\?terme=amend$/.test(partage.url) && partage.title.startsWith('Amend'), 'partager donne le lien de la fiche (' + (partage && partage.url) + ')');
+  // écouter : seulement avec une voix anglaise locale — une voix distante enverrait le mot à un serveur
+  const voix = await js(`
+    const vraie = speechSynthesis.getVoices;
+    const essayer = async (liste) => {
+      speechSynthesis.getVoices = () => liste;
+      speechSynthesis.dispatchEvent(new Event('voiceschanged'));
+      await new Promise((r) => setTimeout(r, 150));
+      const b = document.querySelector('#fiche .bouton-ecouter');
+      return b ? b.getAttribute('aria-label') : null;
+    };
+    const distante = await essayer([{ lang: 'en-US', localService: false, name: 'en ligne' }]);
+    const locale = await essayer([{ lang: 'en-GB', localService: true, name: 'locale' }]);
+    const aucune = await essayer([]);
+    speechSynthesis.getVoices = vraie;
+    return { distante, locale, aucune };
+  `);
+  ok(voix.distante === null, 'pas de bouton « Écouter » avec une voix distante');
+  ok(voix.locale && voix.locale.includes('Amend'), 'un bouton « Écouter » avec une voix anglaise locale (' + voix.locale + ')');
+  ok(voix.aucune === null, 'le bouton disparaît sans voix');
+  await js('Fiche.fermer(); return 1');
+  await attendre('Fiche.ouverte === false', 3000);
 
   // ── Langue des définitions ────────────────────────────────────────────────
   await js("await App.ecrireReglage('definitions', 'fr'); App.appliquerReglages(); Fiche.ouvrir('commit'); return 1");
@@ -153,6 +238,8 @@ try {
   await attendre("document.getElementById('editeur').hidden === false && document.getElementById('e-texte')", 3000, 'éditeur de note');
   await js("document.querySelector('#editeur .pied-formulaire .bouton-principal').click(); return 1");
   ok(await js("return document.querySelector('#editeur .erreur').hidden === false"), 'une note vide est refusée');
+  await js("const t = document.getElementById('e-texte'); t.value = 'brouillon'; t.dispatchEvent(new Event('input', { bubbles: true })); document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true })); return 1");
+  ok(await js("return document.getElementById('editeur').hidden === false"), 'Échap ne jette pas une note commencée');
   await js("const t = document.getElementById('e-texte'); t.value = 'Penser à git stash -u pour les fichiers non suivis.'; document.getElementById('e-titre').value = 'Piège'; document.querySelector('#editeur .pied-formulaire .bouton-principal').click(); return 1");
   await attendre("document.getElementById('editeur').hidden === true", 3000, 'éditeur refermé');
   await attendre("document.querySelectorAll('#fiche .note-carte').length === 1", 3000, 'la note apparaît');
@@ -200,6 +287,9 @@ try {
   await js("document.querySelector('#onglets [data-vue=carnet]').click(); return 1");
   await attendre("document.querySelectorAll('#carnet-contenu .terme-ligne').length === 1", 3000, 'un favori dans le carnet');
   ok(await js("return document.querySelector('#carnet-contenu .terme-mot').textContent") === 'Stash', 'le carnet liste le favori');
+  await attendre("document.querySelector('#carnet-onglets [data-rubrique=favoris] .nombre-rubrique').textContent === '1'", 3000, 'compteur des favoris');
+  ok(await js("const n = document.querySelector('#carnet-onglets [data-rubrique=exemples] .nombre-rubrique'); return n.hidden === false && n.textContent === '1'"), 'chaque rubrique du carnet affiche son nombre');
+  ok(await js("return document.querySelector('#carnet-onglets [data-rubrique=termes] .nombre-rubrique').hidden"), 'une rubrique vide n’affiche pas de nombre');
   await js("document.querySelector('#carnet-onglets [data-rubrique=a-revoir]').click(); return 1");
   await attendre("document.querySelector('#carnet-contenu .terme-mot')?.textContent === 'Stash'", 3000, 'à revoir');
   await js("document.querySelector('#carnet-onglets [data-rubrique=notes]').click(); return 1");
@@ -249,10 +339,12 @@ try {
     await attendre("document.querySelector('#quiz-contenu .verdict:not([hidden])')", 3000, 'verdict ' + (i + 1));
     if (await js("return !!document.querySelector('#quiz-contenu .verdict.juste')")) justes += 1;
     ok(await js("return document.querySelectorAll('#quiz-contenu .choix.bonne').length") === 1, 'une seule bonne réponse marquée (question ' + (i + 1) + ')');
+    ok(await js("return document.querySelectorAll('#quiz-contenu .pastille-q.juste, #quiz-contenu .pastille-q.faux').length") === i + 1, 'une pastille colorée par réponse (question ' + (i + 1) + ')');
     await js("document.querySelector('#quiz-contenu .verdict .bouton-principal').click(); return 1");
   }
   await attendre("document.querySelector('#quiz-contenu .bilan-score')", 3000, 'bilan du quiz');
   ok(await js("return document.querySelector('#quiz-contenu .bilan-score').textContent") === justes + ' sur 5', 'le bilan compte ' + justes + ' bonne(s) réponse(s)');
+  ok(await js("return !!document.querySelector('#quiz-contenu .anneau .anneau-arc')"), 'le score s’affiche en anneau');
   const suivis = await js('return (await Store.tousLesSuivis()).filter((s) => s.ok || s.ko).length');
   ok(suivis >= 1, 'le quiz enregistre le suivi des termes');
   // qualité des questions : pas de réponse qui se devine
@@ -282,6 +374,59 @@ try {
     return { total, problemes: problemes.slice(0, 8), n: problemes.length };
   `);
   ok(rapport.total >= 80 && rapport.n === 0, 'questions du quiz : ' + rapport.total + ' examinées, ' + rapport.n + ' problème(s) ' + rapport.problemes.join(' | '));
+
+  // ── Le quiz au clavier ────────────────────────────────────────────────────
+  const touche = (k) => js("document.dispatchEvent(new KeyboardEvent('keydown', { key: " + JSON.stringify(k) + ", bubbles: true })); return 1");
+  const retourAccueilQuiz = () => js("[...document.querySelectorAll('#quiz-contenu .bouton-discret')].pop().click(); return 1");
+  await retourAccueilQuiz();
+  await attendre("document.querySelector('#quiz-contenu .segments-mode')", 3000, 'retour à l’accueil du quiz');
+  await js("document.querySelector('#quiz-contenu .bouton-principal').click(); return 1");
+  await attendre("document.querySelectorAll('#quiz-contenu .choix').length === 4", 3000, 'question au clavier');
+  await touche('2');
+  await attendre("document.querySelector('#quiz-contenu .verdict:not([hidden])')", 3000, 'réponse par la touche 2');
+  ok(await js("return document.querySelectorAll('#quiz-contenu .choix')[1].matches('.bonne, .mauvaise')"), 'la touche 2 répond par la deuxième proposition');
+  await touche('Enter');
+  await attendre("document.querySelectorAll('#quiz-contenu .pastille-q.juste, #quiz-contenu .pastille-q.faux').length === 1 && document.querySelectorAll('#quiz-contenu .choix').length === 4 && !document.querySelector('#quiz-contenu .choix[disabled]')", 3000, 'Entrée passe à la question suivante');
+  await js("document.querySelector('#quiz-contenu .seance-infos .lien-discret').click(); return 1");
+  await attendre("document.querySelector('#quiz-contenu .bilan-score')", 3000, 'bilan après arrêt');
+  ok(await js("return document.querySelector('#quiz-contenu .bilan-score').textContent.endsWith('sur 1')"), 'arrêter en cours de séance compte les réponses données');
+
+  // ── Les cartes à retourner ────────────────────────────────────────────────
+  await js("await App.ecrireReglage('quizMode', 'cartes'); await App.ecrireReglage('quizSens', 'terme-def'); await App.ecrireReglage('quizNombre', 5); return 1");
+  await retourAccueilQuiz();
+  await attendre("document.querySelector('#quiz-contenu .segments-mode [aria-pressed=true]')?.textContent === 'Cartes à retourner'", 3000, 'mode cartes');
+  const jugees = () => js('return (await Store.tousLesSuivis()).reduce((n, s) => n + (s.ok || 0) + (s.ko || 0), 0)');
+  const avantCartes = await jugees();
+  await js("document.querySelector('#quiz-contenu .bouton-principal').click(); return 1");
+  await attendre("document.querySelector('#quiz-contenu .carte-flash')", 3000, 'première carte');
+  const carteN = (n) => attendre("document.querySelector('#quiz-contenu .seance-infos .discret')?.textContent.startsWith('Carte " + n + " ')", 3000, 'carte ' + n);
+  ok(await js("return document.querySelector('#quiz-contenu .jugement').hidden"), 'on ne juge pas une carte avant de l’avoir retournée');
+  await js("document.querySelector('.carte-flash').click(); return 1");
+  ok(await js("return document.querySelector('.carte-flash').classList.contains('retournee') && !document.querySelector('.jugement').hidden && document.querySelector('.verso').getAttribute('aria-hidden') === 'false'"), 'toucher la carte la retourne, et le verso devient lisible');
+  await js("document.querySelector('.juge-oui').click(); return 1");
+  await carteN(2);
+  await touche('ArrowRight');
+  ok(await js("return document.querySelector('.carte-flash').classList.contains('retournee')"), '→ retourne une carte pas encore vue');
+  await touche('ArrowLeft');
+  await carteN(3);
+  await js(`
+    const c = document.querySelector('.carte-flash');
+    c.click();
+    const r = c.getBoundingClientRect();
+    const ev = (t, x) => c.dispatchEvent(new PointerEvent(t, { bubbles: true, clientX: x, clientY: r.top + 40, pointerId: 7, button: 0 }));
+    ev('pointerdown', 100); ev('pointermove', 130); ev('pointermove', 260); ev('pointerup', 260);
+    return 1;
+  `);
+  await carteN(4);
+  ok(await js("return document.querySelectorAll('.pastille-q.juste').length === 2 && document.querySelectorAll('.pastille-q.faux').length === 1"), 'je savais, à revoir, glissé à droite : deux justes, une à revoir');
+  await js("document.querySelector('.carte-flash').click(); document.querySelector('.juge-oui').click(); return 1");
+  await carteN(5);
+  await js("document.querySelector('.carte-flash').click(); document.querySelector('.juge-oui').click(); return 1");
+  await attendre("document.querySelector('#quiz-contenu .bilan-score')", 3000, 'bilan des cartes');
+  ok(await js("return document.querySelector('#quiz-contenu .bilan-score').textContent") === '4 sur 5', 'le bilan des cartes compte 4 sur 5');
+  ok(await js("return !!document.querySelector('#quiz-contenu .anneau-arc.bien')"), 'l’anneau prend la couleur du résultat');
+  ok(await jugees() - avantCartes === 5, 'chaque carte jugée compte dans le suivi');
+  await js("await App.ecrireReglage('quizMode', 'qcm'); return 1");
 
   // ── Réglages : langue, thème, taille ──────────────────────────────────────
   await js("document.querySelector('#onglets [data-vue=reglages]').click(); return 1");
@@ -335,7 +480,7 @@ try {
     HTMLAnchorElement.prototype.click = vrai;
     return { r, telecharge };
   `);
-  ok(/^code-en-clair-\d{4}-\d\d-\d\d\.json$/.test(exporte.telecharge && exporte.telecharge.nom), 'l’export nomme son fichier code-en-clair-AAAA-MM-JJ.json');
+  ok(/^lexicode-\d{4}-\d\d-\d\d\.json$/.test(exporte.telecharge && exporte.telecharge.nom), 'l’export nomme son fichier lexicode-AAAA-MM-JJ.json');
   ok(exporte.r.notes >= 2, 'l’export contient les notes');
 
   // ── Politique de confidentialité ─────────────────────────────────────────
@@ -396,7 +541,7 @@ try {
         navigator.serviceWorker.controller.postMessage({ type: 'version' }, [canal.port2]);
         return await reponse;
       `);
-      ok(version === 'v1.0.0', 'le service worker annonce sa version (' + version + ')');
+      ok(version === VERSION_SW, 'le service worker annonce sa version (' + version + ', attendu ' + VERSION_SW + ')');
       // on coupe le serveur : plus de réseau du tout
       await serveur.arreter();
       await onglet.envoyer('Page.reload');

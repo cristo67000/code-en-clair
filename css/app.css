@@ -1,5 +1,5 @@
 /*
- * Code en clair — feuille de style.
+ * Lexicode — feuille de style.
  *
  * Conçue pour un téléphone tenu d'une main : cibles larges, texte lisible sans
  * lunettes, barre d'onglets au pouce. L'ordinateur hérite de la même mise en
@@ -65,9 +65,31 @@ button { -webkit-tap-highlight-color: transparent; }
 
 #scene { max-width: 46rem; margin: 0 auto; padding: 0 1rem 2rem; }
 
+/* Un bouton qu'on presse s'enfonce un peu : sous le doigt, on sent que ça a pris. */
+.voisin, .filtre, .bouton-etat, .bouton-discret, .bouton-principal, .bouton-hasard, .segments button,
+.fiche-fermer, .fiche-retour, .fiche-partager, .bouton-ecouter, .carte-du-jour, .carte-revoir {
+  transition: transform .12s ease, background-color .15s ease, border-color .15s ease, color .15s ease;
+}
+.voisin:active, .filtre:active, .bouton-etat:active, .bouton-discret:active, .bouton-principal:active:not([disabled]),
+.bouton-hasard:active, .segments button:active, .fiche-fermer:active, .fiche-retour:active, .fiche-partager:active,
+.bouton-ecouter:active, .choix:active:not([disabled]) { transform: scale(.97); }
+.carte-du-jour:active, .carte-revoir:active { transform: scale(.99); }
+
+/* Chaque onglet apparaît en fondu ; en opacité seulement — une transformation
+ * ferait bouger ce qui, dedans, est fixé à l'écran (la réglette des lettres). */
+.vue { animation: fondu .2s ease; }
+@keyframes fondu { from { opacity: 0; } }
+
 /* ————— Recherche et filtres ————— */
 
-#bloc-recherche { position: relative; margin: .3rem 0 .7rem; }
+/* La recherche colle en haut de l'écran pendant qu'on parcourt la liste. */
+#bloc-recherche {
+  position: sticky; top: 0; z-index: 6;
+  margin: 0 -1rem .55rem; padding: .45rem 1rem;
+  background: var(--fond);
+  transition: box-shadow .2s ease;
+}
+#bloc-recherche.colle { box-shadow: var(--ombre-bord); }
 #q {
   width: 100%; padding: .85rem 2.8rem .85rem 1rem;
   font-size: 1.05rem; font-family: var(--mono);
@@ -78,11 +100,18 @@ button { -webkit-tap-highlight-color: transparent; }
 #q::-webkit-search-cancel-button { display: none; }
 #q::placeholder { color: var(--encre-legere); }
 #q-vider {
-  position: absolute; right: .4rem; top: 50%; transform: translateY(-50%);
+  position: absolute; right: 1.4rem; top: 50%; transform: translateY(-50%);
   width: 2.4rem; height: 2.4rem; border: 0; border-radius: 50%;
   background: transparent; color: var(--encre-legere); cursor: pointer;
 }
 #q-vider:hover { background: var(--accent-clair); }
+/* « / » : le raccourci, rappelé dans le champ — sur un ordinateur seulement */
+.raccourci {
+  position: absolute; right: 1.75rem; top: 50%; transform: translateY(-50%);
+  padding: .05rem .5rem; border: 1px solid var(--trait-fort); border-bottom-width: 2px; border-radius: 6px;
+  font: 600 .8rem var(--mono); color: var(--encre-legere); pointer-events: none;
+}
+@media (hover: none), (pointer: coarse) { .raccourci { display: none; } }
 
 .filtres {
   display: flex; gap: .4rem; overflow-x: auto; padding: .1rem .05rem .6rem;
@@ -99,12 +128,23 @@ button { -webkit-tap-highlight-color: transparent; }
 .filtre.actif { background: var(--accent); border-color: var(--accent); color: var(--sur-accent); font-weight: 600; }
 .filtre.actif .point-cat { box-shadow: 0 0 0 2px var(--sur-accent); }
 
-.compte { margin: .2rem 0 .3rem; }
+.ligne-compte { display: flex; align-items: center; justify-content: space-between; gap: .5rem; margin: .2rem 0 .3rem; }
+.compte { margin: 0; }
+.bouton-hasard {
+  display: inline-flex; align-items: center; gap: .35rem;
+  min-height: 2.3rem; padding: .3rem .85rem .3rem .6rem;
+  border: 1px solid var(--trait); border-radius: 999px; background: var(--carte);
+  color: var(--encre-douce); font-size: .85rem; cursor: pointer;
+}
+.bouton-hasard .icone { width: 1.15rem; height: 1.15rem; transition: transform .35s ease; }
+.icone .plein { fill: currentColor; stroke: none; }
+.bouton-hasard:hover { border-color: var(--accent); color: var(--accent); }
+.bouton-hasard:hover .icone, .bouton-hasard:active .icone { transform: rotate(90deg); }
 
 /* ————— Liste des termes ————— */
 
 .lettre {
-  position: sticky; top: 0; z-index: 2;
+  position: sticky; top: var(--haut-recherche, 0px); z-index: 2;
   margin: 1rem 0 .1rem; padding: .25rem .2rem;
   font: 700 .95rem var(--mono); color: var(--accent);
   background: linear-gradient(var(--fond) 78%, transparent);
@@ -115,8 +155,18 @@ button { -webkit-tap-highlight-color: transparent; }
   padding: .6rem .5rem .6rem .7rem; min-height: 3rem;
   border: 0; border-bottom: 1px solid var(--trait); border-left: 3px solid var(--cc, var(--c-autre));
   background: transparent; cursor: pointer;
+  transition: background-color .15s ease;
+  /* au clavier, la ligne choisie ne passe pas sous la recherche ni sous les onglets */
+  scroll-margin-top: calc(var(--haut-recherche, 0px) + 2.6rem); scroll-margin-bottom: 5rem;
 }
 .terme-ligne:hover, .terme-ligne:focus-visible { background: var(--accent-clair); outline: none; }
+.terme-ligne:focus-visible { box-shadow: inset 0 0 0 2px var(--accent); }
+.terme-ligne:active { background: var(--accent-clair); }
+mark.trouve { background: var(--surligne); color: inherit; border-radius: 3px; box-shadow: 0 0 0 1px var(--surligne); }
+.via-alias {
+  padding: 0 .4rem; border: 1px solid var(--trait); border-radius: 5px;
+  font: .8rem var(--mono); color: var(--encre-douce); overflow-wrap: anywhere;
+}
 .terme-ligne-tete { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
 .terme-mot { font-family: var(--mono); font-size: 1.02rem; font-weight: 700; overflow-wrap: anywhere; }
 .terme-ligne .apercu {
@@ -135,6 +185,43 @@ button { -webkit-tap-highlight-color: transparent; }
 #rien { padding: 1.5rem .5rem .5rem; text-align: center; }
 .rien-titre { font-weight: 600; }
 .ajouter-terme { display: block; margin: 1rem auto; max-width: 100%; overflow-wrap: anywhere; }
+.suggestions { margin: .6rem 0 1.1rem; }
+.suggestions p { margin: 0 0 .5rem; }
+.suggestions .voisins { justify-content: center; }
+.suggestions .partout { flex-basis: 100%; min-height: 2.5rem; margin-bottom: .2rem; }
+
+/* ————— La réglette des lettres ————— */
+
+.index-lettres {
+  position: fixed; z-index: 15;
+  right: max(.15rem, calc((100vw - 46rem) / 2 - 2.3rem));
+  top: calc(50% - .8rem); transform: translateY(-50%);
+  display: flex; flex-direction: column; align-items: center;
+  padding: .3rem .1rem; border-radius: 999px;
+  touch-action: none; user-select: none; -webkit-user-select: none;
+  visibility: hidden; opacity: 0;
+  transition: background-color .15s ease, opacity .2s ease, visibility .2s;
+}
+.index-lettres.visible { visibility: visible; opacity: 1; }
+.index-lettres.actif { background: var(--accent-clair); }
+.index-lettres button {
+  display: flex; align-items: center; justify-content: center;
+  width: 1.4rem; padding: 0; border: 0; background: transparent; cursor: pointer;
+  height: min(1.2rem, calc((100vh - 13rem) / var(--n, 27)));
+  height: min(1.2rem, calc((100dvh - 13rem) / var(--n, 27)));
+  font: 700 .66rem var(--mono); color: var(--accent);
+}
+.index-lettres button:focus-visible { outline: 2px solid var(--accent); border-radius: 4px; }
+.index-bulle {
+  position: fixed; z-index: 16; right: 3.2rem;
+  display: flex; align-items: center; justify-content: center;
+  width: 3.6rem; height: 3.6rem; margin-top: -1.8rem; border-radius: 50%;
+  background: var(--accent); color: var(--sur-accent); box-shadow: var(--ombre);
+  font: 700 1.6rem var(--mono); pointer-events: none;
+}
+@media (max-height: 30rem) { .index-lettres { display: none !important; } }
+/* Sur un téléphone, la réglette longe les lignes : on leur laisse la place. */
+@media (max-width: 52rem) { .avec-index .terme-ligne { padding-right: 1.4rem; } }
 
 /* ————— Accueil : le terme du jour, les récents ————— */
 
@@ -184,12 +271,41 @@ button { -webkit-tap-highlight-color: transparent; }
   max-width: 62vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
 }
 .fiche-retour { font-family: var(--mono); font-size: .9rem; }
+.fiche-partager, .bouton-ecouter {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 2.6rem; height: 2.6rem; padding: 0; border-radius: 50%;
+  border: 1px solid var(--trait); background: var(--carte); color: var(--encre-douce); cursor: pointer;
+}
+.fiche-partager .icone { width: 1.2rem; height: 1.2rem; }
+.fiche-partager:hover, .bouton-ecouter:hover { border-color: var(--accent); color: var(--accent); }
 .editeur-titre { margin: 0; font-size: 1.15rem; }
 
+/* La fiche arrive par le bas ; passer d'une fiche à sa voisine glisse de côté. */
+#fiche.entree { animation: fiche-entre .26s cubic-bezier(.2, .8, .2, 1); }
+@keyframes fiche-entre { from { opacity: 0; transform: translateY(1.5rem); } }
+#fiche-contenu.change { animation: fiche-change .22s ease; }
+@keyframes fiche-change { from { opacity: 0; transform: translateX(.8rem); } }
+
+/* Le nom du terme, dans la barre, une fois le titre sorti de l'écran */
+.fiche-tete-nom {
+  min-width: 0; text-align: center; font: 700 1rem var(--mono);
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  opacity: 0; transform: translateY(.3rem); transition: opacity .18s ease, transform .18s ease;
+}
+.fiche-tete.titre-parti .fiche-tete-nom { opacity: 1; transform: none; }
+.fiche-tete.titre-parti { background: linear-gradient(var(--fond) 88%, transparent); }
+
 .fiche-titre { margin: .4rem 0 .6rem; }
+.titre-ligne { display: flex; align-items: center; gap: .65rem; }
 .terme-nom {
   margin: 0; font: 700 1.9rem/1.15 var(--mono); overflow-wrap: anywhere; letter-spacing: -.02em;
 }
+.bouton-ecouter { color: var(--accent); }
+.bouton-ecouter .icone { width: 1.35rem; height: 1.35rem; }
+.bouton-ecouter.parle { background: var(--accent-clair); border-color: var(--accent); }
+.bouton-ecouter.parle .onde { animation: onde .9s ease-in-out infinite; }
+.bouton-ecouter.parle .onde-2 { animation-delay: .2s; }
+@keyframes onde { 50% { opacity: .15; } }
 .terme-dev { margin: .15rem 0 0; font-size: .95rem; color: var(--encre-douce); }
 .fiche-infos { display: flex; gap: .4rem; align-items: center; flex-wrap: wrap; margin: .5rem 0 .2rem; }
 .pastille-cat {
@@ -207,6 +323,9 @@ button { -webkit-tap-highlight-color: transparent; }
 }
 .bouton-etat.actif { border-color: var(--warn); color: var(--warn); background: var(--warn-fond); font-weight: 600; }
 .bouton-etat.actif.revoir { border-color: var(--bad); color: var(--bad); background: var(--bad-fond); }
+/* le bouton qu'on vient de toucher marque le coup */
+.pop { animation: pop .34s cubic-bezier(.3, 1.6, .5, 1); }
+@keyframes pop { 40% { transform: scale(1.1); } }
 
 .sens-bloc { margin: 0 0 1.6rem; }
 .sens-bloc + .sens-bloc { padding-top: 1.2rem; border-top: 1px solid var(--trait); }
@@ -350,10 +469,35 @@ select.saisie-texte { min-height: 2.9rem; }
 .compteur.bien .chiffre { color: var(--ok); }
 .compteur.moyen .chiffre { color: var(--warn); }
 
-.jauge { height: .45rem; background: var(--trait); border-radius: 999px; overflow: hidden; margin: .8rem 0 .3rem; flex: 1; }
-.jauge > div { height: 100%; background: var(--accent); width: 0; transition: width .25s ease; }
-.seance-tete { display: flex; align-items: center; gap: .7rem; margin: .7rem 0 1.2rem; }
-.seance-tete .jauge { margin: 0; }
+.jauge { height: .45rem; background: var(--trait); border-radius: 999px; overflow: hidden; }
+.jauge > div { height: 100%; background: var(--accent); width: 0; transition: width .9s cubic-bezier(.2, .8, .2, 1); }
+.decouverte { margin: -.3rem 0 1.2rem; }
+.decouverte p { margin: 0 0 .35rem; }
+.jauge-decouverte > div { background: linear-gradient(90deg, var(--accent), var(--v)); }
+
+/* Le raccourci vers ce qu'on a raté */
+.carte-revoir {
+  display: flex; flex-direction: column; gap: .15rem; width: 100%; margin: 0 0 1.2rem; padding: .85rem 1rem;
+  text-align: left; cursor: pointer; color: var(--encre);
+  background: var(--warn-fond); border: 1px solid var(--warn); border-left-width: 4px; border-radius: var(--rayon);
+}
+.carte-revoir-titre { font-weight: 700; color: var(--warn); }
+.carte-revoir-titre::after { content: " →"; }
+.carte-revoir-aide { font-size: .88rem; color: var(--encre-douce); }
+
+/* Une pastille par question, qui prend la couleur de la réponse */
+.seance-tete { margin: .7rem 0 1.1rem; }
+.pastilles { display: flex; gap: 3px; }
+.pastille-q { flex: 1; height: .42rem; border-radius: 999px; background: var(--trait); transition: background-color .25s ease; }
+.pastille-q.courante { background: var(--accent); opacity: .5; }
+.pastille-q.juste { background: var(--ok); }
+.pastille-q.faux { background: var(--bad); }
+.seance-infos { display: flex; align-items: center; gap: .6rem; margin-top: .3rem; min-height: 2.5rem; }
+.seance-infos .espace { flex: 1; }
+.serie {
+  padding: .1rem .6rem; border-radius: 999px;
+  background: var(--warn-fond); color: var(--warn); font: 700 .8rem var(--mono);
+}
 .consigne { margin: 0 0 .7rem; color: var(--encre-legere); font-size: .78rem; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; }
 .enonce {
   margin: 0 0 1.1rem; padding: 1.2rem 1.1rem; background: var(--carte);
@@ -363,16 +507,33 @@ select.saisie-texte { min-height: 2.9rem; }
 .enonce-definition { margin: 0; font-size: 1.15rem; line-height: 1.5; }
 .choix-liste { display: flex; flex-direction: column; gap: .55rem; }
 .choix {
+  display: flex; align-items: flex-start; gap: .7rem;
   width: 100%; text-align: left; padding: .85rem 1rem; min-height: 3rem;
   border: 1px solid var(--trait-fort); border-radius: 10px; background: var(--carte);
   cursor: pointer; font-size: .98rem; line-height: 1.4;
+  transition: transform .12s ease, background-color .15s ease, border-color .15s ease;
 }
 .choix-terme { font-family: var(--mono); font-weight: 700; font-size: 1.05rem; }
 .choix:hover:not([disabled]) { border-color: var(--accent); background: var(--accent-clair); }
 .choix[disabled] { cursor: default; opacity: .8; }
-.choix.bonne { border-color: var(--ok); background: var(--ok-fond); opacity: 1; }
-.choix.mauvaise { border-color: var(--bad); background: var(--bad-fond); opacity: 1; }
+.choix.bonne { border-color: var(--ok); background: var(--ok-fond); opacity: 1; animation: bonne .45s ease; }
+.choix.mauvaise { border-color: var(--bad); background: var(--bad-fond); opacity: 1; animation: secousse .4s ease; }
+@keyframes bonne { 35% { transform: scale(1.025); } }
+@keyframes secousse { 20%, 60% { transform: translateX(-5px); } 40%, 80% { transform: translateX(5px); } }
+/* 1 à 4 : les touches du clavier, rappelées — sur un ordinateur seulement */
+.touche {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 1.45rem; height: 1.45rem; margin-top: -.02rem;
+  border: 1px solid var(--trait-fort); border-bottom-width: 2px; border-radius: 5px;
+  font: 700 .72rem var(--mono); color: var(--encre-legere);
+}
+.choix.bonne .touche { border-color: var(--ok); color: var(--ok); }
+.choix.mauvaise .touche { border-color: var(--bad); color: var(--bad); }
+@media (hover: none), (pointer: coarse) { .touche { display: none; } }
+.choix-texte { flex: 1; min-width: 0; overflow-wrap: anywhere; }
 .verdict { margin-top: 1.1rem; padding: 1rem; border-radius: var(--rayon); border: 1px solid var(--trait); background: var(--carte); }
+.verdict:not([hidden]) { animation: monte .25s ease; }
+@keyframes monte { from { opacity: 0; transform: translateY(.4rem); } }
 .verdict.juste { border-color: var(--ok); }
 .verdict.faux { border-color: var(--bad); }
 .verdict-texte { margin: 0 0 .3rem; font-size: 1.15rem; font-weight: 700; }
@@ -382,7 +543,64 @@ select.saisie-texte { min-height: 2.9rem; }
 .verdict-terme { margin: 0; font: 700 1.2rem var(--mono); }
 .verdict-def { margin: .2rem 0 0; color: var(--encre-douce); font-size: .95rem; }
 .bilan { text-align: center; }
-.bilan-score { margin: 0; font: 700 2.4rem/1.1 var(--mono); color: var(--accent); }
+.bilan-score { margin: 0; font: 700 1.7rem/1.1 var(--mono); color: var(--accent); }
+.serie-bilan { margin: .5rem 0 0; color: var(--warn); font-weight: 600; }
+
+/* Le score en anneau, qui se remplit */
+.anneau { position: relative; width: 8.5rem; height: 8.5rem; margin: .3rem auto .7rem; }
+.anneau svg { display: block; width: 100%; height: 100%; }
+.anneau-fond { fill: none; stroke: var(--trait); stroke-width: 10; }
+.anneau-arc { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; transition: stroke-dashoffset 1.1s cubic-bezier(.2, .8, .2, 1); }
+.anneau-arc.parfait, .anneau-arc.bien { stroke: var(--ok); }
+.anneau-arc.moyen { stroke: var(--warn); }
+.anneau-arc.faible { stroke: var(--bad); }
+.anneau-texte { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 1.6rem; font-weight: 700; }
+
+/* ————— Les cartes à retourner ————— */
+
+#vue-quiz { overflow-x: hidden; overflow-x: clip; }   /* la carte qui s'envole ne doit pas élargir la page */
+.carte-scene { margin: .3rem 0 1rem; }
+.carte-flash {
+  display: block; width: 100%; padding: 0; border: 0; background: none; color: inherit; text-align: left;
+  cursor: pointer; perspective: 1400px;
+  touch-action: pan-y; user-select: none; -webkit-user-select: none;
+  transition: transform .26s ease, opacity .26s ease;
+}
+.carte-flash.tenue { transition: none; cursor: grabbing; }
+.carte-flash.envol { opacity: 0; }
+.carte-flash:focus-visible { outline: none; }
+.carte-flash:focus-visible .face { box-shadow: 0 0 0 3px var(--accent); }
+.carte-interieur {
+  display: grid; transform-style: preserve-3d;
+  transition: transform .5s cubic-bezier(.2, .75, .25, 1);
+}
+.carte-flash.retournee .carte-interieur { transform: rotateY(180deg); }
+.face {
+  grid-area: 1 / 1; display: flex; flex-direction: column; justify-content: center; gap: .7rem;
+  min-height: 15rem; padding: 1.5rem 1.25rem 1.3rem;
+  /* un bandeau à la couleur de la catégorie, en haut */
+  background: linear-gradient(var(--cc, var(--accent)) 0 5px, var(--carte) 5px);
+  border: 1px solid var(--trait); border-radius: calc(var(--rayon) + 4px); box-shadow: var(--ombre);
+  backface-visibility: hidden; -webkit-backface-visibility: hidden;
+  transition: border-color .15s ease;
+}
+.recto { justify-content: space-between; }
+.verso { transform: rotateY(180deg); }
+.face-consigne { font-size: .74rem; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: var(--encre-legere); }
+.face-terme { font: 700 1.9rem/1.2 var(--mono); overflow-wrap: anywhere; letter-spacing: -.02em; }
+.face-definition { font-size: 1.06rem; line-height: 1.55; }
+.verso .face-terme { font-size: 1.35rem; color: var(--accent); }
+.face-aide { font-size: .82rem; color: var(--encre-legere); }
+.face-aide::before { content: "↻  "; }
+.vers-oui .face { border-color: var(--ok); }
+.vers-non .face { border-color: var(--bad); }
+.jugement { display: flex; gap: .6rem; }
+.jugement .bouton-principal, .jugement .bouton-discret { flex: 1; width: auto; }
+.juge-non { color: var(--bad); border-color: var(--bad); }
+.juge-non:hover { color: var(--bad); border-color: var(--bad); background: var(--bad-fond); }
+.juge-oui, .juge-oui:hover { background: var(--ok); }
+.carte-pied { display: flex; align-items: center; justify-content: space-between; gap: .3rem .8rem; flex-wrap: wrap; margin-top: .5rem; }
+.carte-pied p { margin: 0; }
 
 /* ————— Carnet ————— */
 
@@ -395,6 +613,12 @@ select.saisie-texte { min-height: 2.9rem; }
 .segments button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--sur-accent); font-weight: 600; }
 .segments-carnet { flex-wrap: wrap; }
 .segments-carnet button { flex: 1 1 auto; font-size: .85rem; padding: .5rem .55rem; }
+.nombre-rubrique {
+  display: inline-block; min-width: 1.3rem; margin-left: .35rem; padding: 0 .35rem;
+  border-radius: 999px; background: var(--accent-clair); color: var(--accent);
+  font: 700 .72rem/1.3rem var(--mono); text-align: center;
+}
+.segments button[aria-pressed="true"] .nombre-rubrique { background: var(--sur-accent); color: var(--accent); }
 #carnet-filtre {
   width: 100%; margin: 0 0 .8rem; padding: .6rem .8rem;
   border: 1px solid var(--trait-fort); border-radius: 10px; background: var(--carte);
@@ -412,6 +636,15 @@ select.saisie-texte { min-height: 2.9rem; }
 .marche-a-suivre { margin: .5rem 0 0; padding-left: 1.3rem; color: var(--encre-douce); }
 .adresse-partage { margin: .6rem 0 0; font: .8rem var(--mono); color: var(--encre-legere); word-break: break-all; }
 .ligne-sauvegarde { margin: .6rem 0 .2rem; }
+.raccourcis { display: grid; grid-template-columns: auto 1fr; gap: .55rem 1rem; align-items: center; margin: .2rem 0 0; }
+.raccourcis dt { display: flex; gap: .25rem; flex-wrap: wrap; }
+.raccourcis dd { margin: 0; color: var(--encre-douce); font-size: .92rem; }
+.raccourci-touche {
+  padding: .05rem .45rem; border: 1px solid var(--trait-fort); border-bottom-width: 2px; border-radius: 6px;
+  background: var(--fond); font: 600 .8rem var(--mono); white-space: nowrap;
+}
+/* les raccourcis ne servent qu'avec un clavier : rien à en dire sur un téléphone */
+@media (hover: none), (pointer: coarse) { .seulement-clavier { display: none; } }
 
 /* ————— Bandeaux ————— */
 
@@ -447,6 +680,15 @@ body.fiche-ouverte #annonce, body.panneau-ouvert #annonce, body.fiche-ouverte #m
   border: 0; background: transparent; color: var(--encre-legere); cursor: pointer; font-size: .75rem;
 }
 #onglets button[aria-current="true"] { color: var(--accent); font-weight: 700; }
+/* L'onglet choisi : une pastille derrière son icône, qui s'élargit en arrivant */
+#onglets button::before {
+  content: ""; position: absolute; top: .48rem; left: 50%;
+  width: 3.5rem; height: 1.95rem; margin-left: -1.75rem; border-radius: 999px;
+  background: var(--accent-clair); opacity: 0; transform: scaleX(.45);
+  transition: transform .22s ease, opacity .22s ease;
+}
+#onglets button[aria-current="true"]::before { opacity: 1; transform: none; }
+#onglets button > * { position: relative; }
 .icone { width: 1.5rem; height: 1.5rem; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 
 @media (min-width: 48rem) {
@@ -454,5 +696,5 @@ body.fiche-ouverte #annonce, body.panneau-ouvert #annonce, body.fiche-ouverte #m
   .def-phrase { font-size: 1.08rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  * { transition: none !important; scroll-behavior: auto !important; }
+  *, *::before, *::after { transition: none !important; animation: none !important; scroll-behavior: auto !important; }
 }

@@ -22,6 +22,9 @@
   const { element, bouton } = Outils;
   const { t, plur } = I18n;
   const FORMAT = 1;
+  /* L'application s'appelait « Code en clair » : cette marque, écrite dans
+   * chaque fichier de sauvegarde, garde l'ancien nom — la changer ferait
+   * refuser toutes les sauvegardes déjà faites. */
   const APPLICATION = 'code-en-clair';
 
   async function exporter() {
@@ -34,7 +37,7 @@
     };
     const texte = JSON.stringify(donnees, null, 1);
     const fichier = new Blob([texte], { type: 'application/json' });
-    const nom = 'code-en-clair-' + new Date().toISOString().slice(0, 10) + '.json';
+    const nom = 'lexicode-' + new Date().toISOString().slice(0, 10) + '.json';
     const lien = document.createElement('a');
     lien.href = URL.createObjectURL(fichier);
     lien.download = nom;

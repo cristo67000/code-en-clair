@@ -19,7 +19,7 @@
   const { element, bouton } = Outils;
   const { t } = I18n;
 
-  const etat = { ouvert: false, demande: null, confirmation: false };
+  const etat = { ouvert: false, demande: null, confirmation: false, modifie: false };
   let conteneur = null;
   let corps = null;
 
@@ -67,6 +67,7 @@
   async function ouvrir(demande) {
     etat.demande = demande;
     etat.confirmation = false;
+    etat.modifie = false;
     if (!etat.ouvert) {
       etat.ouvert = true;
       conteneur.hidden = false;
@@ -272,12 +273,14 @@
   function brancher() {
     conteneur = document.getElementById('editeur');
     corps = document.getElementById('editeur-contenu');
+    corps.addEventListener('input', () => { etat.modifie = true; });
     document.addEventListener('langue-changee', () => { if (etat.ouvert) dessiner(); });
   }
 
   racine.Editeur = {
     brancher, ouvrir, fermer, fermerSansHistorique, recharger,
     get ouvert() { return etat.ouvert; },
+    get modifie() { return etat.modifie; },
   };
 
 })(window);

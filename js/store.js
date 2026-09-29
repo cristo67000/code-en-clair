@@ -26,6 +26,7 @@
  */
 (function (racine) {
 
+  // l'ancien nom de l'application ; le changer ferait perdre à chacun ses notes
   const NOM = 'code-en-clair';
   const VERSION = 1;
   let bd = null;
@@ -117,6 +118,7 @@
     quizSens: 'mixte',             // 'mixte' | 'def-terme' | 'terme-def'
     quizLangue: 'interface',       // 'interface' | 'fr' | 'en' | 'mixte'
     quizNombre: 10,
+    quizMode: 'qcm',               // 'qcm' (quatre choix) | 'cartes' (à retourner)
   };
 
   async function lireReglages() {

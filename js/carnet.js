@@ -54,12 +54,34 @@
     return b;
   }
 
+  /* Le nombre d'éléments de chaque rubrique, sur son bouton : on voit d'un
+   * coup d'œil où il y a quelque chose. */
+  async function compter() {
+    try {
+      const [suivis, notes] = await Promise.all([Store.tousLesSuivis(), Store.toutesLesNotes()]);
+      const nombres = {
+        favoris: suivis.filter((s) => s.favori && appartient(s.ref)).length,
+        'a-revoir': suivis.filter((s) => s.aRevoir && appartient(s.ref)).length,
+        notes: notes.filter((n) => n.type === 'note').length,
+        exemples: notes.filter((n) => n.type === 'exemple').length,
+        termes: Glossaire.termes.filter((x) => x.perso).length,
+      };
+      for (const b of el.onglets.querySelectorAll('button')) {
+        const n = nombres[b.getAttribute('data-rubrique')] || 0;
+        const case_ = b.querySelector('.nombre-rubrique');
+        case_.textContent = n ? String(n) : '';
+        case_.hidden = !n;
+      }
+    } catch (erreur) { /* sans magasin, pas de compte */ }
+  }
+
   async function dessiner() {
     const rub = etat.rubrique;
     el.contenu.textContent = '';
     for (const b of el.onglets.querySelectorAll('button')) {
       b.setAttribute('aria-pressed', b.getAttribute('data-rubrique') === rub ? 'true' : 'false');
     }
+    compter();
     const filtre = Outils.normaliser(etat.filtre);
     const bonne = (texte) => !filtre || Outils.normaliser(texte).includes(filtre);
     let lignes = [];

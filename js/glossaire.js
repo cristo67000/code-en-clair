@@ -128,6 +128,51 @@
     return trouves;
   }
 
+  /* Quand rien ne correspond : les termes dont une graphie est à une faute ou
+   * deux de la requête (« comit », « rebsae », « kubernets »). La tolérance
+   * suit la longueur — une faute jusqu'à quatre lettres, deux jusqu'à huit,
+   * trois au-delà — et le début d'une longue graphie compte aussi, à une
+   * faute près : on tape souvent un mot à moitié. */
+  function suggerer(requete, options) {
+    const opt = options || {};
+    const q = normaliser(requete);
+    if (q.length < 3) return [];
+    const plafond = q.length <= 4 ? 1 : (q.length <= 8 ? 2 : 3);
+    const proches = [];
+    for (const terme of termes) {
+      if (opt.cat && terme.c !== opt.cat) continue;
+      let ecart = plafond + 1;
+      for (const g of terme.cles) {
+        ecart = Math.min(ecart, Outils.distance(q, g, plafond));
+        if (q.length >= 4 && g.length > q.length) ecart = Math.min(ecart, Outils.distance(q, g.slice(0, q.length), 1) + 0.5);
+      }
+      if (ecart <= plafond) proches.push({ terme, ecart });
+    }
+    proches.sort((a, b) => (a.ecart - b.ecart) || a.terme.cleNue.localeCompare(b.terme.cleNue, 'en'));
+    return proches.slice(0, opt.max || 4).map((p) => p.terme);
+  }
+
+  /* La graphie d'origine d'une clé normalisée : « hachage » pour la clé
+   * « hachage », « dépôt » pour « depot ». Sert à montrer par quel mot un
+   * résultat a été trouvé. */
+  function graphie(terme, cle) {
+    const toutes = [terme.n, terme.nf, terme.ne, terme.dev].concat(terme.al || []).filter(Boolean);
+    return toutes.find((g) => {
+      const n = normaliser(g);
+      return n === cle || n.replace(/^[^a-z0-9]+/, '') === cle;
+    }) || null;
+  }
+
+  /* Un terme au hasard, de préférence parmi ceux qu'on n'a jamais ouverts :
+   * c'est un bouton pour découvrir, pas pour retomber sur ce qu'on connaît. */
+  function auHasard(options) {
+    const opt = options || {};
+    const base = termes.filter((t) => !opt.cat || t.c === opt.cat);
+    const neufs = opt.dejaVus ? base.filter((t) => !opt.dejaVus.has(t.id) && t.id !== opt.sauf) : [];
+    const choix = neufs.length ? neufs : base.filter((t) => t.id !== opt.sauf);
+    return choix.length ? choix[Math.floor(Math.random() * choix.length)] : null;
+  }
+
   // ── Textes ────────────────────────────────────────────────────────────────
 
   /* La première phrase d'une définition : un point suivi d'une espace et d'une
@@ -196,8 +241,8 @@
   }
 
   racine.Glossaire = {
-    charger, reconstruire, categorie, chercher, premierePhrase, definition, apercu, masquer, nom,
-    termeDuJour,
+    charger, reconstruire, categorie, chercher, suggerer, graphie, auHasard, premierePhrase,
+    definition, apercu, masquer, nom, termeDuJour,
     get termes() { return termes; },
     get integres() { return integres; },
     get categories() { return categories; },

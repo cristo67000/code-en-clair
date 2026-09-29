@@ -1,7 +1,7 @@
 'use strict';
 /*
  * L'onglet « Réglages » : langue, définitions affichées, taille du texte,
- * thème, sauvegarde, installation, mise à jour, à propos.
+ * thème, raccourcis clavier, sauvegarde, installation, mise à jour, à propos.
  *
  * L'écran est redessiné en entier à chaque changement de langue : tous ses
  * textes sont écrits ici, en JavaScript, et il n'y a pas d'autre moyen de les
@@ -58,6 +58,27 @@
     affichage.appendChild(element('h4', null, t('reg.theme')));
     affichage.appendChild(segments(['auto', 'clair', 'sombre'], r.theme, (v) => changer('theme', v), (v) => t('reg.theme.' + v)));
     zone.appendChild(affichage);
+
+    // Le clavier — sur un ordinateur seulement (voir app.css)
+    const clavier = bloc(t('reg.clavier'));
+    clavier.classList.add('seulement-clavier');
+    const mac = /Mac|iPhone|iPad/.test(racine.navigator.platform || racine.navigator.userAgent);
+    const raccourcis = element('dl', 'raccourcis');
+    for (const [touches, cle] of [
+      [['/', mac ? '⌘ K' : 'Ctrl K'], 'reg.clavier.chercher'],
+      [['↑', '↓'], 'reg.clavier.parcourir'],
+      [[t('reg.clavier.entree')], 'reg.clavier.ouvrir'],
+      [[t('reg.clavier.echap')], 'reg.clavier.fermer'],
+      [['1 – 4', t('reg.clavier.entree')], 'reg.clavier.repondre'],
+      [[t('reg.clavier.espace'), '←', '→'], 'reg.clavier.cartes'],
+    ]) {
+      const dt = element('dt');
+      for (const k of touches) dt.appendChild(element('kbd', 'raccourci-touche', k));
+      raccourcis.appendChild(dt);
+      raccourcis.appendChild(element('dd', null, t(cle)));
+    }
+    clavier.appendChild(raccourcis);
+    zone.appendChild(clavier);
 
     // Sauvegarde
     const sauv = bloc(t('reg.sauvegarde'));

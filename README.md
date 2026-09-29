@@ -1,4 +1,4 @@
-# Code en clair — le glossaire du codage (FR · EN)
+# Lexicode — le glossaire du codage (FR · EN)
 
 Une application web progressive (PWA), hors ligne, qui définit clairement en
 **français et en anglais** près de 400 termes du codage — Git, terminal, web,
@@ -6,13 +6,26 @@ réseau, données, sécurité, langages, outils, images, bases de données, Andr
 IA, tests, architecture — avec **165 schémas**, des **exemples de code** colorés,
 des mises en garde « à ne pas confondre », et, pour la personne qui s'en sert :
 **ses propres notes, ses propres exemples, ses propres termes**, des favoris, un
-quiz et une sauvegarde dans un fichier.
+quiz à quatre choix, des cartes à retourner et une sauvegarde dans un fichier.
+La recherche surligne ce qu'elle trouve et pardonne les fautes de frappe ; une
+réglette A → Z parcourt la liste ; une fiche se partage et, avec une voix
+installée sur l'appareil, se prononce ; tout se fait aussi au clavier.
 
 En ligne : https://cristo67000.github.io/code-en-clair/ · application Android :
 dépôt `code-en-clair-twa` (Trusted Web Activity pour le Play Store).
 
 Rien n'est envoyé nulle part : pas de compte, pas de serveur, pas de mesure
 d'audience, `connect-src 'self'`. Voir `confidentialite.html`.
+
+### Un nom affiché, des identifiants qui restent
+
+L'application s'appelait « Code en clair ». Seul le nom affiché a changé : les
+identifiants techniques gardent `code-en-clair` — l'adresse du dépôt et du site,
+la base IndexedDB, le préfixe des caches du service worker, la marque écrite
+dans les fichiers de sauvegarde. Les changer ferait perdre leurs notes aux
+personnes qui ont installé l'application, refuserait leurs anciennes
+sauvegardes, et, pour l'adresse, casserait l'application Android (TWA) liée au
+domaine.
 
 ## Structure
 
@@ -60,15 +73,16 @@ tous, à la largeur d'un téléphone (`?l=en` pour l'anglais, `?theme=sombre`).
 
 ```
 node build/construire.mjs        # compile le glossaire, échoue à la moindre incohérence
-node build/essais_statiques.mjs  # 155 contrôles sans navigateur (données, traductions, listes de fichiers)
-node build/essais.mjs            # 81 contrôles dans un vrai Chrome, hors ligne réel compris
+node build/essais_statiques.mjs  # 160 contrôles sans navigateur (données, traductions, listes de fichiers)
+node build/essais.mjs            # 117 contrôles dans un vrai Chrome, hors ligne réel compris
 node build/captures.mjs          # les captures d'écran de la fiche Play Store
 node build/essais_en_ligne.mjs   # le site PUBLIÉ : contenu identique au dépôt, démarrage, hors ligne réel (domaine coupé)
 ```
 
 `essais.mjs` ouvre l'application à la taille d'un téléphone, cherche les 33 termes
-attendus, écrit des notes et des exemples, joue au quiz, change de langue et de
-thème, dessine les 165 schémas (français et anglais) en vérifiant qu'aucun texte ne
+attendus, écrit des notes et des exemples, joue au quiz (au doigt et au
+clavier), retourne et fait glisser des cartes, change de langue et de thème,
+dessine les 165 schémas (français et anglais) en vérifiant qu'aucun texte ne
 sort du cadre, puis **arrête le serveur** et vérifie que l'application se relance
 hors ligne. Il échoue à la moindre erreur de page ou violation de la politique de
 sécurité.
