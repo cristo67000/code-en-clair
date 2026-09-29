@@ -63,6 +63,7 @@ node build/construire.mjs        # compile le glossaire, échoue à la moindre i
 node build/essais_statiques.mjs  # 155 contrôles sans navigateur (données, traductions, listes de fichiers)
 node build/essais.mjs            # 81 contrôles dans un vrai Chrome, hors ligne réel compris
 node build/captures.mjs          # les captures d'écran de la fiche Play Store
+node build/essais_en_ligne.mjs   # le site PUBLIÉ : contenu identique au dépôt, démarrage, hors ligne réel (domaine coupé)
 ```
 
 `essais.mjs` ouvre l'application à la taille d'un téléphone, cherche les 33 termes
