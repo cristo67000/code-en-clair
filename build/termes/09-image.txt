@@ -1,0 +1,301 @@
+# Images et couleurs.
+
+@ pixel
+cat: image
+nom: Pixel
+dev: picture element
+alias: px, picture element, point, pixels, css pixel, pixel css, pixellisation, pixelisé
+fr: Plus petit point d'une image numérique : un carré d'une seule couleur. Une image est une grille de pixels ; plus il y en a pour une même surface, plus l'image est fine.
+en: The smallest dot of a digital image: a square of a single color. An image is a grid of pixels; the more there are for the same area, the finer the image.
++fr: En CSS, le « pixel » (px) n'est pas forcément un point physique de l'écran : sur un écran très dense, un px CSS en recouvre plusieurs, pour que les tailles restent comparables d'un appareil à l'autre.
++en: In CSS, the “pixel” (px) is not necessarily a physical dot on the screen: on a very dense screen, one CSS px covers several, so that sizes stay comparable from one device to another.
+voir: resolution, densite-ecran, rgb, vectoriel-matriciel
+schema: image-pixels
+
+@ resolution
+cat: image
+nom: Résolution
+nom-en: resolution
+alias: resolution, dpi, ppi, 1080p, 4k, résolution d'écran, définition, points par pouce, dots per inch, pixels per inch
+fr: Nombre de pixels d'une image ou d'un écran, donné en largeur × hauteur (1080 × 1920), ou densité de pixels par pouce (PPI, DPI). Plus une image est grande en pixels, plus elle pèse et plus elle peut être agrandie sans devenir floue.
+en: The number of pixels in an image or screen, given as width × height (1080 × 1920), or pixel density per inch (PPI, DPI). The larger an image is in pixels, the more it weighs and the more it can be enlarged without turning blurry.
+attention-fr: Le « DPI » enregistré dans un fichier n'ajoute aucun détail : seul compte le nombre de pixels. Le DPI ne sert qu'à l'impression.
+attention-en: The “DPI” stored in a file adds no detail: only the pixel count matters. DPI only matters for printing.
+voir: pixel, densite-ecran, ratio-aspect, compression
+
+@ densite-ecran
+cat: image
+nom: Densité d'écran
+nom-en: screen density
+alias: dp, dip, devicepixelratio, dpr, retina, hdpi, xhdpi, xxhdpi, mdpi, @2x, @3x, density-independent pixels, srcset
+fr: Rapport entre les pixels physiques d'un écran et ses pixels logiques. Sur un écran « 2× » (Retina), une image de 100 px de large a besoin de 200 pixels réels pour rester nette. Android compte en dp, indépendants de la densité.
+en: The ratio between a screen's physical pixels and its logical pixels. On a “2×” screen (Retina), an image 100 px wide needs 200 real pixels to stay sharp. Android counts in dp, independent of density.
+ex: html
+| <img src="logo.png"
+|      srcset="logo.png 1x, logo@2x.png 2x, logo@3x.png 3x"
+|      width="100" height="40" alt="Logo">
+ex-fr: Le navigateur choisit lui-même le fichier adapté à la densité de l'écran.
+ex-en: The browser itself picks the file suited to the screen's density.
+voir: pixel, resolution, responsive, android
+schema: image-densite
+
+@ rgb
+cat: image
+nom: RGB
+dev: Red Green Blue
+nom-fr: rouge vert bleu
+alias: red green blue, rvb, rgba, additive, synthèse additive, canaux de couleur, rgb(255, 0, 0), color channel
+fr: Modèle qui décrit une couleur par la quantité de rouge, de vert et de bleu de la lumière d'un pixel, chacune de 0 à 255. C'est un mélange additif : rouge + vert + bleu à fond donne du blanc, tout à zéro du noir.
+en: A model that describes a color by the amount of red, green and blue light of a pixel, each from 0 to 255. It is an additive mix: red + green + blue at full gives white, all at zero gives black.
+ex: css
+| color: rgb(36, 87, 214);
+| background: rgb(0 0 0 / 50%);
+ex-fr: Un bleu (36 de rouge, 87 de vert, 214 de bleu), puis un noir à moitié transparent.
+ex-en: A blue (36 red, 87 green, 214 blue), then a half-transparent black.
+attention-fr: RGB est un modèle, pas un espace colorimétrique : les mêmes trois nombres donnent des couleurs différentes selon l'espace (sRGB, Display P3…).
+attention-en: RGB is a model, not a color space: the same three numbers give different colors depending on the space (sRGB, Display P3…).
+voir: srgb, hex-couleur, hsl, canal-alpha, pixel
+schema: image-rgb
+
+@ srgb
+cat: image
+nom: sRGB
+dev: standard Red Green Blue
+nom-fr: espace colorimétrique sRGB
+alias: standard rgb, espace colorimétrique, color space, display p3, adobe rgb, profil de couleur, gamut srgb, iec 61966
+fr: Espace colorimétrique standard du web, créé en 1996 : il fixe quelles couleurs réelles correspondent aux trois nombres RGB. Un écran ordinaire, un navigateur et la plupart des images l'utilisent ; à défaut de profil, on suppose sRGB.
+en: The web's standard color space, created in 1996: it fixes which real colors correspond to the three RGB numbers. An ordinary screen, a browser and most images use it; without a profile, sRGB is assumed.
++fr: Il ne couvre pas toutes les couleurs que l'œil voit : Display P3 (écrans récents) et Adobe RGB (photo) en montrent de plus vives. Une photo en Adobe RGB affichée comme du sRGB paraît terne : on convertit en sRGB avant de publier.
++en: It does not cover every color the eye sees: Display P3 (recent screens) and Adobe RGB (photography) show more vivid ones. A photo in Adobe RGB displayed as sRGB looks dull: convert to sRGB before publishing.
+ex: bash
+| convert photo.jpg -profile sRGB.icc -strip photo-srgb.jpg
+ex-fr: Convertir une photo vers le profil sRGB (avec ImageMagick) et retirer les métadonnées.
+ex-en: Convert a photo to the sRGB profile (with ImageMagick) and strip the metadata.
+voir: rgb, gamut, profil-icc, gamma, webp
+schema: image-srgb
+
+@ gamut
+cat: image
+nom: Gamut
+nom-fr: gamme de couleurs
+alias: gamme de couleurs, étendue colorimétrique, color gamut, wide gamut, display p3, rec2020, hdr
+fr: Ensemble des couleurs qu'un espace colorimétrique ou un appareil peut représenter. Le gamut de l'sRGB est plus petit que celui de Display P3, lui-même plus petit que celui de Rec. 2020 ; les couleurs hors gamut sont ramenées à la plus proche.
+en: The set of colors that a color space or device can represent. sRGB's gamut is smaller than Display P3's, itself smaller than Rec. 2020's; out-of-gamut colors are brought back to the nearest one.
+voir: srgb, profil-icc, rgb
+schema: image-srgb
+
+@ profil-icc
+cat: image
+nom: Profil ICC
+nom-en: ICC profile
+alias: icc, icc profile, profil colorimétrique, profil de couleur, color profile, .icc, .icm, gestion des couleurs, color management
+fr: Petit fichier, souvent intégré dans une image, qui décrit comment les nombres RGB de cette image se traduisent en couleurs réelles pour l'appareil qui l'a produite. Il permet à l'affichage de restituer les mêmes couleurs partout.
+en: A small file, often embedded in an image, that describes how that image's RGB numbers translate into real colors for the device that produced it. It lets the display reproduce the same colors everywhere.
+attention-fr: Un profil intégré peut peser plusieurs dizaines de Ko : pour des icônes ou de petites images web en sRGB, on le retire.
+attention-en: An embedded profile can weigh several tens of KB: for icons or small web images in sRGB, it is removed.
+voir: srgb, gamut, exif, png
+schema: image-srgb
+
+@ canal-alpha
+cat: image
+nom: Canal alpha
+nom-en: alpha channel
+alias: alpha, transparence, transparency, rgba, opacity, opacité, pré-multiplié, premultiplied, 32 bits, png 32
+fr: Quatrième composante d'un pixel, après rouge, vert et bleu : elle indique son opacité, de 0 (transparent) à 255 ou 1 (opaque). Il permet les images aux contours découpés et les ombres douces.
+en: The fourth component of a pixel, after red, green and blue: it gives its opacity, from 0 (transparent) to 255 or 1 (opaque). It allows images with cut-out edges and soft shadows.
+ex: css
+| background: rgba(22, 33, 62, 0.85);
+| opacity: 0.5;
+ex-fr: Un fond bleu nuit à 85 % d'opacité ; puis un élément entier rendu à moitié transparent.
+ex-en: A midnight-blue background at 85% opacity; then a whole element made half transparent.
+attention-fr: JPEG n'a pas de canal alpha : pour une image transparente, on prend PNG, WebP, AVIF ou SVG. Sur le Play Store, l'icône de 512 px est en PNG 32 bits (avec alpha), mais l'image de présentation ne doit pas en avoir.
+attention-en: JPEG has no alpha channel: for a transparent image, use PNG, WebP, AVIF or SVG. On the Play Store, the 512 px icon is a 32-bit PNG (with alpha), but the feature graphic must not have any.
+voir: png, webp, rgb, icone-maskable
+schema: image-alpha
+
+@ png
+cat: image
+nom: PNG
+dev: Portable Network Graphics
+alias: portable network graphics, .png, png-8, png-24, png-32, sans perte, lossless png, apng
+fr: Format d'image sans perte, avec transparence : chaque pixel est conservé exactement. Il convient aux logos, icônes, captures d'écran et schémas ; pour les photos, il donne des fichiers très lourds.
+en: A lossless image format with transparency: every pixel is kept exactly. It suits logos, icons, screenshots and diagrams; for photos, it produces very heavy files.
+voir: jpeg, webp, gif, canal-alpha, compression
+schema: image-formats
+
+@ jpeg
+cat: image
+nom: JPEG
+dev: Joint Photographic Experts Group
+alias: jpg, .jpg, .jpeg, joint photographic experts group, compression jpeg, artefacts, qualité jpeg, progressive jpeg
+fr: Format d'image avec perte, conçu pour les photographies : il élimine des détails peu visibles pour réduire fortement le poids. Il n'a pas de transparence, et une qualité trop basse fait apparaître des blocs et des halos.
+en: A lossy image format designed for photographs: it discards barely visible details to reduce weight strongly. It has no transparency, and too low a quality makes blocks and halos appear.
+attention-fr: Chaque nouvel enregistrement en JPEG dégrade un peu plus l'image : on garde l'original et on n'exporte qu'à la fin.
+attention-en: Each new save as JPEG degrades the image a little more: keep the original and only export at the end.
+voir: png, webp, avif, exif, compression
+schema: image-formats
+
+@ webp
+cat: image
+nom: WebP
+alias: .webp, cwebp, dwebp, libwebp, vp8, image webp, format webp
+fr: Format d'image créé par Google, qui gère la compression avec perte comme sans perte, la transparence et l'animation. À qualité visuelle comparable, ses fichiers sont environ un quart à un tiers plus légers que du JPEG ou du PNG.
+en: An image format created by Google that handles lossy and lossless compression, transparency and animation. At comparable visual quality, its files are about a quarter to a third lighter than JPEG or PNG.
++fr: Tous les navigateurs actuels et Android l'affichent. Un site plus léger charge plus vite, surtout sur mobile ; l'usage de WebP pour les photos est devenu courant.
++en: All current browsers and Android display it. A lighter site loads faster, especially on mobile; using WebP for photos has become common.
+ex: bash
+| cwebp -q 80 photo.jpg -o photo.webp
+| cwebp -lossless icone.png -o icone.webp
+ex-fr: Convertir une photo en WebP avec perte (qualité 80), puis une icône sans aucune perte.
+ex-en: Convert a photo to lossy WebP (quality 80), then an icon losslessly.
+voir: png, jpeg, avif, compression, lazy-loading, mime
+schema: image-formats
+
+@ gif
+cat: image
+nom: GIF
+dev: Graphics Interchange Format
+alias: graphics interchange format, .gif, gif animé, animated gif, 256 couleurs, palette, apng
+fr: Format d'image limité à 256 couleurs, qui gère l'animation et une transparence tout ou rien. Il est resté populaire pour les courtes boucles animées, bien que le WebP ou la vidéo fassent la même chose en beaucoup plus léger.
+en: An image format limited to 256 colors that handles animation and all-or-nothing transparency. It has remained popular for short animated loops, although WebP or video do the same thing much lighter.
+voir: png, webp, canal-alpha, compression
+
+@ avif
+cat: image
+nom: AVIF
+dev: AV1 Image File Format
+alias: av1 image file format, .avif, heic, heif, format d'image moderne
+fr: Format d'image récent, dérivé du codec vidéo AV1, qui atteint à qualité égale des fichiers encore plus petits que WebP. Il est encodé plus lentement et n'est pas géré par les navigateurs très anciens.
+en: A recent image format derived from the AV1 video codec, which reaches even smaller files than WebP at equal quality. It is encoded more slowly and is not supported by very old browsers.
+voir: webp, jpeg, png, compression
+schema: image-formats
+
+@ svg
+cat: image
+nom: SVG
+dev: Scalable Vector Graphics
+alias: scalable vector graphics, .svg, image vectorielle, vector image, path, viewbox, dessin vectoriel
+fr: Format d'image vectoriel, écrit en texte XML : il décrit des formes (traits, courbes, cercles) et non des pixels. Il reste net à n'importe quelle taille, pèse très peu pour des icônes et des schémas, et se stylise avec du CSS.
+en: A vector image format, written in XML text: it describes shapes (lines, curves, circles) rather than pixels. It stays sharp at any size, weighs very little for icons and diagrams, and can be styled with CSS.
+ex: xml
+| <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+|   <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
+|   <path d="M8 12.5l3 3 5-6" fill="none" stroke="currentColor" stroke-width="2"/>
+| </svg>
+ex-fr: Une icône « coche dans un cercle », en deux formes ; currentColor reprend la couleur du texte environnant.
+ex-en: A “check in a circle” icon, in two shapes; currentColor takes the surrounding text's color.
+attention-fr: Un SVG venu de l'extérieur peut contenir du script : ne l'insérez pas tel quel dans une page, chargez-le comme image.
+attention-en: An SVG from outside may contain script: do not insert it as-is in a page, load it as an image.
+voir: vectoriel-matriciel, canvas, png, xml
+schema: image-vectoriel
+
+@ vectoriel-matriciel
+cat: image
+nom: Vectoriel et matriciel
+nom-en: vector and raster
+alias: vector, raster, bitmap, image matricielle, image vectorielle, pixelisation, redimensionner sans perte
+fr: Une image matricielle (JPEG, PNG, WebP) est une grille de pixels : agrandie, elle devient floue. Une image vectorielle (SVG) est une liste de formes : agrandie, elle est recalculée et reste nette. Photos et captures sont matricielles ; logos et icônes gagnent à être vectoriels.
+en: A raster image (JPEG, PNG, WebP) is a grid of pixels: enlarged, it turns blurry. A vector image (SVG) is a list of shapes: enlarged, it is recomputed and stays sharp. Photos and screenshots are raster; logos and icons benefit from being vector.
+voir: svg, pixel, resolution, png
+schema: image-vectoriel
+
+@ ratio-aspect
+cat: image
+nom: Ratio d'aspect
+nom-en: aspect ratio
+alias: aspect ratio, rapport largeur hauteur, 16:9, 4:3, 9:16, 1:1, format d'image, aspect-ratio, letterbox
+fr: Rapport entre la largeur et la hauteur d'une image ou d'un écran, noté 16:9, 4:3 ou 9:16. Réserver le ratio à l'avance dans la page évite que le contenu ne saute quand l'image finit de charger.
+en: The relationship between an image's or screen's width and height, written 16:9, 4:3 or 9:16. Reserving the ratio in advance in the page prevents the content from jumping when the image finishes loading.
+ex: css
+| img { aspect-ratio: 16 / 9; width: 100%; object-fit: cover; }
+ex-fr: Une image toujours en 16:9, qui remplit la largeur en étant recadrée plutôt que déformée.
+ex-en: An image always at 16:9, filling the width by being cropped rather than distorted.
+voir: resolution, responsive, pixel
+
+@ favicon
+cat: image
+nom: Favicon
+alias: favicon.ico, icône de site, apple-touch-icon, icône d'onglet, tab icon, site icon, link rel icon
+fr: Petite icône du site, affichée dans l'onglet du navigateur, les favoris et l'écran d'accueil. On la déclare dans le HTML avec une balise link rel="icon", en PNG ou SVG.
+en: A site's small icon, shown in the browser tab, bookmarks and home screen. It is declared in the HTML with a link rel="icon" tag, as PNG or SVG.
+ex: html
+| <link rel="icon" href="icons/icon-192.png" type="image/png">
+| <link rel="apple-touch-icon" href="icons/icon-192.png">
+ex-fr: L'icône de l'onglet, puis celle qu'iOS utilise pour l'écran d'accueil.
+ex-en: The tab icon, then the one iOS uses for the home screen.
+voir: manifest, pwa, svg, open-graph
+
+@ icone-maskable
+cat: image
+nom: Icône maskable
+nom-en: maskable icon
+alias: maskable, adaptive icon, icône adaptative, zone de sécurité, safe zone, purpose maskable, icône rognée
+fr: Icône dont le fond occupe toute la surface, pour que le système la découpe à sa façon (cercle, carré arrondi) sans laisser de bordure. Le motif important doit rester dans la « zone de sécurité » : un cercle de 80 % au centre.
+en: An icon whose background fills the whole area, so that the system can cut it its own way (circle, rounded square) without leaving a border. The important motif must stay in the “safe zone”: an 80% circle at the center.
+ex: json
+| { "src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+ex-fr: La déclaration d'une icône maskable dans le manifeste d'une PWA.
+ex-en: The declaration of a maskable icon in a PWA's manifest.
+voir: manifest, pwa, twa, canal-alpha
+schema: image-maskable
+
+@ exif
+cat: image
+nom: EXIF
+dev: Exchangeable Image File Format
+alias: métadonnées, metadata, exif data, gps, géolocalisation, iptc, xmp, exiftool, orientation
+fr: Métadonnées intégrées à une photo par l'appareil : date, modèle, réglages, orientation et parfois la position GPS de la prise de vue. Elles voyagent avec le fichier, à moins qu'on ne les retire.
+en: Metadata embedded in a photo by the camera: date, model, settings, orientation and sometimes the GPS position of the shot. It travels with the file unless removed.
+attention-fr: Une photo publiée telle quelle peut révéler où vous habitez : retirez les métadonnées avant de partager (exiftool -all= photo.jpg).
+attention-en: A photo published as-is can reveal where you live: strip the metadata before sharing (exiftool -all= photo.jpg).
+voir: jpeg, profil-icc, canal-alpha
+
+@ hex-couleur
+cat: image
+nom: Couleur hexadécimale
+nom-en: hex color
+alias: #rrggbb, #fff, #rgb, code couleur, color code, hex code, #rrggbbaa, couleur css
+fr: Notation d'une couleur RGB en CSS : un dièse suivi de six chiffres hexadécimaux, deux pour le rouge, deux pour le vert, deux pour le bleu (#2457d6). La forme courte #fff double chaque chiffre (#ffffff, blanc).
+en: A way to write an RGB color in CSS: a hash followed by six hexadecimal digits, two for red, two for green, two for blue (#2457d6). The short form #fff doubles each digit (#ffffff, white).
+ex: css
+| color: #2457d6;
+| background: #fff;
+| border-color: #2457d680;
+ex-fr: Un bleu ; un blanc en notation courte ; le même bleu avec 8 chiffres, où les deux derniers (80) donnent l'opacité (50 %).
+ex-en: A blue; a white in short notation; the same blue with 8 digits, where the last two (80) give the opacity (50%).
+voir: rgb, hexadecimal, hsl, srgb
+
+@ hsl
+cat: image
+nom: HSL
+dev: Hue Saturation Lightness
+alias: hue saturation lightness, teinte saturation luminosité, hsla, hsv, teinte, hue, oklch, roue chromatique
+fr: Modèle qui décrit une couleur par sa teinte (angle sur la roue des couleurs, 0 à 360°), sa saturation (pâle ou vive) et sa luminosité (sombre ou claire). Il est plus naturel que RGB pour fabriquer des variantes d'une même couleur.
+en: A model that describes a color by its hue (angle on the color wheel, 0 to 360°), its saturation (pale or vivid) and its lightness (dark or light). It is more natural than RGB for making variants of the same color.
+ex: css
+| --accent: hsl(220 70% 48%);
+| --accent-clair: hsl(220 70% 94%);
+ex-fr: Une couleur et sa version très claire : seule la luminosité change.
+ex-en: A color and its very light version: only the lightness changes.
+voir: rgb, hex-couleur, contraste-wcag
+schema: image-hsl
+
+@ gamma
+cat: image
+nom: Gamma
+alias: correction gamma, gamma correction, courbe de tonalité, courbe de transfert, transfer function, 2.2, linéaire, linear light
+fr: Courbe non linéaire qui code la luminosité des pixels : sRGB utilise un gamma d'environ 2,2 pour consacrer plus de valeurs aux tons sombres, où l'œil est le plus sensible. Un gris à 50 % de la valeur n'émet donc pas 50 % de la lumière.
+en: A nonlinear curve that encodes pixels' brightness: sRGB uses a gamma of about 2.2 to devote more values to dark tones, where the eye is most sensitive. A gray at 50% of the value therefore does not emit 50% of the light.
+attention-fr: Mélanger ou réduire des images sans tenir compte du gamma assombrit les zones de transition : les outils sérieux travaillent en lumière linéaire.
+attention-en: Blending or shrinking images without accounting for gamma darkens transition areas: serious tools work in linear light.
+voir: srgb, rgb, gamut
+
+@ contraste-wcag
+cat: image
+nom: Contraste (WCAG)
+nom-en: contrast ratio
+alias: contrast ratio, ratio de contraste, 4.5:1, wcag aa, wcag aaa, lisibilité, luminance relative, accessibilité des couleurs
+fr: Rapport de luminosité entre un texte et son fond, de 1:1 (identiques) à 21:1 (noir sur blanc). Les règles d'accessibilité WCAG exigent au moins 4,5:1 pour un texte courant et 3:1 pour un grand texte, afin qu'il reste lisible pour tous.
+en: The brightness ratio between a text and its background, from 1:1 (identical) to 21:1 (black on white). The WCAG accessibility rules require at least 4.5:1 for regular text and 3:1 for large text, so that it stays readable for everyone.
+voir: accessibilite, hsl, rgb
+schema: image-contraste

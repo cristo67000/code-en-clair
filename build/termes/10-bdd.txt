@@ -1,0 +1,259 @@
+# Bases de données.
+
+@ base-de-donnees
+cat: bdd
+nom: Base de données
+nom-en: database
+alias: database, bdd, db, sgbd, dbms, système de gestion de base de données, postgresql, mysql, mariadb, oracle, mongodb
+fr: Collection organisée de données, stockée de façon durable et interrogeable rapidement. Un système de gestion de base de données (SGBD) comme PostgreSQL ou MySQL en assure l'enregistrement, la recherche, la sécurité et l'accès simultané.
+en: An organized collection of data, stored durably and quickly queryable. A database management system (DBMS) such as PostgreSQL or MySQL handles its recording, searching, security and simultaneous access.
++fr: Deux grandes familles : les bases relationnelles (tables reliées, langage SQL) et les bases NoSQL (documents, clés-valeurs, graphes). Une base est plus fiable qu'un simple fichier dès que plusieurs personnes écrivent en même temps.
++en: Two big families: relational databases (linked tables, SQL language) and NoSQL databases (documents, key-values, graphs). A database is more reliable than a plain file as soon as several people write at the same time.
+voir: sql, nosql, table, transaction, sqlite
+schema: bdd-table
+
+@ sql
+cat: bdd
+nom: SQL
+dev: Structured Query Language
+alias: structured query language, requête sql, select, insert, update, delete, where, langage de requête, sequel
+fr: Langage standard pour interroger et modifier une base de données relationnelle : on décrit ce qu'on veut obtenir (SELECT … FROM … WHERE …), et c'est le système qui décide comment le calculer.
+en: The standard language for querying and modifying a relational database: you describe what you want to get (SELECT … FROM … WHERE …), and the system decides how to compute it.
+ex: sql
+| SELECT nom, categorie
+| FROM termes
+| WHERE categorie = 'git'
+| ORDER BY nom
+| LIMIT 10;
+ex-fr: Les dix premiers termes de la catégorie git, par ordre alphabétique.
+ex-en: The first ten terms of the git category, in alphabetical order.
+voir: requete-sql, table, jointure, injection-sql, crud
+
+@ requete-sql
+cat: bdd
+nom: Requête SQL
+nom-en: SQL query
+alias: query, requête, select, insert into, update set, delete from, requête paramétrée, prepared statement, group by, having
+fr: Instruction envoyée à une base de données pour lire ou modifier des données. SELECT lit, INSERT ajoute, UPDATE modifie, DELETE supprime ; WHERE filtre, GROUP BY regroupe, ORDER BY trie.
+en: An instruction sent to a database to read or modify data. SELECT reads, INSERT adds, UPDATE modifies, DELETE removes; WHERE filters, GROUP BY groups, ORDER BY sorts.
+ex: sql
+| INSERT INTO termes (nom, categorie) VALUES ('amend', 'git');
+| UPDATE termes SET categorie = 'shell' WHERE nom = 'grep';
+| DELETE FROM termes WHERE id = 42;
+| SELECT categorie, COUNT(*) FROM termes GROUP BY categorie;
+ex-fr: Ajouter une ligne, en modifier une, en supprimer une, puis compter les termes par catégorie.
+ex-en: Add a row, change one, delete one, then count the terms per category.
+attention-fr: Un UPDATE ou un DELETE sans WHERE s'applique à toutes les lignes de la table : relisez, ou entourez-le d'une transaction.
+attention-en: An UPDATE or DELETE with no WHERE applies to every row in the table: review it, or wrap it in a transaction.
+voir: sql, jointure, transaction, injection-sql
+
+@ nosql
+cat: bdd
+nom: NoSQL
+dev: Not only SQL
+alias: not only sql, base documentaire, document database, mongodb, redis, firebase, firestore, base clé-valeur, base orientée graphe, cassandra
+fr: Famille de bases de données qui n'utilisent pas le modèle des tables reliées : documents JSON (MongoDB), paires clé-valeur (Redis), graphes, colonnes. Elles sont souples sur la forme des données et se répartissent plus facilement sur plusieurs machines.
+en: A family of databases that do not use the linked-tables model: JSON documents (MongoDB), key-value pairs (Redis), graphs, columns. They are flexible about the shape of data and are easier to spread over several machines.
+attention-fr: « NoSQL » ne veut pas dire « sans SQL » ni « meilleur » : c'est un autre compromis, souvent au prix de jointures et de garanties plus faibles.
+attention-en: “NoSQL” does not mean “without SQL” nor “better”: it is another trade-off, often at the cost of joins and weaker guarantees.
+voir: base-de-donnees, cle-valeur, json, sql
+
+@ table
+cat: bdd
+nom: Table
+alias: colonne, column, ligne, row, enregistrement, record, champ, field, tuple, relation
+fr: Structure d'une base relationnelle qui range des données comme dans un tableur : chaque colonne est un champ avec un type (texte, nombre, date), chaque ligne un enregistrement.
+en: A structure of a relational database that stores data as in a spreadsheet: each column is a field with a type (text, number, date), each row a record.
+ex: sql
+| CREATE TABLE termes (
+|   id INTEGER PRIMARY KEY,
+|   nom TEXT NOT NULL,
+|   categorie TEXT
+| );
+ex-fr: Une table de trois colonnes : un identifiant, un nom obligatoire, une catégorie facultative.
+ex-en: A table of three columns: an identifier, a required name, an optional category.
+voir: cle-primaire, sql, schema-bdd, base-de-donnees
+schema: bdd-table
+
+@ cle-primaire
+cat: bdd
+nom: Clé primaire
+nom-en: primary key
+alias: primary key, pk, autoincrement, auto_increment, identifiant de ligne, clé technique, clé naturelle
+fr: Colonne (ou groupe de colonnes) dont la valeur identifie de façon unique chaque ligne d'une table : il n'y a jamais deux lignes de même clé, ni de clé vide. C'est par elle qu'on retrouve, modifie ou relie une ligne.
+en: A column (or group of columns) whose value uniquely identifies each row of a table: there are never two rows with the same key, nor an empty key. It is how a row is found, modified or linked.
++fr: On choisit souvent un identifiant technique (nombre qui s'incrémente, UUID) plutôt qu'une donnée « naturelle » comme un e-mail, qui pourrait changer.
++en: A technical identifier (an incrementing number, a UUID) is often chosen over a “natural” piece of data like an email, which could change.
+voir: id, cle-etrangere, uuid, table
+schema: bdd-table
+
+@ cle-etrangere
+cat: bdd
+nom: Clé étrangère
+nom-en: foreign key
+alias: foreign key, fk, references, contrainte d'intégrité, integrity constraint, relation, one-to-many, many-to-many
+fr: Colonne qui contient la clé primaire d'une ligne d'une autre table, pour les relier. Une colonne auteur_id dans une table des articles désigne la ligne de l'auteur dans la table des auteurs.
+en: A column that contains the primary key of a row in another table, to link them. An author_id column in an articles table designates the author's row in the authors table.
+ex: sql
+| CREATE TABLE notes (
+|   id INTEGER PRIMARY KEY,
+|   terme_id INTEGER REFERENCES termes(id),
+|   texte TEXT
+| );
+ex-fr: Chaque note pointe vers un terme ; la base refuse une note dont le terme n'existe pas.
+ex-en: Each note points to a term; the database refuses a note whose term does not exist.
+voir: cle-primaire, jointure, normalisation, table
+schema: bdd-jointure
+
+@ jointure
+cat: bdd
+nom: Jointure
+nom-en: join
+alias: join, inner join, left join, right join, full join, jointure interne, jointure externe, relier des tables
+fr: Opération qui combine des lignes de deux tables selon une correspondance, en général entre une clé étrangère et la clé primaire visée. Elle permet de retrouver, dans une seule réponse, les données réparties sur plusieurs tables.
+en: An operation that combines rows of two tables according to a match, usually between a foreign key and the primary key it targets. It lets you retrieve, in a single answer, data spread over several tables.
+ex: sql
+| SELECT termes.nom, notes.texte
+| FROM termes
+| JOIN notes ON notes.terme_id = termes.id
+| WHERE termes.categorie = 'git';
+ex-fr: Chaque note de la catégorie git, avec le nom du terme auquel elle appartient.
+ex-en: Each note in the git category, with the name of the term it belongs to.
++fr: INNER JOIN ne garde que les correspondances ; LEFT JOIN garde aussi les lignes de gauche sans correspondance, avec des valeurs vides.
++en: INNER JOIN keeps only the matches; LEFT JOIN also keeps left rows with no match, with empty values.
+voir: cle-etrangere, sql, table, requete-sql
+schema: bdd-jointure
+
+@ index-bdd
+cat: bdd
+nom: Index (base de données)
+nom-en: database index
+alias: index, create index, index sql, b-tree, index unique, unique, index composite, explain, plan d'exécution
+fr: Structure annexe qui accélère les recherches sur une colonne, comme l'index alphabétique à la fin d'un livre : au lieu de lire toute la table, la base trouve la ligne directement. En contrepartie, il ralentit un peu les écritures et occupe de la place.
+en: An auxiliary structure that speeds up searches on a column, like the alphabetical index at the end of a book: instead of reading the whole table, the database finds the row directly. In return, it slows writes slightly and takes up space.
+ex: sql
+| CREATE INDEX idx_termes_nom ON termes (nom);
+| EXPLAIN QUERY PLAN SELECT * FROM termes WHERE nom = 'git';
+ex-fr: Créer un index sur le nom, puis demander à la base comment elle exécute la recherche (elle doit l'utiliser).
+ex-en: Create an index on the name, then ask the database how it runs the search (it should use it).
+attention-fr: Ne pas confondre avec l'index de Git (la zone d'attente) ni avec l'indice d'un tableau.
+attention-en: Not to be confused with Git's index (the staging area) nor with an array index.
+voir: table, complexite, sql, index-git
+schema: bdd-index
+
+@ transaction
+cat: bdd
+nom: Transaction
+alias: begin, commit sql, rollback, atomicité, atomic, isolation, verrou, lock, deadlock, savepoint
+fr: Groupe d'opérations traité comme un tout indivisible : soit toutes réussissent et sont validées (COMMIT), soit aucune n'est appliquée (ROLLBACK). C'est ce qui empêche, par exemple, un virement de retirer l'argent d'un compte sans l'ajouter à l'autre.
+en: A group of operations treated as one indivisible whole: either all succeed and are committed (COMMIT), or none is applied (ROLLBACK). It is what prevents, for example, a transfer from taking money out of one account without adding it to the other.
+ex: sql
+| BEGIN;
+| UPDATE comptes SET solde = solde - 100 WHERE id = 1;
+| UPDATE comptes SET solde = solde + 100 WHERE id = 2;
+| COMMIT;
+ex-fr: Un virement de 100 : les deux modifications ont lieu ensemble ou pas du tout ; en cas d'erreur, ROLLBACK annule.
+ex-en: A transfer of 100: both changes happen together or not at all; on error, ROLLBACK cancels.
+attention-fr: Le COMMIT d'une transaction SQL n'a rien à voir avec un commit Git, même si le mot est le même.
+attention-en: An SQL transaction's COMMIT has nothing to do with a Git commit, even though the word is the same.
+voir: acid, commit, sql, table
+schema: bdd-transaction
+
+@ acid
+cat: bdd
+nom: ACID
+dev: Atomicity, Consistency, Isolation, Durability
+alias: atomicité, cohérence, isolation, durabilité, atomicity, consistency, durability, propriétés acid
+fr: Les quatre garanties d'une transaction fiable : Atomicité (tout ou rien), Cohérence (les règles de la base restent vraies), Isolation (les transactions simultanées ne se gênent pas) et Durabilité (ce qui est validé survit à une panne).
+en: The four guarantees of a reliable transaction: Atomicity (all or nothing), Consistency (the database's rules stay true), Isolation (simultaneous transactions do not interfere) and Durability (what is committed survives a crash).
+voir: transaction, base-de-donnees, nosql
+
+@ schema-bdd
+cat: bdd
+nom: Schéma de base de données
+nom-en: database schema
+alias: database schema, modèle de données, data model, structure de la base, diagramme entité-association, erd, mcd, mld, ddl
+fr: Description de la structure d'une base : quelles tables existent, quelles colonnes et de quels types, quelles clés et quelles relations. Les données changent tout le temps, le schéma rarement.
+en: A description of a database's structure: which tables exist, which columns and of what types, which keys and which relationships. The data changes all the time, the schema seldom.
+voir: table, migration, cle-etrangere, normalisation
+
+@ migration
+cat: bdd
+nom: Migration
+alias: migrations, migration de schéma, schema migration, alter table, flyway, alembic, prisma migrate, version de schéma, upgrade
+fr: Script versionné qui fait évoluer le schéma d'une base d'une version à la suivante (ajouter une colonne, créer une table), sans perdre les données. Rejoué dans l'ordre, il amène n'importe quelle base à l'état actuel.
+en: A versioned script that moves a database's schema from one version to the next (add a column, create a table), without losing data. Replayed in order, it brings any database to the current state.
+ex: sql
+| ALTER TABLE termes ADD COLUMN alias TEXT;
+ex-fr: Une migration minimale : ajouter une colonne à une table existante.
+ex-en: A minimal migration: add a column to an existing table.
+voir: schema-bdd, sql, deploiement, semver
+schema: bdd-migration
+
+@ normalisation
+cat: bdd
+nom: Normalisation
+nom-en: normalization
+alias: normalization, formes normales, normal forms, 3nf, redondance, denormalization, dénormalisation
+fr: Organisation des tables pour que chaque information ne soit écrite qu'à un seul endroit : au lieu de répéter le nom de l'auteur dans chaque article, on le range dans une table à part et on y renvoie par une clé. Cela évite les incohérences.
+en: Organizing tables so that each piece of information is written in only one place: instead of repeating the author's name in each article, it is kept in a separate table and referred to by a key. This avoids inconsistencies.
+voir: cle-etrangere, jointure, table, schema-bdd
+
+@ orm
+cat: bdd
+nom: ORM
+dev: Object-Relational Mapping
+alias: object-relational mapping, mapping objet-relationnel, sequelize, prisma, hibernate, sqlalchemy, typeorm, active record
+fr: Bibliothèque qui fait correspondre les tables d'une base relationnelle et des objets du langage de programmation : on manipule des objets (utilisateur.nom = 'Zoé') et la bibliothèque écrit les requêtes SQL.
+en: A library that maps a relational database's tables to objects of the programming language: you manipulate objects (user.name = 'Zoé') and the library writes the SQL queries.
+attention-fr: Un ORM cache le SQL, pas ses coûts : une mauvaise utilisation peut envoyer des centaines de requêtes là où une jointure suffirait.
+attention-en: An ORM hides SQL, not its costs: misuse can send hundreds of queries where a single join would do.
+voir: sql, classe, requete-sql, injection-sql
+
+@ crud
+cat: bdd
+nom: CRUD
+dev: Create, Read, Update, Delete
+alias: create read update delete, créer lire modifier supprimer, opérations de base, insert select update delete
+fr: Les quatre opérations de base sur des données : Créer, Lire, Modifier (Update), Supprimer (Delete). Elles correspondent aux requêtes SQL INSERT, SELECT, UPDATE, DELETE et aux méthodes HTTP POST, GET, PUT ou PATCH, DELETE.
+en: The four basic operations on data: Create, Read, Update, Delete. They correspond to the SQL queries INSERT, SELECT, UPDATE, DELETE and to the HTTP methods POST, GET, PUT or PATCH, DELETE.
+voir: sql, methode-http, rest, api
+schema: bdd-crud
+
+@ cle-valeur
+cat: bdd
+nom: Base clé-valeur
+nom-en: key-value store
+alias: key-value, kv, redis, clé valeur, key value store, memcached, localstorage, dictionnaire persistant
+fr: Base de données la plus simple : elle range une valeur sous un nom (la clé) et la retrouve par ce nom, rien de plus. Très rapide, elle sert de cache, de session ou de petit stockage (Redis, localStorage).
+en: The simplest kind of database: it stores a value under a name (the key) and finds it by that name, nothing more. Very fast, it serves as a cache, a session store or a small storage (Redis, localStorage).
+voir: dictionnaire, nosql, localstorage, table-de-hachage, cache
+
+@ indexeddb
+cat: bdd
+nom: IndexedDB
+alias: indexed db, idb, base du navigateur, stockage navigateur, object store, transaction indexeddb, dexie, localforage
+fr: Base de données intégrée au navigateur : elle range de grandes quantités de données structurées (objets, fichiers, blobs), avec des index, dans des « magasins d'objets », de façon asynchrone. Elle reste sur l'appareil, propre à chaque site.
+en: A database built into the browser: it stores large amounts of structured data (objects, files, blobs), with indexes, in “object stores”, asynchronously. It stays on the device, specific to each site.
+ex: js
+| const demande = indexedDB.open('ma-base', 1);
+| demande.onupgradeneeded = () => {
+|   demande.result.createObjectStore('notes', { keyPath: 'id' });
+| };
+ex-fr: Ouvrir (ou créer) une base, et lui donner un magasin « notes » identifié par le champ id.
+ex-en: Open (or create) a database, and give it a “notes” store identified by the id field.
+attention-fr: Contrairement à localStorage, elle n'est pas limitée à 5 Mo et ne bloque pas la page ; en revanche son interface est verbeuse, d'où les bibliothèques qui la simplifient.
+attention-en: Unlike localStorage, it is not limited to 5 MB and does not block the page; on the other hand its interface is verbose, hence the libraries that simplify it.
+voir: localstorage, cache-api, blob, base-de-donnees, pwa
+
+@ sqlite
+cat: bdd
+nom: SQLite
+alias: sqlite3, base embarquée, embedded database, .db, .sqlite, base sur fichier, room android
+fr: Moteur de base de données relationnelle qui tient dans une simple bibliothèque et range tout dans un seul fichier, sans serveur à installer. Il est présent dans presque tous les téléphones, navigateurs et applications.
+en: A relational database engine that fits in a simple library and keeps everything in a single file, with no server to install. It is present in nearly every phone, browser and application.
+ex: bash
+| sqlite3 donnees.db "SELECT COUNT(*) FROM termes;"
+ex-fr: Interroger un fichier de base de données depuis la ligne de commande.
+ex-en: Query a database file from the command line.
+voir: base-de-donnees, sql, table, android

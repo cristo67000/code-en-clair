@@ -1,0 +1,320 @@
+# Architecture et concepts.
+
+@ api
+cat: archi
+nom: API
+dev: Application Programming Interface
+nom-fr: interface de programmation
+alias: application programming interface, interface de programmation, web api, api web, api publique, endpoint, sdk, appel d'api, api rest
+fr: Ensemble de fonctions ou de requêtes qu'un programme met à la disposition d'autres programmes, avec ses règles d'emploi. Elle permet à deux logiciels de collaborer sans connaître l'intérieur l'un de l'autre.
+en: A set of functions or requests that a program makes available to other programs, with its rules of use. It lets two pieces of software collaborate without knowing each other's inner workings.
++fr: Une « API web » s'appelle par HTTP et répond en général en JSON. La documentation dit quelles adresses existent, ce qu'il faut envoyer et ce qu'on reçoit.
++en: A “web API” is called over HTTP and usually answers in JSON. The documentation says which addresses exist, what to send and what you receive.
+ex: js
+| const r = await fetch('https://api.github.com/repos/git/git');
+| const depot = await r.json();
+| console.log(depot.stargazers_count);
+ex-fr: Interroger l'API publique de GitHub sur un dépôt et lire le nombre d'étoiles.
+ex-en: Query GitHub's public API about a repository and read the star count.
+voir: rest, endpoint, json, sdk, interface, fetch
+schema: archi-api
+
+@ rest
+cat: archi
+nom: REST
+dev: Representational State Transfer
+alias: representational state transfer, api rest, restful, ressource, verbes http, hateoas, graphql, grpc
+fr: Style d'API web où chaque chose (un utilisateur, un article) est une ressource désignée par une adresse (/articles/42), sur laquelle on agit avec les méthodes HTTP : GET pour lire, POST pour créer, PUT ou PATCH pour modifier, DELETE pour supprimer.
+en: A web API style where each thing (a user, an article) is a resource designated by an address (/articles/42), on which you act with HTTP methods: GET to read, POST to create, PUT or PATCH to modify, DELETE to remove.
+ex: http
+| GET    /articles/42
+| POST   /articles
+| PATCH  /articles/42
+| DELETE /articles/42
+ex-fr: Les quatre actions de base sur la ressource « article ».
+ex-en: The four basic actions on the “article” resource.
+voir: api, methode-http, json, crud, endpoint
+
+@ endpoint
+cat: archi
+nom: Endpoint
+nom-fr: point d'accès
+alias: point d'accès, point de terminaison, route, url d'api, api endpoint, chemin d'api
+fr: Adresse précise d'une API qui répond à un type de demande, par exemple https://api.exemple.org/articles. Une API est faite d'un ensemble d'endpoints, chacun avec ses méthodes HTTP et ses paramètres.
+en: The precise address of an API that answers one kind of request, for example https://api.example.org/articles. An API is made of a set of endpoints, each with its HTTP methods and parameters.
+voir: api, rest, url, methode-http
+
+@ sdk
+cat: archi
+nom: SDK
+dev: Software Development Kit
+nom-fr: kit de développement logiciel
+alias: software development kit, kit de développement, android sdk, java sdk, client library, bibliothèque cliente
+fr: Ensemble d'outils fournis par un éditeur pour développer pour sa plateforme ou son service : bibliothèques, documentation, exemples, outils de compilation. Le SDK Android permet de construire des applications Android.
+en: A set of tools provided by a vendor to develop for its platform or service: libraries, documentation, examples, build tools. The Android SDK lets you build Android apps.
+voir: api, bibliotheque, android, gradle
+
+@ client-serveur
+cat: archi
+nom: Client-serveur
+nom-en: client-server
+alias: client server, client, serveur, server, architecture client-serveur, peer-to-peer, p2p, hôte
+fr: Modèle où un programme, le client (navigateur, application mobile), demande des services à un autre, le serveur, qui les fournit à de nombreux clients. Le client s'occupe de l'affichage, le serveur des données et des règles.
+en: A model where a program, the client (browser, mobile app), requests services from another, the server, which provides them to many clients. The client handles the display, the server the data and the rules.
+voir: http, front-end, back-end, api
+schema: archi-client-serveur
+
+@ front-end
+cat: archi
+nom: Front-end
+nom-fr: partie visible, côté client
+alias: frontend, front, côté client, client-side, interface utilisateur, ui, ux, développeur front
+fr: Partie d'une application que la personne voit et touche : pages, boutons, animations, exécutés dans son navigateur ou son téléphone. Elle est faite de HTML, CSS et JavaScript, souvent avec un framework.
+en: The part of an application that the person sees and touches: pages, buttons, animations, run in their browser or phone. It is made of HTML, CSS and JavaScript, often with a framework.
+voir: back-end, full-stack, html, css, js
+schema: archi-client-serveur
+
+@ back-end
+cat: archi
+nom: Back-end
+nom-fr: partie cachée, côté serveur
+alias: backend, back, côté serveur, server-side, serveur d'application, logique métier, business logic, développeur back
+fr: Partie d'une application qui tourne sur le serveur, à l'abri des regards : la logique métier, l'accès à la base de données, l'authentification, les API. Le front-end lui envoie des requêtes.
+en: The part of an application that runs on the server, out of sight: the business logic, database access, authentication, APIs. The front-end sends requests to it.
+voir: front-end, full-stack, api, base-de-donnees, nodejs
+schema: archi-client-serveur
+
+@ full-stack
+cat: archi
+nom: Full-stack
+alias: fullstack, développeur full stack, pile complète, stack, lamp, mern, mean, technology stack
+fr: Se dit d'une personne, ou d'un projet, qui couvre à la fois le front-end et le back-end. Une « stack » désigne aussi l'ensemble des technologies d'un projet (par exemple JavaScript, Node.js et PostgreSQL).
+en: Said of a person, or a project, that covers both front-end and back-end. A “stack” also refers to the set of technologies of a project (for example JavaScript, Node.js and PostgreSQL).
+voir: front-end, back-end, framework
+
+@ framework
+cat: archi
+nom: Framework
+nom-fr: cadriciel
+alias: cadriciel, cadre de développement, react, vue, angular, svelte, django, laravel, spring, express, next.js, inversion de contrôle
+fr: Ensemble de code qui impose la structure générale d'une application et appelle votre code aux bons moments : « ne nous appelez pas, nous vous appellerons ». Il fournit les bases (routage, sécurité, accès aux données) pour ne coder que ce qui est propre au projet.
+en: A body of code that imposes an application's general structure and calls your code at the right moments: “don't call us, we'll call you”. It supplies the basics (routing, security, data access) so you only code what is specific to the project.
+attention-fr: Une bibliothèque, c'est vous qui l'appelez ; un framework, c'est lui qui vous appelle. Choisir l'un, c'est en adopter les conventions et suivre ses évolutions.
+attention-en: A library is something you call; a framework is something that calls you. Choosing one means adopting its conventions and following its changes.
+voir: bibliotheque, spa, module, mvc
+
+@ mvc
+cat: archi
+nom: MVC
+dev: Model-View-Controller
+nom-fr: modèle-vue-contrôleur
+alias: model view controller, modèle vue contrôleur, mvvm, mvp, architecture en couches, séparation des responsabilités
+fr: Manière d'organiser une application en trois rôles : le modèle (les données et les règles), la vue (ce qu'on affiche) et le contrôleur (qui reçoit les actions et fait le lien). Séparer ces rôles permet de modifier l'un sans casser les autres.
+en: A way of organizing an application into three roles: the model (the data and the rules), the view (what is displayed) and the controller (which receives actions and links the two). Separating these roles lets you change one without breaking the others.
+voir: framework, design-pattern, observer
+schema: archi-mvc
+
+@ microservices
+cat: archi
+nom: Microservices
+alias: micro-services, microservice, monolithe, monolith, architecture distribuée, service mesh, kubernetes
+fr: Architecture où une application est découpée en de nombreux petits services indépendants, chacun avec sa base et son équipe, qui communiquent par le réseau. À l'opposé, un monolithe est un seul programme qui contient tout.
+en: An architecture where an application is split into many small independent services, each with its own database and team, that communicate over the network. In contrast, a monolith is a single program that contains everything.
++fr: Les microservices facilitent le travail de grandes équipes et le passage à l'échelle, mais ajoutent une grande complexité (réseau, déploiements, suivi). Pour un petit projet, un monolithe bien organisé reste presque toujours le bon choix.
++en: Microservices make large teams' work and scaling easier, but add great complexity (network, deployments, monitoring). For a small project, a well-organized monolith is almost always the right choice.
+voir: api, docker, cloud, scalabilite
+schema: archi-microservices
+
+@ cache
+cat: archi
+nom: Cache
+nom-fr: antémémoire
+alias: antémémoire, mémoire cache, caching, mise en cache, cache hit, cache miss, invalidation, ttl, redis, memcached
+fr: Copie temporaire de données coûteuses à obtenir, gardée à un endroit rapide d'accès pour éviter de les recalculer ou de les retélécharger. On y va d'abord ; si la donnée y est (cache hit) on la sert, sinon (cache miss) on la va chercher et on la garde.
+en: A temporary copy of data that is costly to obtain, kept in a fast-access place to avoid recomputing or redownloading it. You look there first; if the data is there (cache hit) you serve it, otherwise (cache miss) you fetch it and keep it.
++fr: « Il n'y a que deux problèmes difficiles en informatique : l'invalidation du cache et le nommage des choses. » Une donnée périmée dans un cache peut rester servie longtemps si on ne pense pas à l'expirer.
++en: “There are only two hard things in computer science: cache invalidation and naming things.” Stale data in a cache can keep being served for a long time if you forget to expire it.
+voir: cache-http, cache-api, cdn, cle-valeur
+schema: archi-cache
+
+@ load-balancer
+cat: archi
+nom: Répartiteur de charge
+nom-en: load balancer
+alias: load balancer, équilibreur de charge, répartition de charge, load balancing, haproxy, nginx, round robin
+fr: Serveur qui reçoit toutes les requêtes d'un service et les distribue entre plusieurs serveurs identiques, pour partager le travail et continuer de fonctionner si l'un d'eux tombe en panne.
+en: A server that receives all of a service's requests and distributes them among several identical servers, to share the work and keep running if one of them goes down.
+voir: proxy, scalabilite, spof, cdn
+schema: archi-load-balancer
+
+@ file-attente-messages
+cat: archi
+nom: File de messages
+nom-en: message queue
+alias: message queue, queue, rabbitmq, kafka, sqs, pub/sub, publish subscribe, broker, courtier de messages, producteur consommateur
+fr: Intermédiaire qui reçoit des messages d'un service (le producteur) et les garde jusqu'à ce qu'un autre (le consommateur) puisse les traiter. Il découple les deux : le producteur n'attend pas, et un pic de messages ne submerge pas le consommateur.
+en: An intermediary that receives messages from one service (the producer) and keeps them until another (the consumer) can process them. It decouples the two: the producer does not wait, and a burst of messages does not overwhelm the consumer.
+voir: file-fifo, microservices, webhook, scalabilite
+schema: archi-queue
+
+@ webhook
+cat: archi
+nom: Webhook
+nom-fr: rappel web
+alias: rappel web, crochet web, http callback, callback url, notification http, github webhook, stripe webhook
+fr: Adresse web de votre application que le service tiers appelle de lui-même quand un événement survient (un paiement, un push GitHub). Au lieu d'interroger sans cesse le service, c'est lui qui vous prévient.
+en: A web address of your application that a third-party service calls by itself when an event occurs (a payment, a GitHub push). Instead of constantly polling the service, it is the service that notifies you.
+attention-fr: N'importe qui peut appeler cette adresse : le service signe ses envois (en-tête de signature) et il faut vérifier cette signature avant d'agir.
+attention-en: Anyone can call this address: the service signs its calls (signature header) and that signature must be verified before acting.
+voir: api, http, websocket, file-attente-messages
+schema: archi-webhook
+
+@ serverless
+cat: archi
+nom: Serverless
+nom-fr: sans serveur
+alias: sans serveur, faas, function as a service, aws lambda, cloud functions, cloudflare workers, edge functions, fonctions cloud
+fr: Modèle où l'on ne gère aucun serveur : on dépose de petites fonctions chez un fournisseur cloud, qui les exécute à la demande et ne facture que le temps d'exécution. Il y a bien des serveurs, mais ils ne sont pas votre affaire.
+en: A model where you manage no server: you upload small functions to a cloud provider, which runs them on demand and only bills for execution time. There are servers, of course, but they are not your concern.
+voir: cloud, api, microservices, deploiement
+
+@ cloud
+cat: archi
+nom: Cloud
+nom-fr: informatique en nuage
+alias: nuage, cloud computing, informatique en nuage, aws, azure, google cloud, iaas, paas, saas, hébergement, hébergeur
+fr: Utilisation de ressources informatiques (serveurs, stockage, bases, logiciels) louées à distance à un fournisseur, payées à l'usage, plutôt que possédées. On distingue IaaS (machines), PaaS (plateforme pour déployer son code) et SaaS (logiciel prêt à l'emploi).
+en: Use of computing resources (servers, storage, databases, software) rented remotely from a provider, paid by usage, rather than owned. A distinction is made between IaaS (machines), PaaS (a platform to deploy your code) and SaaS (ready-to-use software).
+attention-fr: « Le cloud, c'est l'ordinateur de quelqu'un d'autre » : ce qu'on y met dépend de ses conditions, de sa localisation et de sa fiabilité.
+attention-en: “The cloud is someone else's computer”: what you put there depends on its terms, its location and its reliability.
+voir: serverless, docker, deploiement, saas
+
+@ saas
+cat: archi
+nom: SaaS
+dev: Software as a Service
+nom-fr: logiciel en tant que service
+alias: software as a service, logiciel en ligne, application en ligne, abonnement, logiciel par abonnement
+fr: Logiciel qu'on utilise en ligne, par abonnement, sans rien installer ni maintenir : la messagerie web, un traitement de texte en ligne, GitHub. Le fournisseur s'occupe des serveurs et des mises à jour.
+en: Software you use online, by subscription, with nothing to install or maintain: web mail, an online word processor, GitHub. The provider takes care of servers and updates.
+voir: cloud, github, pwa
+
+@ open-source
+cat: archi
+nom: Open source
+nom-fr: logiciel libre
+alias: logiciel libre, libre, code source ouvert, foss, floss, free software, licence libre, gpl, mit, apache
+fr: Logiciel dont le code source est public, et que la licence autorise à lire, modifier et redistribuer, sous conditions. Git, Linux et la plupart des bibliothèques web en sont.
+en: Software whose source code is public, and which the license allows you to read, modify and redistribute, under conditions. Git, Linux and most web libraries are open source.
+attention-fr: « Open source » ne veut pas dire « sans règles » : chaque licence en fixe, et les ignorer peut être illégal.
+attention-en: “Open source” does not mean “no rules”: every license sets some, and ignoring them can be illegal.
+voir: licence, github, fork, dependance
+
+@ licence
+cat: archi
+nom: Licence
+nom-en: license
+alias: license, mit, gpl, apache 2.0, bsd, creative commons, cc by, cc by-sa, copyleft, droit d'auteur, domaine public
+fr: Contrat par lequel l'auteur d'un logiciel ou d'un contenu dit ce que les autres ont le droit d'en faire. MIT et Apache 2.0 sont permissives (presque tout est permis) ; la GPL et la licence Creative Commons BY-SA sont « à partage identique » : une œuvre dérivée doit reprendre la même licence.
+en: A contract by which the author of software or content says what others may do with it. MIT and Apache 2.0 are permissive (almost anything is allowed); the GPL and the Creative Commons BY-SA license are “share-alike”: a derived work must take the same license.
++fr: Sans licence, un code public reste protégé par le droit d'auteur : on ne peut pas le réutiliser. On joint donc un fichier LICENSE à un projet qu'on partage, et on lit celle des bibliothèques qu'on emploie.
++en: Without a license, public code remains protected by copyright: it cannot be reused. A LICENSE file is therefore added to a project you share, and you read the licenses of the libraries you use.
+voir: open-source, github, dependance
+
+@ scalabilite
+cat: archi
+nom: Scalabilité
+nom-en: scalability
+alias: scalability, passage à l'échelle, scaling, scale up, scale out, mise à l'échelle, montée en charge, horizontal scaling
+fr: Capacité d'un système à supporter une charge croissante. On monte en puissance soit en renforçant une machine (verticalement), soit en ajoutant des machines (horizontalement), ce que permettent le répartiteur de charge et les services sans état.
+en: A system's ability to handle a growing load. You scale up either by strengthening one machine (vertically) or by adding machines (horizontally), which load balancers and stateless services make possible.
+voir: load-balancer, microservices, cache, cloud
+
+@ spof
+cat: archi
+nom: SPOF
+dev: Single Point of Failure
+nom-fr: point unique de défaillance
+alias: single point of failure, point unique de défaillance, redondance, redundancy, haute disponibilité, high availability, failover, sla, uptime
+fr: Élément dont la panne arrête tout le système, parce que rien ne peut le remplacer : un seul serveur, une seule base, un seul compte. On le supprime par la redondance : plusieurs exemplaires prêts à prendre le relais.
+en: An element whose failure stops the whole system, because nothing can replace it: a single server, a single database, a single account. It is removed through redundancy: several copies ready to take over.
+voir: load-balancer, scalabilite, sauvegarde-backup
+
+@ design-pattern
+cat: archi
+nom: Design pattern
+nom-fr: patron de conception
+alias: patron de conception, motif de conception, singleton, observer, factory, strategy, decorator, gang of four, gof
+fr: Solution éprouvée à un problème de conception qui revient souvent, décrite indépendamment du langage : singleton, observateur, fabrique, stratégie. Ce n'est pas du code à copier, mais un vocabulaire commun pour parler d'architecture.
+en: A proven solution to a recurring design problem, described independently of the language: singleton, observer, factory, strategy. It is not code to copy, but a common vocabulary for talking about architecture.
+voir: singleton, observer, mvc, middleware
+
+@ singleton
+cat: archi
+nom: Singleton
+alias: instance unique, patron singleton, unique instance, anti-pattern, état global, global state
+fr: Patron de conception qui garantit qu'une classe n'a qu'une seule instance, accessible de partout : une connexion à la base, une configuration. Pratique, mais c'est un état global caché, qui rend le code plus difficile à tester.
+en: A design pattern that guarantees a class has only one instance, accessible from everywhere: a database connection, a configuration. Convenient, but it is a hidden global state, which makes code harder to test.
+voir: design-pattern, instance, classe, portee
+
+@ observer
+cat: archi
+nom: Observer
+nom-fr: observateur
+alias: observateur, patron observateur, publish subscribe, pub/sub, abonnement, événements, eventemitter, reactive, réactif, addEventListener
+fr: Patron de conception où des objets (les observateurs) s'abonnent à un autre et sont prévenus automatiquement quand il change. C'est le principe des événements, des interfaces réactives et des files de messages.
+en: A design pattern where objects (the observers) subscribe to another one and are notified automatically when it changes. It is the principle behind events, reactive interfaces and message queues.
+ex: js
+| const sujet = new EventTarget();
+| sujet.addEventListener('change', (e) => console.log('Reçu', e.detail));
+| sujet.dispatchEvent(new CustomEvent('change', { detail: 42 }));
+ex-fr: Un observateur s'abonne au sujet ; quand le sujet émet « change », il est prévenu (« Reçu 42 »).
+ex-en: An observer subscribes to the subject; when the subject emits “change”, it is notified (“Reçu 42”).
+voir: evenement, design-pattern, callback, file-attente-messages
+schema: archi-observer
+
+@ middleware
+cat: archi
+nom: Middleware
+nom-fr: intergiciel
+alias: intergiciel, couche intermédiaire, express middleware, filtre de requêtes, pipeline de requêtes, next()
+fr: Maillon placé entre la réception d'une requête et le code qui y répond, qui peut la vérifier, l'enrichir ou la refuser : journalisation, authentification, compression. Plusieurs middlewares s'enchaînent, chacun passant la main au suivant.
+en: A link placed between the reception of a request and the code that answers it, which can check, enrich or refuse it: logging, authentication, compression. Several middlewares chain together, each handing over to the next.
+ex: js
+| app.use((req, res, next) => {
+|   console.log(req.method, req.url);
+|   next();
+| });
+ex-fr: Un middleware Express : il journalise chaque requête, puis passe au maillon suivant avec next().
+ex-en: An Express middleware: it logs each request, then moves to the next link with next().
+voir: http, framework, authentification, design-pattern
+
+@ machine-a-etats
+cat: archi
+nom: Machine à états
+nom-en: state machine
+alias: state machine, fsm, finite state machine, automate fini, états finis, transitions, statechart, xstate
+fr: Modèle qui décrit un système par un nombre fini d'états et les transitions autorisées de l'un à l'autre, déclenchées par des événements. Une commande est « créée », « payée », « expédiée » : elle ne peut pas être expédiée avant d'être payée.
+en: A model that describes a system by a finite number of states and the allowed transitions from one to another, triggered by events. An order is “created”, “paid”, “shipped”: it cannot be shipped before being paid.
+voir: promesse, evenement, design-pattern
+schema: archi-etats
+
+@ legacy
+cat: archi
+nom: Legacy
+nom-fr: code hérité
+alias: code hérité, code legacy, héritage logiciel, système legacy, vieux code, code existant, migration
+fr: Code ou système ancien, encore en service, que personne ne veut plus toucher parce qu'il est mal compris, peu testé ou fait avec des technologies dépassées. On l'améliore prudemment, en l'entourant de tests avant de le retoucher.
+en: Old code or a system still in service that nobody wants to touch any more because it is poorly understood, barely tested or built with outdated technologies. It is improved carefully, surrounding it with tests before changing it.
+voir: dette-technique, refactoring, test-unitaire
+
+@ sauvegarde-backup
+cat: archi
+nom: Sauvegarde
+nom-en: backup
+alias: backup, sauvegarder, restauration, restore, 3-2-1, plan de reprise, snapshot, instantané, copie de sécurité
+fr: Copie de données faite à part pour pouvoir les restaurer après une panne, une erreur ou une attaque. La règle 3-2-1 : trois copies, sur deux supports différents, dont une hors site. Une sauvegarde jamais testée n'est qu'une hypothèse.
+en: A copy of data made separately so it can be restored after a failure, a mistake or an attack. The 3-2-1 rule: three copies, on two different media, one of them off-site. A backup never tested is only a hypothesis.
+attention-fr: Git n'est pas une sauvegarde de vos secrets ni de vos fichiers hors dépôt ; et une clé de signature perdue ne se restaure pas : sauvegardez-la en deux exemplaires chiffrés.
+attention-en: Git is not a backup of your secrets or of your files outside the repository; and a lost signing key cannot be restored: back it up in two encrypted copies.
+voir: git, keystore, spof, cloud

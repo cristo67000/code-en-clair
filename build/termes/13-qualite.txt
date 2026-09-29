@@ -1,0 +1,215 @@
+# Tests et qualité.
+
+@ test-unitaire
+cat: qualite
+nom: Test unitaire
+nom-en: unit test
+alias: unit test, tests unitaires, jest, vitest, pytest, junit, mocha, assert, tests automatisés, test automatique
+fr: Petit programme qui vérifie automatiquement qu'un morceau de code isolé (une fonction, une classe) donne le résultat attendu pour des entrées connues. Rapides à lancer, ils signalent tout de suite qu'une modification a cassé quelque chose.
+en: A small program that automatically checks that an isolated piece of code (a function, a class) gives the expected result for known inputs. Quick to run, they immediately signal that a change has broken something.
+ex: js
+| import { test, expect } from 'vitest';
+| import { carre } from './maths.js';
+|
+| test('le carré de 4 est 16', () => {
+|   expect(carre(4)).toBe(16);
+| });
+ex-fr: Un test avec Vitest : appeler carre(4) et exiger 16.
+ex-en: A test with Vitest: call carre(4) and require 16.
+voir: assertion, test-integration, tdd, couverture, mock
+schema: qualite-pyramide
+
+@ test-integration
+cat: qualite
+nom: Test d'intégration
+nom-en: integration test
+alias: integration test, tests d'intégration, test de composants, test d'api, test de bout en milieu
+fr: Test qui vérifie que plusieurs éléments fonctionnent bien ensemble : une fonction et sa base de données, un serveur et son API. Plus lent et plus difficile à diagnostiquer qu'un test unitaire, mais il attrape des erreurs que celui-ci ne voit pas.
+en: A test that checks that several elements work well together: a function and its database, a server and its API. Slower and harder to diagnose than a unit test, but it catches errors the latter cannot see.
+voir: test-unitaire, test-e2e, mock, ci-cd
+schema: qualite-pyramide
+
+@ test-e2e
+cat: qualite
+nom: Test de bout en bout
+nom-en: end-to-end test
+alias: e2e, end to end, end-to-end, test e2e, cypress, playwright, selenium, test d'interface, test de parcours
+fr: Test qui pilote l'application comme le ferait une personne, de l'écran jusqu'au fond : ouvrir la page, cliquer, remplir un formulaire, vérifier le résultat. Il ne se lance en général qu'à la fin, avec un navigateur headless.
+en: A test that drives the application as a person would, from the screen down to the depths: open the page, click, fill in a form, check the result. It is usually run only at the end, with a headless browser.
+voir: headless, test-integration, test-unitaire, recette
+schema: qualite-pyramide
+
+@ tdd
+cat: qualite
+nom: TDD
+dev: Test-Driven Development
+nom-fr: développement piloté par les tests
+alias: test-driven development, développement guidé par les tests, red green refactor, rouge vert refactor, bdd, tests d'abord
+fr: Méthode où l'on écrit d'abord le test, qui échoue (rouge), puis le code minimal pour le faire passer (vert), puis on améliore ce code sans casser le test (refactoring). On répète ce cycle par petits pas.
+en: A method where you first write the test, which fails (red), then the minimal code to make it pass (green), then improve that code without breaking the test (refactoring). This cycle is repeated in small steps.
+voir: test-unitaire, refactoring, assertion, regression
+schema: qualite-tdd
+
+@ assertion
+cat: qualite
+nom: Assertion
+nom-en: assertion
+alias: assert, expect, tobe, toequal, vérification, check, assertion de test, assert.equal
+fr: Instruction d'un test qui exige qu'une condition soit vraie, par exemple « le résultat vaut 16 ». Si elle est fausse, le test échoue et affiche la différence entre l'attendu et l'obtenu.
+en: A statement in a test that demands that a condition be true, for example “the result equals 16”. If it is false, the test fails and shows the difference between what was expected and what was obtained.
+ex: js
+| expect(resultat).toBe(16);
+| expect(liste).toContain('git');
+| expect(() => parser('{')).toThrow();
+ex-fr: Exiger une valeur exacte, la présence d'un élément, puis la levée d'une erreur.
+ex-en: Require an exact value, the presence of an element, then a thrown error.
+voir: test-unitaire, tdd, exception
+
+@ mock
+cat: qualite
+nom: Mock
+nom-fr: doublure, simulacre
+alias: mocking, stub, spy, fake, doublure de test, simulacre, faux service, vi.fn, jest.fn, test double
+fr: Faux composant, écrit pour un test, qui remplace un vrai élément qu'on ne veut pas appeler (un service en ligne, une base, l'horloge) : il renvoie des réponses prévues et note comment on l'a appelé.
+en: A fake component, written for a test, that replaces a real element you do not want to call (an online service, a database, the clock): it returns planned answers and records how it was called.
+ex: js
+| const chercher = vi.fn().mockResolvedValue({ id: 1, nom: 'git' });
+| await afficherTerme(chercher);
+| expect(chercher).toHaveBeenCalledWith('git');
+ex-fr: Une fausse fonction de recherche qui renvoie toujours le même terme, puis la vérification qu'elle a été appelée avec « git ».
+ex-en: A fake search function that always returns the same term, then the check that it was called with “git”.
+voir: test-unitaire, test-integration, assertion, api
+schema: qualite-mock
+
+@ couverture
+cat: qualite
+nom: Couverture de tests
+nom-en: test coverage
+alias: coverage, code coverage, couverture de code, taux de couverture, istanbul, nyc, c8, lignes couvertes
+fr: Proportion du code (lignes, branches) exécutée au moins une fois par les tests, exprimée en pourcentage. Un outil la mesure et signale les parties jamais testées.
+en: The proportion of code (lines, branches) run at least once by the tests, expressed as a percentage. A tool measures it and flags the parts never tested.
+attention-fr: Une couverture de 100 % ne prouve pas que le code est correct : une ligne exécutée n'est pas une ligne bien vérifiée. C'est un indicateur de trous, pas un gage de qualité.
+attention-en: 100% coverage does not prove the code is correct: a line that ran is not a line that was well checked. It is an indicator of gaps, not a guarantee of quality.
+voir: test-unitaire, ci-cd, assertion
+
+@ regression
+cat: qualite
+nom: Régression
+nom-en: regression
+alias: regression, bug de régression, test de non-régression, non-régression, régresser, ça marchait avant, regression test
+fr: Défaut qui apparaît dans une fonction qui marchait auparavant, à la suite d'une modification ailleurs dans le code. Les tests de non-régression, relancés à chaque changement, servent à les repérer aussitôt.
+en: A defect that appears in a feature that used to work, following a change elsewhere in the code. Regression tests, rerun on each change, are meant to spot them right away.
+voir: test-unitaire, bisect, ci-cd, bug
+
+@ bug
+cat: qualite
+nom: Bug
+nom-fr: bogue
+alias: bogue, bug report, rapport de bug, anomalie, défaut, issue, ticket, reproduire un bug, minimal reproducible example, mre
+fr: Défaut dans un programme qui le fait se comporter autrement que prévu : résultat faux, plantage, lenteur. Un bon rapport de bug dit ce qu'on a fait, ce qu'on attendait, ce qui s'est passé, et comment le reproduire.
+en: A defect in a program that makes it behave other than intended: wrong result, crash, slowness. A good bug report says what you did, what you expected, what happened, and how to reproduce it.
++fr: L'anecdote du papillon de nuit trouvé dans un relais du Harvard Mark II, en 1947, popularise le mot, mais il était déjà employé en ingénierie bien avant.
++en: The anecdote of the moth found in a relay of the Harvard Mark II in 1947 popularized the word, but it was already used in engineering long before.
+voir: debogage, regression, exception, debugger
+
+@ debogage
+cat: qualite
+nom: Débogage
+nom-en: debugging
+alias: debugging, deboguer, déboguer, debug, traquer un bug, canard en plastique, rubber duck, stack trace, trace d'appels
+fr: Démarche qui consiste à trouver la cause d'un bug, puis à le corriger : reproduire le problème, formuler une hypothèse, la vérifier (journaux, débogueur, tests), corriger, vérifier que le bug a disparu et qu'aucun autre n'est apparu.
+en: The process of finding a bug's cause, then fixing it: reproduce the problem, form a hypothesis, verify it (logs, debugger, tests), fix, check that the bug is gone and no other has appeared.
++fr: Expliquer le problème à voix haute, à un collègue ou à un canard en plastique, aide étonnamment souvent à voir l'erreur.
++en: Explaining the problem out loud, to a colleague or a rubber duck, surprisingly often helps to see the mistake.
+voir: bug, debugger, console-log, exception, log-journal
+
+@ refactoring
+cat: qualite
+nom: Refactoring
+nom-fr: remaniement de code
+alias: refactorisation, refactoriser, remaniement, réusinage, clean code, code propre, code smell, duplication, dry
+fr: Amélioration de la structure interne d'un code sans changer ce qu'il fait : rendre les noms plus clairs, découper une longue fonction, supprimer les duplications. Les tests permettent de vérifier que le comportement n'a pas bougé.
+en: Improving a code's internal structure without changing what it does: making names clearer, splitting a long function, removing duplication. The tests make it possible to verify that the behavior has not moved.
+voir: tdd, test-unitaire, dette-technique, code-review, lint
+
+@ dette-technique
+cat: qualite
+nom: Dette technique
+nom-en: technical debt
+alias: technical debt, code legacy, raccourcis, quick fix, hack, spaghetti code, code spaghetti, code hérité
+fr: Coût futur d'un raccourci pris aujourd'hui : un code écrit vite, sans tests ni clarté, fait avancer tout de suite mais ralentit chaque évolution ensuite, comme des intérêts. On la « rembourse » par du refactoring.
+en: The future cost of a shortcut taken today: code written quickly, with no tests or clarity, moves things forward right now but slows every later change, like interest. It is “repaid” through refactoring.
+voir: refactoring, legacy, test-unitaire
+
+@ code-review
+cat: qualite
+nom: Revue de code
+nom-en: code review
+alias: code review, relecture de code, review, relecteur, reviewer, approve, lgtm, pair programming, programmation en binôme
+fr: Relecture du code d'une personne par une autre avant sa fusion : on cherche des erreurs, des failles, des manques de clarté, et on partage la connaissance du projet. Sur GitHub, elle a lieu dans la pull request.
+en: A person's code being read by another before it is merged: looking for errors, flaws, lack of clarity, and sharing knowledge of the project. On GitHub, it takes place in the pull request.
+voir: pull-request, refactoring, lint, hallucination
+
+@ benchmark
+cat: qualite
+nom: Benchmark
+nom-fr: test de performance
+alias: banc d'essai, mesure de performance, performance test, micro-benchmark, performance.now, console.time, temps d'exécution
+fr: Mesure de la rapidité ou de la consommation d'un programme, dans des conditions contrôlées et répétables, pour comparer deux solutions ou détecter une dégradation. On mesure avant d'optimiser, pas au jugé.
+en: A measurement of a program's speed or consumption, under controlled and repeatable conditions, to compare two solutions or detect a degradation. You measure before optimizing, not by guesswork.
+ex: js
+| const debut = performance.now();
+| trier(donnees);
+| console.log((performance.now() - debut).toFixed(1) + ' ms');
+ex-fr: Chronométrer un tri en millisecondes.
+ex-en: Time a sort in milliseconds.
+voir: profiling, complexite, latence
+
+@ profiling
+cat: qualite
+nom: Profilage
+nom-en: profiling
+alias: profiler, profilage, flame graph, flamegraph, goulot d'étranglement, bottleneck, hotspot, devtools performance
+fr: Analyse d'un programme en cours d'exécution pour savoir où il passe son temps et sa mémoire. Il désigne les goulots d'étranglement : souvent, une petite partie du code explique l'essentiel de la lenteur.
+en: Analysis of a running program to learn where it spends its time and memory. It points out the bottlenecks: often, a small part of the code explains most of the slowness.
+voir: benchmark, devtools, complexite
+
+@ log-journal
+cat: qualite
+nom: Log
+nom-fr: journal
+alias: logs, logging, journal d'événements, journalisation, log level, niveau de log, syslog, journal d'application, warn, error, info, debug
+fr: Trace écrite par un programme pour dire ce qu'il fait : démarrage, requêtes reçues, erreurs. Les journaux s'organisent par niveau de gravité (debug, info, warn, error) et servent à comprendre après coup ce qui s'est passé en production.
+en: A trace written by a program to say what it is doing: startup, requests received, errors. Logs are organized by severity level (debug, info, warn, error) and serve to understand after the fact what happened in production.
+attention-fr: Ne jamais écrire de mot de passe, de jeton ni de donnée personnelle dans les journaux : ils sont copiés, conservés et lus par beaucoup de monde.
+attention-en: Never write a password, token or personal data in logs: they are copied, kept and read by many people.
+voir: console-log, debogage, exception, secret
+
+@ idempotence
+cat: qualite
+nom: Idempotence
+nom-en: idempotence
+alias: idempotent, idempotency, opération idempotente, réessayer sans risque, retry safe, put idempotent
+fr: Propriété d'une opération dont on peut répéter l'exécution sans changer le résultat au-delà de la première fois. Supprimer une ressource ou définir une valeur est idempotent ; ajouter un élément à une liste ne l'est pas.
+en: A property of an operation that can be executed repeatedly without changing the result beyond the first time. Deleting a resource or setting a value is idempotent; adding an item to a list is not.
++fr: C'est précieux pour le réseau : si la réponse se perd, le client peut réessayer sans risque de doublon. En HTTP, GET, PUT et DELETE sont censés être idempotents, pas POST.
++en: This is valuable for networks: if the response is lost, the client can retry without any risk of duplicates. In HTTP, GET, PUT and DELETE are meant to be idempotent, POST is not.
+voir: methode-http, rest, api, timeout
+
+@ smoke-test
+cat: qualite
+nom: Smoke test
+nom-fr: test de fumée
+alias: test de fumée, sanity check, test rapide, vérification de base, build verification
+fr: Test très rapide qui vérifie l'essentiel : l'application démarre-t-elle, sa page d'accueil s'affiche-t-elle, la connexion marche-t-elle ? S'il échoue, inutile de lancer des tests plus longs. Le nom vient de l'électronique : on allume, et l'on regarde s'il y a de la fumée.
+en: A very quick test that checks the essentials: does the app start, does its home page show, does login work? If it fails, there is no point running longer tests. The name comes from electronics: you power on and see whether there is smoke.
+voir: test-e2e, ci-cd, deploiement, recette
+
+@ recette
+cat: qualite
+nom: Recette
+nom-en: acceptance testing
+alias: acceptance test, test d'acceptation, uat, user acceptance testing, validation, vsr, réception, recette fonctionnelle
+fr: Étape où l'on vérifie que le logiciel livré répond bien à ce que le client ou les utilisateurs attendaient. On déroule des scénarios réels et on la déclare acceptée, ou on demande des corrections.
+en: The stage where you check that the delivered software really does what the client or the users expected. Real scenarios are run through, and it is declared accepted, or corrections are requested.
+voir: test-e2e, smoke-test, release, bug

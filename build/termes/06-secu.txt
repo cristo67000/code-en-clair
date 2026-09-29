@@ -1,0 +1,350 @@
+# Sécurité et cryptographie.
+
+@ hash
+cat: secu
+nom: Hash
+nom-fr: hachage, valeur de hachage
+alias: hachage, haché, fonction de hachage, hash function, digest, condensat, valeur de hachage, hasher, hash d'un commit
+fr: Valeur de taille fixe calculée à partir de données par une fonction de hachage. Le même contenu donne toujours le même hash ; changer un seul octet le change entièrement ; et on ne peut pas retrouver les données à partir de lui.
+en: A fixed-size value computed from data by a hash function. The same content always gives the same hash; changing a single byte changes it entirely; and you cannot get the data back from it.
++fr: Deux usages : reconnaître ou vérifier un contenu sans le comparer octet par octet (Git identifie chaque commit par son hash), et stocker des mots de passe sans les garder en clair. On dit aussi « empreinte » ou « condensat ».
++en: Two uses: recognizing or verifying content without comparing it byte by byte (Git identifies each commit by its hash), and storing passwords without keeping them in clear. It is also called a “digest” or “fingerprint”.
+ex: js
+| async function sha256(texte) {
+|   const octets = new TextEncoder().encode(texte);
+|   const hash = await crypto.subtle.digest('SHA-256', octets);
+|   return [...new Uint8Array(hash)].map((o) => o.toString(16).padStart(2, '0')).join('');
+| }
+| await sha256('Bonjour');
+ex-fr: Calculer le SHA-256 de « Bonjour » (9172e8ee…). Avec « bonjour » en minuscule, le résultat est totalement différent (2cb4b143…).
+ex-en: Compute the SHA-256 of “Bonjour” (9172e8ee…). With a lowercase “bonjour”, the result is completely different (2cb4b143…).
+attention-fr: Un hash n'est pas un chiffrement : on ne peut pas le « déchiffrer ». Il n'est pas non plus une clé de sécurité à lui seul (voir le hachage de mots de passe et le sel).
+attention-en: A hash is not encryption: it cannot be “decrypted”. Nor is it a security key by itself (see password hashing and salt).
+voir: sha, empreinte, checksum, salage, commit
+schema: secu-hash
+
+@ sha
+cat: secu
+nom: SHA
+dev: Secure Hash Algorithm
+alias: sha-1, sha1, sha-256, sha256, sha-512, sha-3, secure hash algorithm, sha256sum, shasum
+fr: Famille de fonctions de hachage normalisées, dont les plus connues sont SHA-1 (160 bits, 40 chiffres hexadécimaux), SHA-256 (256 bits, 64 chiffres) et SHA-512. SHA-256 est aujourd'hui le choix courant ; SHA-1 n'est plus sûr contre un attaquant.
+en: A family of standardized hash functions, the best known being SHA-1 (160 bits, 40 hexadecimal digits), SHA-256 (256 bits, 64 digits) and SHA-512. SHA-256 is today's usual choice; SHA-1 is no longer safe against an attacker.
++fr: Git a longtemps identifié ses objets par SHA-1 (les identifiants de commit sur 40 signes) et migre vers SHA-256. On ne réduit pas un SHA-256 en le tronquant sans perdre de sécurité, mais on peut afficher ses premiers signes, comme le fait Git (3f2a9c1).
++en: Git has long identified its objects with SHA-1 (the 40-character commit ids) and is migrating to SHA-256. Truncating a SHA-256 loses security, but its first characters can be shown, as Git does (3f2a9c1).
+ex: bash
+| echo -n "abc" | sha256sum
+| sha256sum fichier.zip
+ex-fr: Le SHA-256 de « abc » est ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad ; la seconde commande vérifie l'intégrité d'un fichier téléchargé.
+ex-en: The SHA-256 of “abc” is ba7816bf8f01cfea414140de5dae2223b00361a396177a9cb410ff61f20015ad; the second command checks the integrity of a downloaded file.
+attention-fr: SHA-256 est rapide : c'est une qualité pour vérifier un fichier, un défaut pour stocker un mot de passe, où l'on veut une fonction volontairement lente.
+attention-en: SHA-256 is fast: a quality for checking a file, a flaw for storing a password, where a deliberately slow function is wanted.
+voir: hash, empreinte, commit, salage, checksum
+schema: secu-hash
+
+@ empreinte
+cat: secu
+nom: Empreinte
+nom-en: fingerprint, digest
+alias: fingerprint, digest, empreinte numérique, empreinte sha-256, condensat, hash, empreinte de certificat, empreinte de clé
+sens: Empreinte d'un contenu | Fingerprint of content
+fr: Résultat du hachage d'un contenu : une valeur courte et fixe qui l'identifie. Deux contenus identiques ont la même empreinte, deux contenus différents en ont pratiquement toujours des différentes ; Git en fait l'identifiant de chaque commit.
+en: The result of hashing content: a short, fixed value that identifies it. Two identical contents have the same fingerprint, two different contents almost always have different ones; Git makes it each commit's identifier.
++fr: On s'en sert aussi dans le nom des fichiers d'un site (app.3f2a9c1.js) : dès que le contenu change, le nom change, et le cache du navigateur ne peut pas servir une ancienne version.
++en: It is also used in a site's file names (app.3f2a9c1.js): as soon as the content changes, the name changes, and the browser cache cannot serve an old version.
+ex: bash
+| git rev-parse HEAD
+| git rev-parse --short HEAD
+ex-fr: L'empreinte complète du dernier commit (40 signes), puis sa version courte.
+ex-en: The full fingerprint of the last commit (40 characters), then its short form.
+schema: secu-hash
+sens: Empreinte d'un certificat ou d'une clé | Fingerprint of a certificate or key
+fr: Hash du contenu d'un certificat ou d'une clé, écrit en hexadécimal (souvent par paires séparées par des deux-points). Il permet de vérifier, sans comparer tout le certificat, qu'on a bien la bonne clé, par exemple celle qui signe une application Android.
+en: The hash of a certificate's or key's content, written in hexadecimal (often in pairs separated by colons). It lets you verify, without comparing the whole certificate, that you have the right key, for example the one that signs an Android app.
+ex: bash
+| keytool -list -v -keystore android.keystore -alias cle
+ex-fr: Afficher les détails d'une clé de signature Android, dont l'empreinte « SHA-256 » à déclarer dans assetlinks.json.
+ex-en: Show the details of an Android signing key, including the “SHA-256” fingerprint to declare in assetlinks.json.
+attention-fr: L'empreinte d'une clé publique n'est pas secrète, contrairement à la clé privée elle-même.
+attention-en: A public key's fingerprint is not secret, unlike the private key itself.
+voir: hash, sha, certificat, assetlinks, keystore
+
+@ checksum
+cat: secu
+nom: Checksum
+nom-fr: somme de contrôle
+alias: somme de contrôle, crc, crc32, md5, md5sum, vérification d'intégrité, integrity, sri
+fr: Petite valeur calculée à partir de données pour détecter qu'elles ont été altérées : une corruption, une erreur de transfert. Le destinataire refait le calcul et compare. CRC32 et MD5 servent à détecter des erreurs, SHA-256 aussi des manipulations.
+en: A small value computed from data to detect that it was altered: corruption, a transfer error. The recipient redoes the calculation and compares. CRC32 and MD5 detect errors, SHA-256 also detects tampering.
+ex: html
+| <script src="https://cdn.exemple.org/lib.js"
+|         integrity="sha384-oqVuAfXRKap7fdgcCY5uykM6+R9GqQ8K/uxy9rx7HNQlGYl1kPzQho1wx4JwY8wC"
+|         crossorigin="anonymous"></script>
+ex-fr: Une ressource externe protégée par une somme de contrôle : le navigateur refuse le script s'il ne correspond pas.
+ex-en: An external resource protected by a checksum: the browser refuses the script if it does not match.
+voir: hash, sha, cdn, empreinte
+
+@ chiffrement
+cat: secu
+nom: Chiffrement
+nom-en: encryption
+alias: encryption, cryptage, déchiffrement, decryption, aes, chiffrement symétrique, symmetric, chiffrement de bout en bout, e2ee
+fr: Transformation de données en un texte illisible, à l'aide d'une clé, pour que seule une personne détenant la bonne clé puisse les retrouver. Contrairement au hachage, il est réversible.
+en: Transforming data into unreadable text, using a key, so that only someone holding the right key can recover it. Unlike hashing, it is reversible.
++fr: En chiffrement symétrique (AES), la même clé chiffre et déchiffre : elle doit être partagée en secret. En chiffrement asymétrique, deux clés différentes se répondent (clé publique, clé privée).
++en: In symmetric encryption (AES), the same key encrypts and decrypts: it must be shared secretly. In asymmetric encryption, two different keys answer each other (public key, private key).
+attention-fr: Ne pas confondre avec le hachage (à sens unique) ni avec l'encodage (réversible par n'importe qui). En français, on dit « chiffrer », et « décrypter » désigne le fait de casser un chiffrement sans la clé.
+attention-en: Do not confuse encryption (reversible with a key) with hashing (one-way) or encoding (reversible by anyone).
+voir: cle-publique-privee, hash, encodage, tls
+schema: secu-chiffrement
+
+@ cle-publique-privee
+cat: secu
+nom: Clé publique et clé privée
+nom-en: public and private key
+alias: public key, private key, chiffrement asymétrique, paire de clés, key pair, rsa, ed25519, clé publique, clé privée, asymmetric
+fr: Paire de clés liées mathématiquement : la clé publique se diffuse librement, la clé privée ne quitte jamais son propriétaire. Ce que l'une chiffre, seule l'autre peut le déchiffrer ; ce que la privée signe, la publique le vérifie.
+en: A pair of mathematically linked keys: the public key is freely shared, the private key never leaves its owner. What one encrypts, only the other can decrypt; what the private key signs, the public key verifies.
++fr: C'est la base d'HTTPS, de SSH et des signatures de code. La sécurité repose entièrement sur le secret de la clé privée : perdue, elle est irremplaçable ; volée, elle doit être révoquée.
++en: It is the basis of HTTPS, SSH and code signing. Security rests entirely on the secrecy of the private key: lost, it is irreplaceable; stolen, it must be revoked.
+ex: bash
+| ssh-keygen -t ed25519
+| cat ~/.ssh/id_ed25519.pub
+ex-fr: Créer une paire ; ne diffuser que le fichier .pub (la clé publique), jamais le fichier sans extension (la privée).
+ex-en: Create a pair; only share the .pub file (the public key), never the file with no extension (the private one).
+voir: ssh, signature-numerique, certificat, chiffrement, keystore
+schema: secu-asymetrique
+
+@ signature-numerique
+cat: secu
+nom: Signature numérique
+nom-en: digital signature
+alias: digital signature, signer, signature de code, code signing, signature, vérifier une signature, gpg, apksigner
+fr: Preuve qu'un contenu vient bien de son auteur et n'a pas été modifié : on calcule son empreinte, on la signe avec la clé privée, et n'importe qui peut vérifier la signature avec la clé publique.
+en: Proof that a content really comes from its author and was not modified: its hash is computed, signed with the private key, and anyone can verify the signature with the public key.
++fr: Toute application Android est signée : le système refuse d'installer une mise à jour signée par une autre clé, ce qui empêche un tiers de se faire passer pour l'éditeur.
++en: Every Android app is signed: the system refuses to install an update signed by another key, which prevents a third party from impersonating the publisher.
+voir: cle-publique-privee, hash, certificat, keystore
+schema: secu-signature
+
+@ certificat
+cat: secu
+nom: Certificat
+nom-en: certificate
+alias: certificate, certificat tls, certificat ssl, x.509, autorité de certification, ca, certificate authority, let's encrypt, chaîne de certification
+fr: Document numérique qui associe une clé publique à une identité (un domaine, une entreprise) et qui est signé par une autorité de certification que le navigateur connaît. Il permet de vérifier qu'on parle bien au bon serveur.
+en: A digital document that ties a public key to an identity (a domain, a company) and is signed by a certificate authority that the browser knows. It lets you check that you are really talking to the right server.
++fr: Le navigateur remonte la chaîne : certificat du site, certificat intermédiaire, puis certificat racine présent dans sa liste de confiance. Let's Encrypt en délivre gratuitement, pour trois mois renouvelables.
++en: The browser follows the chain: the site's certificate, an intermediate certificate, then a root certificate present in its trust list. Let's Encrypt issues them for free, for renewable three months.
+voir: https, tls, cle-publique-privee, signature-numerique
+schema: secu-certificat
+
+@ token
+cat: secu
+nom: Token
+nom-fr: jeton
+alias: jeton, access token, bearer, jeton d'accès, api token, personal access token, pat, jeton, tokens, tokenisation, tokenization, lexeme, lexème
+sens: Jeton d'authentification | Authentication token
+fr: Chaîne de caractères qui prouve l'identité ou les droits de son porteur, remise par un serveur après une connexion réussie. Le client la joint ensuite à chaque requête, à la place du mot de passe.
+en: A string of characters that proves its holder's identity or rights, handed out by a server after a successful login. The client then attaches it to each request, in place of the password.
++fr: Un jeton d'accès expire vite (minutes ou heures) ; un jeton de rafraîchissement, gardé plus longtemps, sert à en obtenir un nouveau. Un « jeton d'accès personnel » (GitHub) remplace le mot de passe pour les outils en ligne de commande.
++en: An access token expires quickly (minutes or hours); a refresh token, kept longer, is used to get a new one. A “personal access token” (GitHub) replaces the password for command-line tools.
+ex: http
+| GET /api/profil HTTP/1.1
+| Host: api.exemple.org
+| Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+ex-fr: Une requête qui présente son jeton dans l'en-tête Authorization.
+ex-en: A request that presents its token in the Authorization header.
+attention-fr: Un jeton se traite comme un mot de passe : celui qui le possède agit en votre nom. Ne le mettez ni dans Git, ni dans une URL, ni dans un message.
+attention-en: A token is treated like a password: whoever holds it acts on your behalf. Do not put it in Git, in a URL or in a message.
+schema: secu-token
+sens: Token lexical | Lexical token
+fr: Plus petite unité qui a un sens dans un programme, produite quand un analyseur découpe le code source : un mot-clé, un nom, un nombre, un opérateur, un signe de ponctuation. C'est la première étape de la compilation.
+en: The smallest meaningful unit in a program, produced when a parser cuts up the source code: a keyword, a name, a number, an operator, a punctuation mark. It is the first step of compilation.
+ex: js
+| let prix = 42;
+ex-fr: Cinq tokens : let (mot-clé), prix (nom), = (opérateur), 42 (nombre) et ; (ponctuation).
+ex-en: Five tokens: let (keyword), prix (name), = (operator), 42 (number) and ; (punctuation).
+schema: langage-tokens
+sens: Token d'un modèle de langage | Language-model token
+fr: Morceau de texte (un mot entier, un fragment de mot, un signe) que les modèles d'IA lisent et produisent à la place des lettres. Leur nombre mesure la longueur d'un texte et le coût d'un appel : en français, un mot vaut environ 1,5 token.
+en: A piece of text (a whole word, a word fragment, a symbol) that AI models read and produce instead of letters. Their count measures a text's length and the cost of a call: in English, a word is about 1.3 tokens.
++fr: La fenêtre de contexte d'un modèle se compte en tokens, entrée et sortie ensemble. Le découpage varie d'un modèle à l'autre, et le code ou une langue rare coûtent plus de tokens que l'anglais courant.
++en: A model's context window is counted in tokens, input and output together. The splitting varies from one model to another, and code or a rare language costs more tokens than plain English.
+schema: ia-token
+voir: jwt, oauth, api-key, secret, context-window, parsing
+
+@ jwt
+cat: secu
+nom: JWT
+dev: JSON Web Token
+alias: json web token, jeton jwt, bearer token, header.payload.signature, jws
+fr: Jeton d'authentification au format standard, formé de trois parties encodées en Base64 et séparées par des points : un en-tête, une charge utile (l'identité et l'expiration) et une signature qui garantit qu'il n'a pas été modifié.
+en: An authentication token in a standard format, made of three Base64-encoded parts separated by dots: a header, a payload (the identity and the expiry) and a signature guaranteeing it was not altered.
++fr: Il est signé, pas chiffré : n'importe qui peut lire la charge utile en la décodant. On n'y met donc aucun secret, seulement l'identifiant de la personne et la date d'expiration.
++en: It is signed, not encrypted: anyone can read the payload by decoding it. So nothing secret goes in it, only the person's identifier and the expiry date.
+ex: js
+| const [entete, charge] = jeton.split('.');
+| JSON.parse(atob(charge))
+ex-fr: Décoder la charge utile d'un jeton (par exemple {"sub":"42"}) pour lire son contenu, sans en vérifier la signature.
+ex-en: Decode a token's payload (for example {"sub":"42"}) to read its content, without verifying the signature.
+voir: token, base64, signature-numerique, oauth
+schema: secu-jwt
+
+@ oauth
+cat: secu
+nom: OAuth
+alias: oauth 2, oauth2, openid connect, oidc, se connecter avec google, sign in with, autorisation déléguée, sso, single sign-on
+fr: Protocole d'autorisation déléguée : il permet à une application d'agir sur votre compte chez un service (lire vos dépôts GitHub, votre agenda) sans jamais connaître votre mot de passe, grâce à un jeton que vous lui accordez.
+en: A delegated-authorization protocol: it lets an application act on your account at a service (read your GitHub repositories, your calendar) without ever knowing your password, thanks to a token you grant it.
++fr: Les boutons « Se connecter avec Google » l'utilisent, souvent avec OpenID Connect, qui y ajoute l'identité de la personne. On vous présente les droits demandés (scopes) avant d'accepter.
++en: “Sign in with Google” buttons use it, often with OpenID Connect, which adds the person's identity. You are shown the permissions requested (scopes) before accepting.
+voir: token, authentification, jwt, api-key
+schema: secu-oauth
+
+@ api-key
+cat: secu
+nom: Clé d'API
+nom-en: API key
+alias: api key, apikey, clé api, cle api, clé d'accès, api secret, x-api-key
+fr: Chaîne secrète qui identifie une application (ou un développeur) auprès d'une API, pour la facturer, la limiter ou la bloquer. Elle se joint à chaque requête, en général dans un en-tête.
+en: A secret string that identifies an application (or a developer) to an API, to bill it, limit it or block it. It is attached to each request, usually in a header.
+attention-fr: Une clé placée dans du code exécuté chez l'utilisateur (page web, application mobile) est visible de tous : elle n'est pas secrète. Les clés vraiment privées restent sur un serveur.
+attention-en: A key placed in code that runs on the user's side (web page, mobile app) is visible to everyone: it is not secret. Truly private keys stay on a server.
+voir: secret, token, oauth, variable-denvironnement, rate-limit
+
+@ secret
+cat: secu
+nom: Secret
+alias: secrets, mot de passe, clé privée, fuite de secret, secret leak, gitleaks, gestionnaire de mots de passe, vault
+fr: Toute donnée qui donne un accès et doit rester confidentielle : mot de passe, clé d'API, jeton, clé privée, chaîne de connexion à une base. Elle ne doit jamais figurer dans le code source ni dans Git.
+en: Any data that grants access and must remain confidential: password, API key, token, private key, database connection string. It must never appear in the source code or in Git.
++fr: On la range dans une variable d'environnement, un fichier ignoré par Git ou un coffre dédié. Si un secret a été publié, il faut le révoquer et le remplacer : le supprimer du dépôt ne suffit pas, l'historique le garde.
++en: It is kept in an environment variable, a file ignored by Git or a dedicated vault. If a secret was published, it must be revoked and replaced: deleting it from the repository is not enough, the history keeps it.
+ex: bash
+| echo ".env" >> .gitignore
+| git rm --cached .env
+ex-fr: Faire ignorer le fichier .env par Git, puis le retirer de l'index s'il y avait déjà été ajouté.
+ex-en: Make Git ignore the .env file, then remove it from the index if it had already been added.
+voir: variable-denvironnement, gitignore, api-key, token, cle-publique-privee
+
+@ salage
+cat: secu
+nom: Salage
+nom-en: salt
+alias: salt, sel, bcrypt, argon2, scrypt, pbkdf2, hachage de mot de passe, password hashing, rainbow table
+fr: Donnée aléatoire ajoutée à un mot de passe avant de le hacher, propre à chaque utilisateur. Deux personnes ayant le même mot de passe obtiennent des hashes différents, ce qui rend inefficaces les tables de hashes précalculés.
+en: Random data added to a password before hashing it, unique to each user. Two people with the same password get different hashes, which defeats precomputed hash tables.
++fr: On ne stocke jamais un mot de passe : on stocke le résultat d'une fonction volontairement lente (bcrypt, scrypt, Argon2) qui inclut son sel. À la connexion, on refait le calcul et on compare.
++en: A password is never stored: what is stored is the result of a deliberately slow function (bcrypt, scrypt, Argon2) that includes its salt. At login, the computation is redone and compared.
+voir: hash, sha, authentification, secret
+
+@ 2fa
+cat: secu
+nom: 2FA
+dev: Two-Factor Authentication
+nom-fr: double authentification
+alias: two-factor authentication, double authentification, mfa, authentification à deux facteurs, totp, otp, code à usage unique, passkey
+fr: Vérification d'identité par deux preuves de nature différente : quelque chose que l'on sait (mot de passe) et quelque chose que l'on possède (téléphone, clé de sécurité) ou que l'on est (empreinte digitale). Un mot de passe volé ne suffit plus.
+en: Identity verification by two proofs of different kinds: something you know (password) and something you have (phone, security key) or are (fingerprint). A stolen password is no longer enough.
++fr: Le code à six chiffres d'une application d'authentification est un TOTP : il se calcule à partir d'un secret partagé et de l'heure, et change toutes les 30 secondes. Les clés d'accès (passkeys) le remplacent avec une clé privée propre à l'appareil.
++en: The six-digit code of an authenticator app is a TOTP: it is computed from a shared secret and the time, and changes every 30 seconds. Passkeys replace it with a private key specific to the device.
+voir: authentification, token, cle-publique-privee
+schema: secu-2fa
+
+@ authentification
+cat: secu
+nom: Authentification et autorisation
+nom-en: authentication and authorization
+alias: authentication, authorization, authn, authz, login, connexion, permissions, droits d'accès, rôle, role, rbac
+fr: L'authentification vérifie qui vous êtes (identifiant et mot de passe, jeton) ; l'autorisation vérifie ce que vous avez le droit de faire une fois identifié (lire, modifier, administrer). La première précède toujours la seconde.
+en: Authentication checks who you are (username and password, token); authorization checks what you are allowed to do once identified (read, modify, administer). The first always precedes the second.
+attention-fr: Les codes de statut HTTP suivent cette distinction : 401 veut dire « je ne sais pas qui vous êtes », 403 « je sais, mais vous n'avez pas le droit ».
+attention-en: HTTP status codes follow this distinction: 401 means “I don't know who you are”, 403 “I know, but you are not allowed”.
+voir: token, oauth, 2fa, session, moindre-privilege, code-de-statut
+
+@ session
+cat: secu
+nom: Session
+alias: session web, cookie de session, session id, sessionid, session utilisateur, connexion persistante, expiration de session
+fr: Période pendant laquelle un serveur reconnaît un visiteur d'une requête à l'autre, alors que HTTP n'a pas de mémoire. Après la connexion, le serveur remet un identifiant de session, en général dans un cookie, et le retrouve à chaque requête.
+en: A period during which a server recognizes a visitor from one request to the next, although HTTP has no memory. After login, the server hands out a session identifier, usually in a cookie, and finds it again on every request.
+voir: cookie, http, authentification, csrf
+schema: secu-session
+
+@ xss
+cat: secu
+nom: XSS
+dev: Cross-Site Scripting
+alias: cross-site scripting, injection de script, innerhtml, textcontent, assainissement, sanitize, échappement html
+fr: Faille par laquelle un attaquant fait exécuter son propre JavaScript dans la page d'un site, en y glissant du texte que le site affiche sans le neutraliser. Le script agit alors avec les droits de la victime : il peut voler un jeton ou modifier la page.
+en: A flaw by which an attacker gets their own JavaScript executed in a site's page, by slipping in text that the site displays without neutralizing it. The script then acts with the victim's rights: it can steal a token or modify the page.
++fr: Le remède est de traiter tout texte venu de l'extérieur comme du texte, jamais comme du code : textContent plutôt qu'innerHTML, échappement des caractères < et >, et une politique CSP restrictive.
++en: The remedy is to treat any outside text as text, never as code: textContent rather than innerHTML, escaping the < and > characters, and a restrictive CSP.
+ex: js
+| const commentaire = '<img src=x onerror="alert(1)">';
+| zone.innerHTML = commentaire;
+| zone.textContent = commentaire;
+ex-fr: La deuxième ligne exécute le script de l'attaquant ; la troisième affiche le même texte, inoffensif, tel quel.
+ex-en: The second line runs the attacker's script; the third displays the same text as-is, harmless.
+voir: csp, dom, csrf, injection-sql
+schema: secu-xss
+
+@ csrf
+cat: secu
+nom: CSRF
+dev: Cross-Site Request Forgery
+alias: cross-site request forgery, falsification de requête, xsrf, samesite, jeton csrf, csrf token
+fr: Attaque qui pousse le navigateur d'une personne connectée à un site à envoyer, à son insu, une requête vers ce site (virement, suppression), depuis une page piégée d'un autre site. Le navigateur y joint automatiquement le cookie de session.
+en: An attack that makes the browser of a person logged in to a site send, without their knowledge, a request to that site (transfer, deletion), from a booby-trapped page on another site. The browser automatically attaches the session cookie.
++fr: Parades : l'attribut de cookie SameSite, et un jeton propre à chaque formulaire que le site vérifie à la réception et qu'un site tiers ne peut pas deviner.
++en: Defenses: the SameSite cookie attribute, and a token unique to each form that the site checks on receipt and that a third-party site cannot guess.
+voir: cookie, session, xss, methode-http
+schema: secu-csrf
+
+@ injection-sql
+cat: secu
+nom: Injection SQL
+nom-en: SQL injection
+alias: sql injection, sqli, requête préparée, prepared statement, paramétrée, ' or 1=1, or 1=1
+fr: Faille où du texte saisi par l'utilisateur est collé dans une requête SQL et interprété comme du SQL : l'attaquant peut lire ou effacer toute la base. Elle disparaît quand on utilise des requêtes paramétrées.
+en: A flaw where text entered by a user is pasted into an SQL query and interpreted as SQL: the attacker can read or wipe the whole database. It disappears when parameterized queries are used.
+ex: js
+| db.query("SELECT * FROM users WHERE nom = '" + saisie + "'");
+| db.query('SELECT * FROM users WHERE nom = ?', [saisie]);
+ex-fr: La première ligne concatène la saisie (dangereux : « ' OR '1'='1 » renvoie tout le monde) ; la seconde la passe en paramètre, traitée comme une simple valeur.
+ex-en: The first line concatenates the input (dangerous: “' OR '1'='1” returns everybody); the second passes it as a parameter, handled as a mere value.
+voir: sql, xss, requete-sql, orm
+schema: secu-injection
+
+@ sandbox
+cat: secu
+nom: Sandbox
+nom-fr: bac à sable
+alias: bac à sable, isolation, iframe sandbox, conteneur isolé, environnement isolé
+fr: Environnement clos où un programme s'exécute avec des droits très limités : il ne peut ni lire vos fichiers, ni toucher au reste du système. Un navigateur enferme chaque onglet, et Android chaque application, dans une sandbox.
+en: A closed environment where a program runs with very limited rights: it can neither read your files nor touch the rest of the system. A browser confines each tab, and Android each app, in a sandbox.
+voir: moindre-privilege, permission-android, docker, navigateur
+schema: secu-sandbox
+
+@ moindre-privilege
+cat: secu
+nom: Moindre privilège
+nom-en: least privilege
+alias: least privilege, principe du moindre privilège, polp, permissions minimales, droits minimaux
+fr: Principe qui veut qu'une personne, un programme ou une clé n'ait que les droits strictement nécessaires à sa tâche. Si elle est compromise, les dégâts restent limités à ce périmètre.
+en: A principle stating that a person, program or key should only have the rights strictly needed for its task. If it is compromised, the damage stays limited to that scope.
++fr: Exemples : une application Android qui ne demande aucune permission, un jeton GitHub limité à un seul dépôt en lecture, un service qui tourne sous un compte sans droits d'administrateur.
++en: Examples: an Android app that asks for no permission, a GitHub token limited to a single repository in read-only mode, a service that runs under an account with no administrator rights.
+voir: sudo, permission-android, chmod, sandbox, authentification
+
+@ vulnerabilite
+cat: secu
+nom: Vulnérabilité
+nom-en: vulnerability
+alias: vulnerability, faille, faille de sécurité, cve, zero-day, 0-day, exploit, correctif de sécurité, security patch, cvss
+fr: Défaut dans un logiciel qu'un attaquant peut exploiter pour obtenir un accès ou des droits qu'il ne devrait pas avoir. Chaque faille connue reçoit un identifiant public de la forme CVE-2024-12345.
+en: A flaw in software that an attacker can exploit to gain access or rights they should not have. Each known flaw receives a public identifier of the form CVE-2024-12345.
++fr: Une faille « zero-day » est exploitée avant que l'éditeur ne publie un correctif. Garder ses dépendances à jour est la protection la plus efficace.
++en: A “zero-day” flaw is exploited before the vendor publishes a fix. Keeping dependencies up to date is the most effective protection.
+voir: dependance, npm, xss, injection-sql, ci-cd

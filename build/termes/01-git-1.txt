@@ -1,0 +1,433 @@
+# Git et GitHub — première moitié : les notions de base.
+# Format : voir l'en-tête de build/construire.mjs.
+
+@ git
+cat: git
+nom: Git
+alias: gestion de versions, version control, VCS, versionnement
+fr: Logiciel de gestion de versions décentralisé : il enregistre l'historique de tous les fichiers d'un projet et permet à plusieurs personnes d'y travailler en parallèle sans s'écraser.
+en: A distributed version control system: it records the full history of a project's files and lets several people work on them in parallel without overwriting each other.
++fr: Créé en 2005 par Linus Torvalds pour développer le noyau Linux. Chaque copie d'un projet contient tout son historique, on peut donc travailler sans réseau.
++en: Created in 2005 by Linus Torvalds to develop the Linux kernel. Every copy of a project holds its whole history, so you can work offline.
+ex: bash
+| git init
+| git status
+| git --version
+ex-fr: Créer un dépôt dans le dossier courant, voir l'état du projet, vérifier que Git est installé.
+ex-en: Create a repository in the current folder, see the project's state, check that Git is installed.
+attention-fr: Git est l'outil, installé sur votre ordinateur ; GitHub est un service en ligne qui héberge des dépôts Git.
+attention-en: Git is the tool, installed on your computer; GitHub is an online service that hosts Git repositories.
+voir: github, repository, commit, branch
+schema: git-zones
+
+@ github
+cat: git
+nom: GitHub
+alias: gitlab, bitbucket, forge logicielle
+fr: Plateforme en ligne qui héberge des dépôts Git et fournit des outils pour collaborer : pull requests, tickets (issues), automatisation (Actions) et sites statiques (Pages).
+en: An online platform that hosts Git repositories and provides collaboration tools: pull requests, issue tracking, automation (Actions) and static websites (Pages).
++fr: GitLab et Bitbucket jouent le même rôle. Un dépôt GitHub public est visible de tous ; son historique aussi, y compris les adresses e-mail des auteurs des commits.
++en: GitLab and Bitbucket play the same role. A public GitHub repository is visible to everyone, and so is its history, including the commit authors' email addresses.
+ex: bash
+| git remote add origin https://github.com/mon-compte/mon-projet.git
+| git push -u origin main
+ex-fr: Relier le dépôt local à un dépôt GitHub, puis y envoyer la branche main.
+ex-en: Link the local repository to a GitHub repository, then send the main branch there.
+attention-fr: GitHub n'est pas Git : on peut utiliser Git sans GitHub, et héberger ses dépôts ailleurs.
+attention-en: GitHub is not Git: you can use Git without GitHub, and host your repositories elsewhere.
+voir: git, remote, pull-request, fork, noreply
+schema: git-github
+
+@ repository
+cat: git
+nom: Repository
+nom-fr: dépôt
+alias: repo, dépôt, dépôt git, depot
+fr: Dossier d'un projet suivi par Git, avec tout son historique de modifications. Un dépôt local vit sur votre ordinateur ; un dépôt distant vit sur un serveur, par exemple GitHub.
+en: A project folder tracked by Git, together with its whole history of changes. A local repository lives on your computer; a remote repository lives on a server such as GitHub.
++fr: L'historique est rangé dans le dossier caché .git. Copier ce dossier, c'est copier tout le projet et son passé.
++en: The history is stored in the hidden .git folder. Copying that folder means copying the whole project and its past.
+ex: bash
+| git init mon-projet
+| cd mon-projet
+| ls -a
+ex-fr: Créer un dépôt dans un nouveau dossier, puis lister ses fichiers, cachés compris : on y voit .git.
+ex-en: Create a repository in a new folder, then list its files, hidden ones included: .git shows up.
+voir: git, dossier-git, clone, remote
+schema: git-remote
+
+@ dossier-git
+cat: git
+nom: .git
+alias: dossier git, git slash, git/, .git/, dossier .git
+fr: Dossier caché à la racine d'un projet, créé par git init : il contient tout l'historique, la configuration et l'état du dépôt. Sans lui, le dossier n'est plus un dépôt.
+en: A hidden folder at the root of a project, created by git init: it holds the whole history, the configuration and the state of the repository. Without it, the folder is no longer a repository.
++fr: On n'y touche jamais à la main. Les commits, les arbres et les blobs y sont rangés sous forme d'objets identifiés par leur empreinte, dans .git/objects.
++en: You never edit it by hand. Commits, trees and blobs are stored there as objects identified by their hash, in .git/objects.
+ex: bash
+| ls .git
+| cat .git/HEAD
+ex-fr: Lister le contenu du dossier, puis lire HEAD pour connaître la branche courante.
+ex-en: List the folder's contents, then read HEAD to see the current branch.
+attention-fr: Ne pas confondre .git (le dossier) avec .gitignore (le fichier qui liste ce que Git doit ignorer).
+attention-en: Not to be confused with .git (the folder) and .gitignore (the file listing what Git should ignore).
+voir: repository, gitignore, objet-git, hook
+schema: git-dossier-git
+
+@ clone
+cat: git
+nom: Clone
+alias: git clone, cloner
+fr: Copie complète d'un dépôt distant sur votre ordinateur : les fichiers, mais aussi tout l'historique. Git relie automatiquement la copie à son origine sous le nom origin.
+en: A full copy of a remote repository on your computer: the files, but also the entire history. Git automatically links the copy to its source under the name origin.
++fr: L'option --depth 1 ne récupère que le dernier état (clone superficiel), bien plus rapide sur un gros projet.
++en: The --depth 1 option only fetches the latest state (a shallow clone), much faster on a large project.
+ex: bash
+| git clone https://github.com/mon-compte/mon-projet.git
+| git clone --depth 1 https://github.com/mon-compte/mon-projet.git
+ex-fr: Cloner un dépôt entier, ou seulement son dernier état.
+ex-en: Clone a whole repository, or just its latest state.
+attention-fr: Un clone est indépendant de l'original : ce que vous y faites n'est pas envoyé tant que vous n'avez pas fait un push. Ce n'est pas un fork (copie sur GitHub).
+attention-en: A clone is independent of the original: nothing you do reaches it until you push. It is not a fork (a copy on GitHub).
+voir: repository, remote, origin, fork, fetch
+schema: git-clone
+
+@ clone-web
+cat: web
+nom: Clone web
+nom-fr: copie de site web
+nom-en: website mirror
+alias: web clone, site mirror, mirror, miroir, aspirer un site, wget --mirror, httrack, scraper
+fr: Copie locale d'un site web (pages HTML, feuilles de style, scripts, images) faite par un programme qui suit les liens et télécharge chaque fichier, pour le consulter hors ligne ou l'archiver.
+en: A local copy of a website (HTML pages, stylesheets, scripts, images) made by a program that follows links and downloads each file, to browse it offline or archive it.
++fr: Copier un site pour l'archiver ou l'étudier est courant ; le republier tel quel sous un autre nom ne l'est pas : les contenus restent protégés par le droit d'auteur.
++en: Copying a site to archive or study it is common; republishing it as-is under another name is not: the content remains protected by copyright.
+ex: bash
+| wget --mirror --convert-links --page-requisites --no-parent https://exemple.org/
+ex-fr: Miroir d'un site avec wget : les liens sont réécrits pour fonctionner hors ligne.
+ex-en: Mirror a site with wget: the links are rewritten so that they work offline.
+attention-fr: Un clone web n'est pas un clone Git : il copie ce qu'un navigateur peut voir, pas le code source ni l'historique du projet.
+attention-en: A web clone is not a Git clone: it copies what a browser can see, not the project's source code or history.
+voir: clone, scraping, html
+schema: web-clone
+
+@ commit
+cat: git
+nom: Commit
+alias: git commit, valider, enregistrer les modifications
+fr: Instantané enregistré de l'état du projet à un moment donné, avec un message, un auteur et une date. C'est l'unité de base de l'historique Git.
+en: A recorded snapshot of the project's state at a given moment, with a message, an author and a date. It is the basic unit of Git's history.
++fr: Chaque commit reçoit une empreinte unique (son hash) et pointe vers son parent : l'historique est une chaîne de commits. On le crée depuis l'index, avec git commit.
++en: Each commit gets a unique hash and points to its parent: the history is a chain of commits. It is created from the index, with git commit.
+ex: bash
+| git add index.html
+| git commit -m "Ajoute la page d'accueil"
+| git log --oneline
+ex-fr: Mettre un fichier en attente, l'enregistrer dans un commit, puis relire l'historique en une ligne par commit.
+ex-en: Stage a file, record it in a commit, then read the history at one line per commit.
+attention-fr: Un commit n'est pas un envoi : il reste sur votre ordinateur tant que vous ne faites pas git push.
+attention-en: A commit is not an upload: it stays on your computer until you run git push.
+voir: add, index-git, message-de-commit, amend, push, hash
+schema: git-commit
+
+@ message-de-commit
+cat: git
+nom: Message de commit
+nom-en: commit message
+alias: commit message, conventional commits, feat fix chore
+fr: Court texte qui décrit ce que change un commit et pourquoi. Une première ligne d'environ 50 signes, à l'impératif, résume ; une ligne vide puis un paragraphe peuvent détailler.
+en: A short text describing what a commit changes and why. A first line of about 50 characters, in the imperative mood, summarizes it; a blank line then a paragraph may add detail.
++fr: La convention « Conventional Commits » préfixe le message par un type : feat pour une fonctionnalité, fix pour une correction, docs, refactor, test, chore. Elle permet de générer automatiquement un journal des changements.
++en: The “Conventional Commits” convention prefixes the message with a type: feat for a feature, fix for a bug fix, docs, refactor, test, chore. It makes it possible to generate a changelog automatically.
+ex: bash
+| git commit -m "fix: corrige le calcul de la TVA" -m "L'arrondi se faisait avant la somme."
+ex-fr: Une première ligne courte, puis un second paragraphe avec le détail.
+ex-en: A short first line, then a second paragraph with the details.
+voir: commit, amend, log
+schema: git-commit
+
+@ index-git
+cat: git
+nom: Index (Git)
+nom-fr: zone d'attente
+nom-en: staging area
+alias: staging area, stage, staged, zone d'attente, zone de préparation, index git
+fr: Zone intermédiaire de Git où l'on prépare le prochain commit : on y met, avec git add, exactement les modifications que l'on veut enregistrer ensemble.
+en: An intermediate area in Git where the next commit is prepared: with git add you put in exactly the changes you want to record together.
++fr: Grâce à l'index, on peut modifier dix fichiers mais n'en valider que deux dans un premier commit, pour garder des commits cohérents.
++en: Thanks to the index, you can edit ten files but commit only two in a first commit, keeping commits coherent.
+ex: bash
+| git add src/app.js
+| git status
+| git restore --staged src/app.js
+ex-fr: Mettre un fichier dans l'index, vérifier, puis l'en retirer sans perdre la modification.
+ex-en: Put a file in the index, check, then take it out again without losing the change.
+attention-fr: Ne pas confondre avec l'index d'une base de données ni avec l'index d'un tableau.
+attention-en: Not to be confused with a database index or an array index.
+voir: add, commit, working-tree, status
+schema: git-zones
+
+@ working-tree
+cat: git
+nom: Working tree
+nom-fr: dossier de travail
+alias: arbre de travail, working directory, dossier de travail, répertoire de travail
+fr: Les fichiers réels du projet tels que vous les voyez et les modifiez dans votre éditeur : l'état sur le disque, avant qu'il soit mis dans l'index ou dans un commit.
+en: The project's real files as you see and edit them in your editor: the state on disk, before it is put in the index or in a commit.
+ex: bash
+| git status
+| git diff
+ex-fr: Voir quels fichiers du dossier de travail ont changé, puis lire les modifications ligne par ligne.
+ex-en: See which files in the working tree changed, then read the changes line by line.
+voir: index-git, commit, checkout, status
+schema: git-zones
+
+@ add
+cat: git
+nom: git add
+alias: add, stage, mettre en attente, ajouter à l'index
+fr: Commande qui place des modifications dans l'index pour qu'elles fassent partie du prochain commit. Elle ne modifie pas les fichiers eux-mêmes.
+en: A command that places changes in the index so they become part of the next commit. It does not modify the files themselves.
+ex: bash
+| git add index.html
+| git add src/
+| git add -p
+ex-fr: Ajouter un fichier, un dossier entier, ou choisir morceau par morceau (-p) ce qui doit entrer dans le commit.
+ex-en: Add one file, a whole folder, or pick piece by piece (-p) what goes into the commit.
+attention-fr: git add . ajoute tout ce qui a changé sous le dossier courant, y compris des fichiers que vous n'aviez pas l'intention de valider : relisez avec git status.
+attention-en: git add . adds everything that changed under the current folder, including files you did not mean to commit: review with git status.
+voir: index-git, commit, status, gitignore
+schema: git-zones
+
+@ status
+cat: git
+nom: git status
+alias: status, état du dépôt
+fr: Commande qui indique l'état du projet : la branche courante, les fichiers modifiés, ceux qui sont dans l'index, et ceux que Git ne suit pas encore.
+en: A command that shows the project's state: the current branch, modified files, files in the index, and files Git does not track yet.
+ex: bash
+| git status
+| git status --short
+ex-fr: L'état détaillé, puis une version compacte, une ligne par fichier.
+ex-en: The detailed state, then a compact version, one line per file.
+voir: add, diff, index-git, porcelain
+schema: git-zones
+
+@ branch
+cat: git
+nom: Branch
+nom-fr: branche
+alias: branche, git branch, branching
+fr: Ligne d'historique indépendante : un simple pointeur mobile vers un commit. Créer une branche permet de développer une idée sans toucher à la version principale.
+en: An independent line of history: simply a movable pointer to a commit. Creating a branch lets you develop an idea without touching the main version.
++fr: Une branche ne copie aucun fichier, elle est donc quasi instantanée et très bon marché. Quand le travail est fini, on la fusionne dans la branche principale.
++en: A branch copies no files, so it is nearly instant and very cheap. When the work is done, it is merged into the main branch.
+ex: bash
+| git branch ma-fonction
+| git switch ma-fonction
+| git switch -c autre-idee
+ex-fr: Créer une branche, s'y placer, ou faire les deux d'un coup avec -c.
+ex-en: Create a branch, move onto it, or do both at once with -c.
+voir: main, merge, rebase, head, checkout
+schema: git-branche
+
+@ main
+cat: git
+nom: main
+alias: master, branche principale, main branch, trunk, fonction main, point d'entrée
+sens: Branche Git | Git branch
+fr: Nom de la branche principale d'un dépôt Git depuis 2020 : celle qui contient la version de référence du projet, vers laquelle on fusionne le travail terminé.
+en: The name of a Git repository's default branch since 2020: the one holding the project's reference version, into which finished work is merged.
++fr: Elle s'appelait master auparavant. Le nom n'a rien de magique : on peut le choisir avec git init -b et le changer avec git branch -m.
++en: It used to be called master. The name is not magic: you can choose it with git init -b and change it with git branch -m.
+ex: bash
+| git init -b main
+| git branch -m master main
+ex-fr: Créer un dépôt dont la branche s'appelle main, ou renommer une branche master existante.
+ex-en: Create a repository whose branch is called main, or rename an existing master branch.
+schema: git-main
+sens: Fonction main | Entry-point function
+fr: Fonction par laquelle un programme démarre dans de nombreux langages (C, Java, Python, Rust…) : le système d'exploitation l'appelle, et c'est elle qui appelle le reste du code.
+en: The function where a program starts in many languages (C, Java, Python, Rust…): the operating system calls it, and it calls the rest of the code.
+ex: c
+| #include <stdio.h>
+|
+| int main(void) {
+|     printf("Bonjour\n");
+|     return 0;
+| }
+ex-fr: Un programme C minimal : le système appelle main, dont la valeur de retour (0) signale que tout s'est bien passé.
+ex-en: A minimal C program: the system calls main, whose return value (0) signals that everything went well.
+schema: main-fonction
+voir: branch, merge, head
+
+@ head
+cat: git
+nom: HEAD
+alias: git head, head~1, tête, pointeur courant
+fr: Pointeur spécial de Git qui désigne l'endroit où vous vous trouvez : en général la branche courante, donc son dernier commit. Le prochain commit aura HEAD pour parent.
+en: A special Git pointer that tells where you are: usually the current branch, and so its latest commit. The next commit will have HEAD as its parent.
++fr: HEAD~1 désigne le parent de HEAD, HEAD~2 son grand-parent. C'est la façon usuelle de dire « avant-dernier commit ».
++en: HEAD~1 designates the parent of HEAD, HEAD~2 its grandparent. It is the usual way to say “the commit before the last”.
+ex: bash
+| git show HEAD
+| git diff HEAD~1
+| git reset --soft HEAD~1
+ex-fr: Voir le dernier commit, comparer avec l'avant-dernier, défaire le dernier commit en gardant ses modifications.
+ex-en: Show the last commit, compare with the one before, undo the last commit while keeping its changes.
+voir: branch, detached-head, reset, checkout
+schema: git-head
+
+@ detached-head
+cat: git
+nom: Detached HEAD
+nom-fr: HEAD détaché
+alias: head détaché, detached, tête détachée
+fr: État où HEAD pointe directement sur un commit au lieu d'une branche, par exemple après avoir extrait un ancien commit ou un tag. Les nouveaux commits n'appartiennent alors à aucune branche.
+en: A state where HEAD points straight at a commit instead of a branch, for instance after checking out an old commit or a tag. New commits then belong to no branch.
++fr: Si l'on repart sur une branche sans avoir créé d'étiquette, ces commits deviennent inaccessibles (et seront un jour nettoyés). Pour les garder : git switch -c nouvelle-branche.
++en: If you go back to a branch without creating a label, those commits become unreachable (and will eventually be cleaned up). To keep them: git switch -c new-branch.
+ex: bash
+| git checkout 3f2a9c1
+| git switch -c sauvetage
+ex-fr: Se placer sur un ancien commit (HEAD détaché), puis créer une branche pour ne pas perdre le travail fait à cet endroit.
+ex-en: Move onto an old commit (detached HEAD), then create a branch so the work done there is not lost.
+voir: head, checkout, branch, reflog
+schema: git-detached-head
+
+@ checkout
+cat: git
+nom: checkout
+nom-fr: extraire, changer de branche
+alias: git checkout, switch, git switch, restore, git restore
+fr: Commande qui change d'endroit dans l'historique : se placer sur une branche ou un commit, et mettre le dossier de travail en conformité. Depuis 2019, switch (branches) et restore (fichiers) la remplacent de façon plus claire.
+en: A command that moves you around in the history: getting onto a branch or a commit and updating the working tree to match. Since 2019, switch (branches) and restore (files) replace it more clearly.
+ex: bash
+| git switch main
+| git restore index.html
+| git checkout -b ancienne-syntaxe
+ex-fr: Changer de branche, annuler les modifications d'un fichier, ou créer une branche et s'y placer (ancienne écriture).
+ex-en: Change branch, discard a file's changes, or create a branch and move onto it (old syntax).
+attention-fr: git restore et git checkout -- fichier écrasent vos modifications non validées, sans retour possible.
+attention-en: git restore and git checkout -- file overwrite your uncommitted changes, with no way back.
+voir: branch, head, detached-head, working-tree, reset
+
+@ merge
+cat: git
+nom: Merge
+nom-fr: fusion
+alias: git merge, fusionner, fusion
+fr: Opération qui réunit les modifications d'une branche dans une autre. Si les deux ont évolué, Git crée un commit de fusion à deux parents.
+en: An operation that brings one branch's changes into another. If both have moved on, Git creates a merge commit with two parents.
+ex: bash
+| git switch main
+| git merge ma-fonction
+ex-fr: Se placer sur main, puis y fusionner la branche ma-fonction.
+ex-en: Move onto main, then merge the ma-fonction branch into it.
+attention-fr: La fusion conserve l'historique tel qu'il s'est passé ; rebase le réécrit pour le rendre linéaire.
+attention-en: A merge keeps the history as it happened; rebase rewrites it to make it linear.
+voir: branch, fast-forward, merge-conflict, rebase, pull-request
+schema: git-merge
+
+@ fast-forward
+cat: git
+nom: Fast-forward
+alias: ff, avance rapide, --ff-only, fast forward
+fr: Fusion sans nouveau commit : quand la branche visée n'a pas avancé, Git déplace simplement son pointeur jusqu'au bout de l'autre branche.
+en: A merge without a new commit: when the target branch has not moved, Git simply slides its pointer up to the tip of the other branch.
+ex: bash
+| git merge --ff-only ma-fonction
+| git merge --no-ff ma-fonction
+ex-fr: Exiger une fusion en avance rapide (elle échoue sinon), ou forcer un commit de fusion même quand ce ne serait pas nécessaire.
+ex-en: Require a fast-forward merge (it fails otherwise), or force a merge commit even when it would not be needed.
+voir: merge, branch, pull
+schema: git-fast-forward
+
+@ merge-conflict
+cat: git
+nom: Merge conflict
+nom-fr: conflit de fusion
+alias: conflit, conflict, conflit git, <<<<<<<, =======, >>>>>>>
+fr: Situation où deux branches ont modifié la même partie d'un fichier : Git ne peut pas choisir seul. Il marque le passage litigieux dans le fichier et attend que vous tranchiez.
+en: A situation where two branches changed the same part of a file: Git cannot choose on its own. It marks the disputed spot in the file and waits for you to decide.
++fr: Les marqueurs <<<<<<<, ======= et >>>>>>> encadrent les deux versions. On garde l'une, l'autre ou un mélange, on supprime les marqueurs, puis on fait git add et git commit.
++en: The markers <<<<<<<, ======= and >>>>>>> surround the two versions. You keep one, the other or a mix, delete the markers, then run git add and git commit.
+ex: text
+| <<<<<<< HEAD
+| titre = "Bienvenue"
+| =======
+| titre = "Accueil"
+| >>>>>>> ma-fonction
+ex-fr: Un conflit dans un fichier : la version de la branche courante (HEAD), puis celle de la branche fusionnée.
+ex-en: A conflict in a file: the current branch's version (HEAD), then the merged branch's.
+voir: merge, rebase, diff
+schema: git-conflit
+
+@ rebase
+cat: git
+nom: Rebase
+alias: git rebase, rebaser, rejouer les commits
+fr: Opération qui rejoue les commits d'une branche à la suite d'une autre, comme s'ils avaient été écrits après elle. Elle rend l'historique linéaire, mais crée de nouveaux commits.
+en: An operation that replays a branch's commits on top of another, as if they had been written after it. It makes the history linear, but creates new commits.
++fr: Les anciens commits sont abandonnés et remplacés par des copies aux empreintes différentes. Règle d'or : ne jamais rebaser des commits déjà partagés avec d'autres.
++en: The old commits are abandoned and replaced by copies with different hashes. Golden rule: never rebase commits already shared with others.
+ex: bash
+| git switch ma-fonction
+| git rebase main
+| git rebase -i HEAD~3
+ex-fr: Rejouer ma-fonction sur la dernière version de main, ou réorganiser interactivement (-i) les trois derniers commits.
+ex-en: Replay ma-fonction on the latest version of main, or interactively (-i) reorganize the last three commits.
+voir: merge, squash, cherry-pick, amend, force-push
+schema: git-rebase
+
+@ cherry-pick
+cat: git
+nom: Cherry-pick
+alias: git cherry-pick, cueillir, picorer
+fr: Commande qui copie un seul commit d'une branche sur la branche courante, sans fusionner le reste. Le résultat est un nouveau commit, avec une autre empreinte.
+en: A command that copies a single commit from one branch onto the current branch, without merging the rest. The result is a new commit, with a different hash.
+ex: bash
+| git cherry-pick 3f2a9c1
+ex-fr: Reprendre sur la branche courante uniquement le commit 3f2a9c1.
+ex-en: Take only commit 3f2a9c1 onto the current branch.
+voir: merge, rebase, commit, hash
+schema: git-cherry-pick
+
+@ amend
+cat: git
+nom: Amend
+nom-fr: amender
+alias: git commit --amend, amende, amander, amendement, corriger le dernier commit
+fr: Option de git commit qui remplace le dernier commit au lieu d'en ajouter un : on corrige son message ou on y ajoute un oubli. Le commit obtenu a une nouvelle empreinte.
+en: An option of git commit that replaces the last commit instead of adding one: you fix its message or add something you forgot. The resulting commit has a new hash.
++fr: Réécrire un commit déjà envoyé oblige à forcer le push et perturbe ceux qui l'ont récupéré : à réserver aux commits encore locaux.
++en: Rewriting a commit that was already pushed forces a force push and disturbs anyone who fetched it: keep it for commits that are still local.
+ex: bash
+| git commit --amend -m "Nouveau message"
+| git add oubli.txt
+| git commit --amend --no-edit
+ex-fr: Changer le message du dernier commit, ou y glisser un fichier oublié en gardant son message.
+ex-en: Change the last commit's message, or slip a forgotten file into it while keeping its message.
+attention-fr: Amend ne modifie pas le commit : il en crée un nouveau à sa place, l'ancien devient orphelin.
+attention-en: Amend does not edit the commit: it creates a new one in its place, and the old one becomes orphaned.
+voir: commit, rebase, force-push, reflog
+schema: git-amend
+
+@ stash
+cat: git
+nom: Stash
+nom-fr: remisage, mettre de côté
+alias: git stash, remiser, planquer, stash pop
+fr: Mise de côté temporaire de vos modifications non validées : Git les range dans une pile et remet le dossier de travail à l'état du dernier commit, pour que vous puissiez changer de branche proprement.
+en: A temporary shelf for your uncommitted changes: Git stores them in a stack and resets the working tree to the last commit, so you can switch branches cleanly.
+ex: bash
+| git stash
+| git switch autre-branche
+| git switch -
+| git stash pop
+ex-fr: Mettre son travail de côté, aller voir une autre branche, revenir, puis récupérer ses modifications.
+ex-en: Set your work aside, go and look at another branch, come back, then get your changes back.
+attention-fr: git stash pop retire l'entrée de la pile ; git stash apply la garde. Par défaut, les fichiers non suivis ne sont pas remisés (option -u).
+attention-en: git stash pop removes the entry from the stack; git stash apply keeps it. By default, untracked files are not stashed (use -u).
+voir: working-tree, checkout, branch
+schema: git-stash

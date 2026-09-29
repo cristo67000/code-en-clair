@@ -1,0 +1,557 @@
+# Données et encodage.
+
+@ bit
+cat: data
+nom: Bit
+dev: binary digit
+alias: binary digit, chiffre binaire, 0 et 1, bits, b, kbit
+fr: Plus petite unité d'information d'un ordinateur : un chiffre qui vaut 0 ou 1. Huit bits forment un octet ; les débits réseau se mesurent en bits par seconde.
+en: The smallest unit of information in a computer: a digit that is either 0 or 1. Eight bits make a byte; network speeds are measured in bits per second.
++fr: Avec n bits, on représente 2 puissance n valeurs : 8 bits donnent 256 valeurs, 16 bits 65 536, 32 bits environ 4,3 milliards.
++en: With n bits, you can represent 2 to the power n values: 8 bits give 256 values, 16 bits 65,536, 32 bits about 4.3 billion.
+attention-fr: Bit (b minuscule) et octet (B majuscule) : 100 Mb/s (mégabits) font environ 12 Mo/s (mégaoctets) au mieux.
+attention-en: Bit (lowercase b) and byte (uppercase B): 100 Mb/s (megabits) is about 12 MB/s (megabytes) at best.
+voir: byte, binaire, hexadecimal, bande-passante
+schema: data-octet
+
+@ byte
+cat: data
+nom: Byte
+nom-fr: octet
+alias: octet, o, o., bytes, octets, ko, mo, go, kb, mb, gb, kib, mib
+fr: Unité d'information de 8 bits, qui peut prendre 256 valeurs différentes (de 0 à 255). C'est l'unité de base pour mesurer une taille de fichier ou de mémoire : un caractère ASCII tient dans un octet.
+en: A unit of information of 8 bits, which can take 256 different values (from 0 to 255). It is the base unit for measuring a file or memory size: one ASCII character fits in a byte.
++fr: En français, l'octet s'écrit « o » (Ko, Mo, Go) ; en anglais, le byte s'écrit « B » (KB, MB, GB). Un octet se note souvent en hexadécimal, sur deux chiffres : 00 à FF.
++en: In English, the byte is written “B” (KB, MB, GB); in French it is “o” (octet). A byte is often written in hexadecimal, on two digits: 00 to FF.
+ex: js
+| const octets = new Uint8Array([72, 105, 33]);
+| console.log(octets.length, octets[0]);
+| console.log(new TextDecoder().decode(octets));
+ex-fr: Un tableau de trois octets : sa longueur, son premier octet (72), puis leur lecture comme texte (« Hi! »).
+ex-en: An array of three bytes: its length, its first byte (72), then reading them as text (“Hi!”).
+voir: bit, unites-octets, ascii, buffer, blob
+schema: data-octet
+
+@ unites-octets
+cat: data
+nom: Ko, Mo, Kio, Mio
+nom-en: KB, MB, KiB, MiB
+alias: kilo-octet, méga-octet, kibioctet, mébioctet, 1024, 1000, kio, mio, gio, kilobyte, kibibyte
+fr: Deux familles de multiples de l'octet : les unités décimales (1 Ko = 1 000 octets, 1 Mo = 1 000 Ko) et les unités binaires, notées avec un « i » (1 Kio = 1 024 octets, 1 Mio = 1 024 Kio). Windows affiche souvent des Kio en écrivant « Ko ».
+en: Two families of byte multiples: decimal units (1 KB = 1,000 bytes, 1 MB = 1,000 KB) and binary units, written with an “i” (1 KiB = 1,024 bytes, 1 MiB = 1,024 KiB). Windows often shows KiB while writing “KB”.
++fr: 1 024 est 2 puissance 10 : les mémoires s'organisent naturellement en puissances de deux, d'où l'habitude ancienne de prendre « kilo » pour 1 024. Cet écart grandit : un « Go » décimal fait 7 % de moins qu'un Gio.
++en: 1,024 is 2 to the power 10: memories are naturally organized in powers of two, hence the old habit of taking “kilo” to mean 1,024. The gap grows: a decimal “GB” is 7% smaller than a GiB.
+voir: byte, bit, bande-passante
+schema: data-unites
+
+@ chunk
+cat: data
+nom: Chunk
+nom-fr: morceau, tronçon
+alias: chunks, bloc de données, morceau de données, découpage, chunked, transfer-encoding chunked, fragment
+fr: Morceau d'un ensemble de données plus grand, traité ou transmis à part. On découpe un gros fichier en chunks pour le lire sans saturer la mémoire, l'envoyer par étapes ou en reprendre le transfert après une coupure.
+en: A piece of a larger set of data, processed or transmitted separately. A big file is cut into chunks to read it without exhausting memory, send it in stages or resume its transfer after a break.
++fr: En web, un fichier JavaScript volumineux est aussi découpé en chunks que le navigateur charge au besoin ; et le codage HTTP « chunked » envoie une réponse morceau par morceau sans en connaître la taille totale.
++en: On the web, a large JavaScript bundle is also split into chunks that the browser loads on demand; and the HTTP “chunked” encoding sends a response piece by piece without knowing its total size.
+ex: js
+| const flux = (await fetch('/gros.bin')).body.getReader();
+| let total = 0;
+| while (true) {
+|   const { done, value } = await flux.read();
+|   if (done) break;
+|   total += value.length;
+| }
+ex-fr: Lire une réponse par morceaux successifs (value) et cumuler leur taille, sans jamais tout garder en mémoire.
+ex-en: Read a response in successive chunks (value) and add up their sizes, never holding everything in memory.
+attention-fr: Un chunk n'a pas de taille fixe par nature : elle dépend de l'outil ou du choix du programmeur.
+attention-en: A chunk has no inherently fixed size: it depends on the tool or the programmer's choice.
+voir: stream, buffer, paquet, bundler
+schema: data-chunk
+
+@ buffer
+cat: data
+nom: Buffer
+nom-fr: tampon
+alias: tampon, mémoire tampon, arraybuffer, buffering, uint8array
+fr: Zone de mémoire qui met des données en attente, le temps qu'elles soient utilisées. Un tampon absorbe la différence de vitesse entre celui qui produit les données et celui qui les consomme.
+en: An area of memory that holds data waiting to be used. A buffer absorbs the speed difference between whoever produces the data and whoever consumes it.
+ex: js
+| const tampon = new ArrayBuffer(8);
+| const vue = new DataView(tampon);
+| vue.setUint16(0, 0xC3A9);
+ex-fr: Réserver 8 octets, puis écrire deux octets (C3 A9) au début, par une vue qui interprète le tampon.
+ex-en: Reserve 8 bytes, then write two bytes (C3 A9) at the start, through a view that interprets the buffer.
+voir: stream, chunk, byte, blob
+schema: data-buffer
+
+@ stream
+cat: data
+nom: Stream
+nom-fr: flux
+alias: flux de données, readablestream, streaming, stream de données, pipe stream, flux
+fr: Suite de données qui arrive ou repart petit à petit, sans qu'on ait à tout charger d'un coup : lecture d'un gros fichier, vidéo en direct, réponse réseau. On traite chaque morceau (chunk) au fur et à mesure.
+en: A sequence of data that arrives or leaves bit by bit, without having to load everything at once: reading a large file, live video, a network response. Each piece (chunk) is processed as it goes.
+voir: chunk, buffer, flux-standard, fetch
+schema: data-stream
+
+@ blob
+cat: data
+nom: Blob
+dev: Binary Large Object
+alias: binary large object, objet binaire, git blob, new Blob, createObjectURL, file, objet blob, bytea
+sens: Objet Git | Git object
+fr: Objet Git qui contient le contenu brut d'un fichier, sans son nom ni ses droits, et est identifié par l'empreinte de ce contenu. Deux fichiers identiques, même à des endroits différents, partagent le même blob.
+en: A Git object that holds a file's raw content, without its name or permissions, identified by the hash of that content. Two identical files, even in different places, share the same blob.
++fr: Le nom du fichier est porté par l'arbre (tree) qui pointe vers le blob. L'empreinte est calculée sur l'en-tête « blob taille » suivi du contenu.
++en: The file name is carried by the tree that points to the blob. The hash is computed over the header “blob size” followed by the content.
+ex: bash
+| echo "hello" | git hash-object --stdin
+| git cat-file -p ce013625030ba8dba906f756967f9e9ca394464a
+ex-fr: Calculer l'empreinte du blob « hello » (ce01362…), puis relire son contenu à partir de cette empreinte.
+ex-en: Compute the blob hash of “hello” (ce01362…), then read its content back from that hash.
+schema: git-objets
+sens: Objet web (JavaScript) | Web object (JavaScript)
+fr: Objet du navigateur qui représente une masse de données brutes, comme un fichier, avec un type MIME et une taille. On l'utilise pour manipuler des images ou des fichiers, les télécharger, ou les afficher via une adresse temporaire.
+en: A browser object that represents a mass of raw data, like a file, with a MIME type and a size. It is used to handle images or files, download them, or display them through a temporary address.
+ex: js
+| const blob = new Blob(['{"a":1}'], { type: 'application/json' });
+| const lien = document.createElement('a');
+| lien.href = URL.createObjectURL(blob);
+| lien.download = 'donnees.json';
+| lien.click();
+ex-fr: Fabriquer un fichier JSON en mémoire et le faire télécharger, sans passer par un serveur.
+ex-en: Build a JSON file in memory and have it downloaded, without going through a server.
+schema: data-blob
+sens: Type de base de données | Database type
+fr: Type de colonne qui stocke des données binaires brutes (image, document, son) dans une base de données, sans en interpréter le contenu. On le préfère souvent au stockage du fichier ailleurs quand la taille est modeste.
+en: A column type that stores raw binary data (image, document, sound) in a database, without interpreting its content. It is often chosen over storing the file elsewhere when the size is modest.
+ex: sql
+| CREATE TABLE photos (
+|   id INTEGER PRIMARY KEY,
+|   nom TEXT,
+|   contenu BLOB
+| );
+ex-fr: Une table de photos dont la colonne contenu garde les octets de l'image.
+ex-en: A photos table whose contenu column keeps the image's bytes.
+voir: objet-git, byte, mime, indexeddb
+
+@ ascii
+cat: data
+nom: ASCII
+dev: American Standard Code for Information Interchange
+alias: american standard code, table ascii, code ascii, caractère de contrôle
+fr: Table historique de 128 caractères (lettres sans accents, chiffres, ponctuation, caractères de contrôle) numérotés de 0 à 127. « A » vaut 65, « a » 97, « 0 » 48. Elle est incluse telle quelle dans UTF-8.
+en: A historic table of 128 characters (unaccented letters, digits, punctuation, control characters) numbered from 0 to 127. “A” is 65, “a” is 97, “0” is 48. It is included unchanged in UTF-8.
+ex: js
+| 'A'.charCodeAt(0)
+| String.fromCharCode(97)
+ex-fr: Le code de « A » (65), puis le caractère de code 97 (« a »).
+ex-en: The code of “A” (65), then the character with code 97 (“a”).
+voir: unicode, utf-8, byte, encodage
+schema: data-ascii
+
+@ unicode
+cat: data
+nom: Unicode
+alias: code point, point de code, u+00e9, caractère unicode, emoji, plan unicode
+fr: Standard qui attribue un numéro unique, un point de code (U+0041 pour « A », U+00E9 pour « é »), à chaque caractère de toutes les écritures du monde et aux emoji. Il définit les caractères, pas la façon de les écrire en octets.
+en: A standard that assigns a unique number, a code point (U+0041 for “A”, U+00E9 for “é”), to every character of all the world's writing systems and to emoji. It defines the characters, not how to write them as bytes.
++fr: Passer de la suite de points de code à des octets, c'est le rôle d'un encodage comme UTF-8. Un « caractère » perçu peut d'ailleurs en comprendre plusieurs (une lettre et son accent séparé, ou un emoji composé).
++en: Turning the sequence of code points into bytes is the job of an encoding such as UTF-8. A perceived “character” may in fact consist of several (a letter and its separate accent, or a composed emoji).
+ex: js
+| '{BS}u00e9'
+| 'é'.codePointAt(0).toString(16)
+| 'é'.normalize('NFD').length
+ex-fr: Écrire é par son point de code ; lire ce code en hexadécimal (e9) ; constater que la forme décomposée (e + accent) compte 2 unités.
+ex-en: Write é by its code point; read that code in hexadecimal (e9); see that the decomposed form (e + accent) has 2 units.
+attention-fr: Unicode n'est pas un encodage : UTF-8, UTF-16 et UTF-32 sont trois façons différentes d'écrire les mêmes points de code.
+attention-en: Unicode is not an encoding: UTF-8, UTF-16 and UTF-32 are three different ways of writing the same code points.
+voir: utf-8, ascii, encodage, echappement
+schema: data-utf8
+
+@ utf-8
+cat: data
+nom: UTF-8
+dev: Unicode Transformation Format, 8 bits
+alias: utf8, utf-16, utf-32, encodage utf-8, charset=utf-8, mojibake, charset
+fr: Encodage d'Unicode le plus répandu sur le web : chaque caractère s'écrit sur 1 à 4 octets. Les caractères ASCII n'en prennent qu'un, les lettres accentuées deux, les emoji quatre.
+en: The most widespread Unicode encoding on the web: each character is written on 1 to 4 bytes. ASCII characters take just one, accented letters two, emoji four.
++fr: Il est compatible avec l'ASCII et ne dépend pas de l'ordre des octets de la machine. Lire du UTF-8 comme du Latin-1 produit du « mojibake » : « é » s'affiche « Ã© ».
++en: It is compatible with ASCII and does not depend on the machine's byte order. Reading UTF-8 as Latin-1 produces “mojibake”: “é” shows up as “Ã©”.
+ex: js
+| new TextEncoder().encode('é')
+| new TextEncoder().encode('€')
+ex-fr: « é » donne deux octets (C3 A9), « € » trois (E2 82 AC).
+ex-en: “é” gives two bytes (C3 A9), “€” three (E2 82 AC).
+voir: unicode, ascii, encodage, byte
+schema: data-utf8
+
+@ encodage
+cat: data
+nom: Encodage
+nom-en: encoding
+alias: encoding, charset, jeu de caractères, character encoding, latin-1, iso-8859-1, windows-1252, encoder, décoder
+fr: Convention qui fait correspondre des caractères à des suites d'octets, pour les enregistrer ou les transmettre. Pour relire un texte correctement, il faut connaître l'encodage avec lequel il a été écrit.
+en: A convention that maps characters to sequences of bytes, to store or transmit them. To read a text back correctly, you must know the encoding it was written with.
++fr: Sur le web, on déclare UTF-8 (<meta charset="utf-8">). Le mot « encodage » désigne aussi, plus largement, toute transformation réversible des données (Base64, encodage en pourcentage d'une URL).
++en: On the web, UTF-8 is declared (<meta charset="utf-8">). The word “encoding” also refers, more broadly, to any reversible transformation of data (Base64, percent-encoding of a URL).
+attention-fr: Encoder n'est ni chiffrer ni hacher : un encodage se défait sans clé, il n'apporte aucune protection.
+attention-en: Encoding is neither encrypting nor hashing: an encoding can be undone without a key, it provides no protection.
+voir: utf-8, ascii, base64, chiffrement, hash
+
+@ base64
+cat: data
+nom: Base64
+alias: btoa, atob, data uri, data:image, encodage base64, base 64
+fr: Encodage qui transforme des octets quelconques en texte composé de 64 caractères sûrs (A-Z, a-z, 0-9, + et /), avec « = » pour compléter. Trois octets deviennent quatre caractères : les données grossissent d'un tiers.
+en: An encoding that turns arbitrary bytes into text made of 64 safe characters (A-Z, a-z, 0-9, + and /), with “=” as padding. Three bytes become four characters: the data grows by a third.
++fr: Il sert à faire passer du binaire (image, clé, certificat) là où seul du texte est permis : e-mail, JSON, URL de données (data:image/png;base64,…).
++en: It is used to carry binary (image, key, certificate) where only text is allowed: email, JSON, data URLs (data:image/png;base64,…).
+ex: js
+| btoa('Bonjour')
+| atob('Qm9uam91cg==')
+ex-fr: Encoder « Bonjour » (Qm9uam91cg==), puis décoder le résultat.
+ex-en: Encode “Bonjour” (Qm9uam91cg==), then decode the result.
+attention-fr: Base64 n'est pas du chiffrement : n'importe qui le décode en une ligne. Ne jamais y « cacher » un mot de passe.
+attention-en: Base64 is not encryption: anyone can decode it in one line. Never “hide” a password in it.
+voir: encodage, byte, mime, jwt
+schema: data-base64
+
+@ hexadecimal
+cat: data
+nom: Hexadécimal
+nom-en: hexadecimal
+alias: hex, base 16, 0x, #ff0000, hexa, notation hexadécimale
+fr: Système de numération en base 16 : il utilise les chiffres 0 à 9 et les lettres A à F (10 à 15). Un octet s'écrit sur exactement deux chiffres hexadécimaux, ce qui en fait la notation courante des octets, des empreintes et des couleurs.
+en: A base-16 numeral system: it uses the digits 0 to 9 and the letters A to F (10 to 15). A byte is written on exactly two hexadecimal digits, which makes it the usual notation for bytes, hashes and colors.
+ex: js
+| 255..toString(16)
+| parseInt('ff', 16)
+| 0xFF
+ex-fr: 255 s'écrit ff en hexadécimal ; on relit ff comme 255 ; le préfixe 0x marque un nombre hexadécimal littéral.
+ex-en: 255 is written ff in hexadecimal; ff reads back as 255; the 0x prefix marks a hexadecimal literal.
+voir: binaire, byte, hex-couleur, hash
+schema: data-hexa
+
+@ binaire
+cat: data
+nom: Binaire
+nom-en: binary
+alias: base 2, système binaire, 0b, fichier binaire, binary file, notation binaire
+fr: Système de numération en base 2, n'utilisant que 0 et 1 : la langue des ordinateurs. Un fichier « binaire » est un fichier qui n'est pas du texte lisible (image, programme, archive), par opposition à un fichier texte.
+en: A base-2 numeral system using only 0 and 1: the language of computers. A “binary” file is one that is not readable text (image, program, archive), as opposed to a text file.
+ex: js
+| (65).toString(2)
+| parseInt('01000001', 2)
+| 0b1000001
+ex-fr: 65 s'écrit 1000001 en binaire (soit 01000001 sur un octet) ; le préfixe 0b marque un littéral binaire.
+ex-en: 65 is written 1000001 in binary (01000001 on a byte); the 0b prefix marks a binary literal.
+voir: bit, hexadecimal, byte
+schema: data-octet
+
+@ endianness
+cat: data
+nom: Endianness
+nom-fr: boutisme
+alias: big-endian, little-endian, boutisme, ordre des octets, byte order, network byte order
+fr: Ordre dans lequel les octets d'un nombre sont rangés en mémoire ou dans un fichier. En gros-boutiste (big-endian), l'octet de poids fort vient en premier ; en petit-boutiste (little-endian), c'est l'octet de poids faible.
+en: The order in which a number's bytes are laid out in memory or in a file. In big-endian, the most significant byte comes first; in little-endian, the least significant one does.
++fr: Les processeurs x86 et ARM courants sont petit-boutistes ; les protocoles réseau sont gros-boutistes. Il faut donc convertir aux frontières : c'est un piège classique en lisant des formats binaires.
++en: Common x86 and ARM processors are little-endian; network protocols are big-endian. Conversions are therefore needed at the boundaries: a classic pitfall when reading binary formats.
+ex: js
+| const vue = new DataView(new ArrayBuffer(4));
+| vue.setUint32(0, 0x12345678, false);
+| vue.getUint8(0)
+ex-fr: Écrire 12345678 en gros-boutiste (false = pas petit-boutiste) : le premier octet lu vaut 0x12.
+ex-en: Write 12345678 in big-endian (false = not little-endian): the first byte read is 0x12.
+voir: byte, hexadecimal, buffer
+schema: data-endian
+
+@ json
+cat: data
+nom: JSON
+dev: JavaScript Object Notation
+alias: javascript object notation, json.parse, json.stringify, .json, notation objet, json5, jsonl
+fr: Format texte léger pour échanger des données, fait d'objets ({"clé": valeur}), de tableaux ([1, 2]), de chaînes, de nombres, de booléens et de null. Presque tous les langages savent le lire et l'écrire.
+en: A lightweight text format for exchanging data, made of objects ({"key": value}), arrays ([1, 2]), strings, numbers, booleans and null. Almost every language can read and write it.
++fr: Les clés et les chaînes se notent entre guillemets doubles ; les commentaires et les virgules finales sont interdits. C'est le format habituel des API web.
++en: Keys and strings are written in double quotes; comments and trailing commas are forbidden. It is the usual format of web APIs.
+ex: js
+| const texte = JSON.stringify({ nom: 'Zoé', langages: ['js', 'py'] });
+| const objet = JSON.parse(texte);
+| console.log(objet.langages[0]);
+ex-fr: Transformer un objet en texte JSON, puis le relire et obtenir « js ».
+ex-en: Turn an object into JSON text, then read it back and get “js”.
+attention-fr: JSON.parse échoue avec une erreur sur un JSON invalide : entourez-le d'un try/catch quand la source n'est pas de confiance.
+attention-en: JSON.parse throws an error on invalid JSON: wrap it in a try/catch when the source is not trusted.
+voir: serialisation, api, yaml, xml, parsing
+schema: data-json
+
+@ xml
+cat: data
+nom: XML
+dev: eXtensible Markup Language
+alias: extensible markup language, balise xml, xsd, xslt, rss, svg xml, html vs xml
+fr: Langage de balisage qui décrit des données par des balises imbriquées et libres (<livre><titre>…</titre></livre>). Plus verbeux que JSON, il est encore courant dans les flux RSS, les fichiers de configuration Android, le SVG et les documents Office.
+en: A markup language that describes data with nested, freely named tags (<book><title>…</title></book>). More verbose than JSON, it is still common in RSS feeds, Android configuration files, SVG and Office documents.
+ex: xml
+| <glossaire>
+|   <terme id="commit">
+|     <nom>Commit</nom>
+|   </terme>
+| </glossaire>
+ex-fr: Un petit document XML : un élément racine, un terme avec un attribut id et un sous-élément nom.
+ex-en: A small XML document: a root element, a term with an id attribute and a name child element.
+voir: json, html, yaml, parsing
+
+@ yaml
+cat: data
+nom: YAML
+dev: YAML Ain't Markup Language
+alias: yml, .yml, .yaml, yaml ain't markup language, configuration yaml, indentation
+fr: Format de données lisible par les humains, fondé sur l'indentation plutôt que sur des accolades. Il sert beaucoup à écrire des fichiers de configuration (GitHub Actions, Docker Compose).
+en: A human-readable data format based on indentation rather than braces. It is widely used to write configuration files (GitHub Actions, Docker Compose).
+ex: yaml
+| nom: Test
+| on: [push]
+| jobs:
+|   verifier:
+|     runs-on: ubuntu-latest
+|     steps:
+|       - run: npm test
+ex-fr: Une automatisation GitHub Actions : à chaque push, lancer les tests.
+ex-en: A GitHub Actions workflow: on every push, run the tests.
+attention-fr: L'indentation fait partie de la syntaxe : deux espaces de trop, ou une tabulation, et le fichier change de sens ou devient invalide.
+attention-en: Indentation is part of the syntax: two spaces too many, or a tab, and the file changes meaning or becomes invalid.
+voir: json, ci-cd, docker, parsing
+
+@ csv
+cat: data
+nom: CSV
+dev: Comma-Separated Values
+alias: comma separated values, tsv, valeurs séparées par des virgules, tableur, .csv, séparateur
+fr: Format texte pour des tableaux : une ligne par enregistrement, des valeurs séparées par des virgules (ou des points-virgules). Tout tableur l'ouvre ; il ne porte ni types ni mise en forme.
+en: A text format for tables: one line per record, values separated by commas (or semicolons). Any spreadsheet opens it; it carries neither types nor formatting.
+ex: text
+| nom,categorie,octets
+| commit,git,120
+| "byte, octet",data,1
+ex-fr: Trois lignes ; les guillemets protègent la virgule contenue dans une valeur.
+ex-en: Three lines; the quotes protect the comma contained in a value.
+attention-fr: Les CSV français utilisent souvent le point-virgule (la virgule y est la décimale) : un fichier « CSV » s'ouvre alors en une seule colonne dans un outil anglophone.
+attention-en: French CSVs often use a semicolon (the comma being the decimal mark): such a file then opens as a single column in an English-language tool.
+voir: json, encodage, parsing, saut-de-ligne
+
+@ serialisation
+cat: data
+nom: Sérialisation
+nom-en: serialization
+alias: serialization, marshalling, désérialisation, deserialization, sérialiser, stringify, pickle
+fr: Transformation d'une donnée en mémoire (objet, tableau) en une suite d'octets ou de texte que l'on peut enregistrer ou envoyer. L'opération inverse, la désérialisation, reconstruit la donnée à l'arrivée.
+en: Turning an in-memory value (object, array) into a sequence of bytes or text that can be stored or sent. The reverse operation, deserialization, rebuilds the value on arrival.
+attention-fr: Désérialiser des données non fiables avec certains formats (pickle en Python, sérialisation native de Java) permet d'exécuter du code : préférez JSON.
+attention-en: Deserializing untrusted data with some formats (pickle in Python, Java's native serialization) allows code execution: prefer JSON.
+voir: json, parsing, api, indexeddb
+schema: data-serialisation
+
+@ parsing
+cat: data
+nom: Parsing
+nom-fr: analyse syntaxique
+alias: parser, analyseur, parse, analyse syntaxique, analyseur syntaxique, lexer, ast, arbre syntaxique
+fr: Lecture d'un texte (JSON, HTML, code source) pour en dégager la structure et en faire une donnée exploitable, en général un arbre. Un « parseur » est le programme qui effectue cette lecture.
+en: Reading a text (JSON, HTML, source code) to extract its structure and turn it into usable data, usually a tree. A “parser” is the program that does this reading.
++fr: Un compilateur commence par découper le code en jetons (tokens) puis les assemble en arbre syntaxique abstrait (AST). Un texte qui ne respecte pas la syntaxe provoque une erreur de parsing.
++en: A compiler starts by cutting the code into tokens, then assembles them into an abstract syntax tree (AST). A text that does not follow the syntax causes a parse error.
+ex: js
+| const doc = new DOMParser().parseFromString('<p>Salut</p>', 'text/html');
+| doc.body.textContent
+ex-fr: Analyser un fragment HTML en un document et lire son texte (« Salut »).
+ex-en: Parse an HTML fragment into a document and read its text (“Salut”).
+voir: json, dom, token, compilation
+schema: data-parsing
+
+@ string
+cat: data
+nom: String
+nom-fr: chaîne de caractères
+alias: chaîne, chaîne de caractères, texte, str, littéral de chaîne, concaténation, template string
+fr: Type de donnée qui représente du texte : une suite de caractères, écrite entre guillemets ("bonjour"). Une chaîne se concatène, se découpe, se compare et se recherche.
+en: A data type that represents text: a sequence of characters, written between quotes ("hello"). A string can be concatenated, sliced, compared and searched.
+ex: js
+| const nom = 'Zoé';
+| const message = `Bonjour ${nom} !`;
+| message.length
+| message.toUpperCase()
+ex-fr: Une chaîne avec insertion d'une variable (entre accents graves), sa longueur, puis sa version en majuscules.
+ex-en: A string with a variable inserted (between backticks), its length, then its uppercase version.
+attention-fr: Dans la plupart des langages, une chaîne est immuable : « modifier » une chaîne en crée une nouvelle.
+attention-en: In most languages a string is immutable: “modifying” a string creates a new one.
+voir: unicode, echappement, tableau, type, regex
+
+@ tableau
+cat: data
+nom: Tableau
+nom-en: array
+alias: array, liste, list, vecteur, indice, index de tableau, matrice, array.map
+fr: Suite ordonnée de valeurs rangées à la suite et repérées par leur position (leur indice), qui commence à 0 dans la plupart des langages. On y accède, on le parcourt, on l'agrandit ou on le trie.
+en: An ordered sequence of values stored one after another and identified by their position (their index), which starts at 0 in most languages. You access it, loop over it, grow it or sort it.
+ex: js
+| const langages = ['bash', 'js', 'sql'];
+| langages[0]
+| langages.push('css');
+| langages.map((l) => l.toUpperCase())
+ex-fr: Le premier élément (« bash »), l'ajout d'un élément, puis un nouveau tableau en majuscules.
+ex-en: The first element (“bash”), adding an element, then a new array in uppercase.
+attention-fr: Le premier indice est 0, pas 1 : un tableau de 3 éléments a pour dernier indice 2. C'est la source d'erreurs « décalées d'un » (off-by-one).
+attention-en: The first index is 0, not 1: a 3-element array has 2 as its last index. It is the source of “off-by-one” errors.
+voir: string, dictionnaire, boucle, liste-chainee
+
+@ dictionnaire
+cat: data
+nom: Dictionnaire
+nom-en: dictionary
+alias: map, objet, object, dict, hash map, clé valeur, key value, tableau associatif, associative array, hashmap
+fr: Structure qui associe des clés à des valeurs : on retrouve une valeur en donnant sa clé, pas sa position. Selon les langages, on parle de dictionnaire (Python), d'objet ou de Map (JavaScript), de hashmap (Java).
+en: A structure that associates keys with values: you find a value by giving its key, not its position. Depending on the language it is called a dictionary (Python), an object or a Map (JavaScript), a hashmap (Java).
+ex: js
+| const compte = { git: 49, web: 35 };
+| compte.git
+| compte['web'] += 1;
+| Object.keys(compte)
+ex-fr: Lire une valeur par sa clé, l'incrémenter, puis lister les clés.
+ex-en: Read a value by its key, increment it, then list the keys.
+voir: tableau, table-de-hachage, json, cle-valeur
+
+@ null
+cat: data
+nom: null
+alias: undefined, none, nil, valeur nulle, null pointer, nullpointerexception, valeur absente
+fr: Valeur qui signifie « pas de valeur » : une variable existe, mais ne désigne rien. Selon les langages : null (JavaScript, Java, SQL), None (Python), nil (Ruby, Go).
+en: A value that means “no value”: a variable exists but designates nothing. Depending on the language: null (JavaScript, Java, SQL), None (Python), nil (Ruby, Go).
++fr: En JavaScript, undefined signifie « jamais reçu de valeur » et null « vide à dessein ». Chercher une propriété sur null ou undefined provoque l'erreur la plus fréquente du langage.
++en: In JavaScript, undefined means “never given a value” and null “deliberately empty”. Reading a property of null or undefined causes the language's most frequent error.
+ex: js
+| let a;
+| let b = null;
+| a === undefined
+| b?.longueur
+ex-fr: Une variable jamais affectée vaut undefined ; l'opérateur ?. lit une propriété sans erreur si l'objet est null ou undefined.
+ex-en: A variable never assigned is undefined; the ?. operator reads a property without error if the object is null or undefined.
+attention-fr: null n'est pas 0 ni la chaîne vide : c'est l'absence de valeur.
+attention-en: null is not 0 nor the empty string: it is the absence of a value.
+voir: type, exception, dictionnaire
+
+@ nombre-flottant
+cat: data
+nom: Entier et flottant
+nom-en: integer and float
+alias: int, float, double, nombre flottant, virgule flottante, floating point, ieee 754, 0.1 + 0.2, arrondi, nan, infinity, bigint
+fr: Deux familles de nombres : les entiers, exacts, et les flottants (nombres à virgule flottante), qui représentent les décimaux de façon approchée sur 32 ou 64 bits. Beaucoup de décimaux, comme 0,1, n'ont pas de représentation exacte en binaire.
+en: Two families of numbers: integers, exact, and floats (floating-point numbers), which represent decimals approximately on 32 or 64 bits. Many decimals, like 0.1, have no exact representation in binary.
++fr: NaN (« not a number ») est le résultat d'un calcul impossible (0/0, « abc » × 2) ; il n'est égal à rien, pas même à lui-même. Pour l'argent, on compte en centimes entiers.
++en: NaN (“not a number”) is the result of an impossible computation (0/0, “abc” × 2); it equals nothing, not even itself. For money, count in whole cents.
+ex: js
+| 0.1 + 0.2
+| 0.1 + 0.2 === 0.3
+| Math.round((0.1 + 0.2) * 100) / 100
+| NaN === NaN
+ex-fr: 0,1 + 0,2 donne 0,30000000000000004 ; la comparaison échoue ; on arrondit ; et NaN n'est pas égal à lui-même.
+ex-en: 0.1 + 0.2 gives 0.30000000000000004; the comparison fails; we round; and NaN is not equal to itself.
+attention-fr: Ne comparez jamais deux flottants avec « == » : comparez à une tolérance près.
+attention-en: Never compare two floats with “==”: compare within a tolerance.
+voir: type, bit, byte
+schema: data-flottant
+
+@ timestamp
+cat: data
+nom: Timestamp
+nom-fr: horodatage
+alias: horodatage, epoch, unix time, unix timestamp, date.now, temps unix, iso 8601, utc, fuseau horaire, timezone
+fr: Nombre de secondes (ou de millisecondes) écoulées depuis le 1er janvier 1970 à 00:00 UTC, l'« epoch » d'Unix. Il désigne un instant précis, sans ambiguïté de fuseau horaire.
+en: The number of seconds (or milliseconds) elapsed since 1 January 1970 at 00:00 UTC, the Unix “epoch”. It designates a precise instant, with no time-zone ambiguity.
++fr: Pour échanger des dates lisibles, on utilise la norme ISO 8601 : 2026-09-29T14:30:00Z (le Z signifie UTC). On stocke en UTC et on convertit à l'affichage dans le fuseau de la personne.
++en: To exchange readable dates, the ISO 8601 standard is used: 2026-09-29T14:30:00Z (the Z means UTC). Store in UTC and convert at display time to the person's time zone.
+ex: js
+| Date.now()
+| new Date(1700000000000).toISOString()
+| new Date(0).toISOString()
+ex-fr: L'instant présent en millisecondes ; le timestamp 1700000000000 en ISO (2023-11-14T22:13:20.000Z) ; l'origine des temps (1970-01-01T00:00:00.000Z).
+ex-en: The present moment in milliseconds; timestamp 1700000000000 in ISO (2023-11-14T22:13:20.000Z); the time origin (1970-01-01T00:00:00.000Z).
+voir: uuid, byte, id
+
+@ id
+cat: data
+nom: ID
+dev: identifier
+nom-fr: identifiant
+alias: identifiant, identifier, id unique, clé primaire, primary key, .id, #id, attribut id, numéro d'identification
+fr: Valeur qui identifie de façon unique un élément parmi d'autres : une ligne dans une base de données, un utilisateur, un commit, un élément d'une page HTML. Deux éléments distincts n'ont jamais le même identifiant.
+en: A value that uniquely identifies one item among others: a row in a database, a user, a commit, an element on an HTML page. Two distinct items never share the same identifier.
++fr: Un bon identifiant ne change jamais et ne porte pas de sens qui pourrait changer (un nom, une adresse e-mail). On utilise souvent un nombre qui s'incrémente ou un UUID.
++en: A good identifier never changes and carries no meaning that could change (a name, an email address). A number that increments, or a UUID, is often used.
+ex: html
+| <section id="quiz">…</section>
+| <a href="#quiz">Aller au quiz</a>
+ex-fr: En HTML, l'attribut id désigne un élément ; le lien avec # y mène directement, et le CSS (#quiz) ou JavaScript (getElementById) peuvent le cibler.
+ex-en: In HTML, the id attribute designates an element; the link with # goes straight to it, and CSS (#quiz) or JavaScript (getElementById) can target it.
+attention-fr: Dans une page HTML, un id doit être unique : deux éléments qui le partagent est une erreur silencieuse. Pour un groupe d'éléments, on utilise une classe.
+attention-en: In an HTML page, an id must be unique: two elements sharing it is a silent error. For a group of elements, use a class.
+voir: uuid, cle-primaire, hash, commit
+schema: data-id
+
+@ uuid
+cat: data
+nom: UUID
+dev: Universally Unique Identifier
+alias: universally unique identifier, guid, identifiant universel, crypto.randomUUID, uuid v4
+fr: Identifiant de 128 bits, écrit en 32 chiffres hexadécimaux groupés (550e8400-e29b-41d4-a716-446655440000), tiré au hasard de façon telle que deux machines ne le génèrent pratiquement jamais deux fois, sans se coordonner.
+en: A 128-bit identifier, written as 32 hexadecimal digits in groups (550e8400-e29b-41d4-a716-446655440000), drawn at random in such a way that two machines practically never generate it twice, without coordinating.
+ex: js
+| crypto.randomUUID()
+ex-fr: Génère un UUID version 4 (aléatoire), par exemple 3b241101-e2bb-4255-8caf-4136c566a962.
+ex-en: Generates a version 4 (random) UUID, for example 3b241101-e2bb-4255-8caf-4136c566a962.
+voir: id, hash, cle-primaire
+schema: data-uuid
+
+@ compression
+cat: data
+nom: Compression
+alias: gzip, zip, brotli, deflate, zstd, compression avec perte, compression sans perte, lossless, lossy, archive
+fr: Réduction de la taille de données en supprimant leur redondance. Sans perte (zip, gzip, PNG), on retrouve exactement l'original ; avec perte (JPEG, MP3, WebP), on sacrifie des détails peu visibles pour gagner beaucoup.
+en: Reducing the size of data by removing its redundancy. Lossless (zip, gzip, PNG), you get the original back exactly; lossy (JPEG, MP3, WebP), you sacrifice barely visible details to save a lot.
++fr: Les serveurs web compressent le texte (HTML, CSS, JS) en gzip ou Brotli : le navigateur le décompresse à l'arrivée, ce qui réduit souvent le poids de trois quarts.
++en: Web servers compress text (HTML, CSS, JS) with gzip or Brotli: the browser decompresses it on arrival, often cutting the weight by three quarters.
+ex: bash
+| gzip -k app.js
+| tar czf archive.tar.gz dossier/
+ex-fr: Compresser un fichier en gardant l'original (-k), puis archiver et compresser un dossier entier.
+ex-en: Compress a file keeping the original (-k), then archive and compress a whole folder.
+voir: webp, png, bande-passante, byte
+
+@ mime
+cat: data
+nom: Type MIME
+nom-en: MIME type
+alias: mime, media type, content-type, application/json, text/html, image/png, mimetype
+fr: Étiquette qui indique la nature d'un contenu, sous la forme type/sous-type : text/html, application/json, image/webp. Elle dit au navigateur comment traiter un fichier, l'extension seule n'y suffisant pas.
+en: A label that states the nature of a content, in the form type/subtype: text/html, application/json, image/webp. It tells the browser how to handle a file, the extension alone not being enough.
+ex: http
+| Content-Type: image/webp
+| Content-Type: text/html; charset=utf-8
+ex-fr: Deux en-têtes de réponse : un fichier WebP, puis une page HTML en UTF-8.
+ex-en: Two response headers: a WebP file, then an HTML page in UTF-8.
+voir: header, blob, encodage, http
+
+@ bom
+cat: data
+nom: BOM
+dev: Byte Order Mark
+alias: byte order mark, marque d'ordre des octets, utf-8 bom, feff, efbbbf
+fr: Petite marque invisible, U+FEFF, placée au début d'un fichier texte pour indiquer son encodage. En UTF-8 (où elle est facultative), elle occupe trois octets et gêne certains programmes qui n'attendent pas de signe avant le premier caractère.
+en: A small invisible mark, U+FEFF, placed at the start of a text file to indicate its encoding. In UTF-8 (where it is optional), it takes three bytes and disturbs some programs that do not expect anything before the first character.
+ex: bash
+| head -c 3 fichier.txt | xxd
+ex-fr: Regarder les trois premiers octets : ef bb bf trahit un BOM UTF-8.
+ex-en: Look at the first three bytes: ef bb bf reveals a UTF-8 BOM.
+voir: utf-8, unicode, encodage, saut-de-ligne

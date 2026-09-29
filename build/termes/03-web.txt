@@ -1,0 +1,498 @@
+# Web et navigateur.
+
+@ js
+cat: web
+nom: JS
+dev: JavaScript
+alias: javascript, ecmascript, es6, es2015, .js, js vanille, vanilla js, node
+fr: Langage de programmation de la page web : exécuté par le navigateur, il rend une page interactive en lisant et modifiant son contenu, en réagissant aux clics et en communiquant avec des serveurs. Il tourne aussi hors navigateur, avec Node.js.
+en: The web page's programming language: run by the browser, it makes a page interactive by reading and changing its content, reacting to clicks and talking to servers. It also runs outside the browser, with Node.js.
++fr: Normalisé sous le nom ECMAScript, il évolue chaque année. Un fichier JavaScript porte l'extension .js ; « JS vanille » désigne du JavaScript sans framework.
++en: Standardized as ECMAScript, it evolves every year. A JavaScript file has the .js extension; “vanilla JS” means JavaScript without a framework.
+ex: js
+| const bouton = document.querySelector('button');
+| bouton.addEventListener('click', () => {
+|   bouton.textContent = 'Merci !';
+| });
+ex-fr: Trouver un bouton dans la page, puis changer son texte quand on clique dessus.
+ex-en: Find a button on the page, then change its text when it is clicked.
+attention-fr: JavaScript n'a rien à voir avec Java : ce sont deux langages distincts, le nom est un accident de marketing des années 1990.
+attention-en: JavaScript has nothing to do with Java: they are two distinct languages, the name is a 1990s marketing accident.
+voir: html, css, dom, nodejs, sw-js
+schema: web-trois-langages
+
+@ html
+cat: web
+nom: HTML
+dev: HyperText Markup Language
+alias: balise, tag html, .html, markup, langage de balisage, hypertexte
+fr: Langage de balisage qui décrit la structure d'une page web : titres, paragraphes, liens, images, formulaires. Le navigateur le lit et en construit la page.
+en: The markup language that describes a web page's structure: headings, paragraphs, links, images, forms. The browser reads it and builds the page from it.
+ex: html
+| <h1>Code en clair</h1>
+| <p>Un glossaire du <a href="/codage">codage</a>.</p>
+| <img src="logo.png" alt="Logo">
+ex-fr: Un titre, un paragraphe contenant un lien, une image avec son texte alternatif.
+ex-en: A heading, a paragraph containing a link, an image with its alternative text.
+attention-fr: HTML n'est pas un langage de programmation : il décrit du contenu, il ne contient ni calcul ni logique.
+attention-en: HTML is not a programming language: it describes content, it contains no computation or logic.
+voir: css, js, dom, accessibilite
+schema: web-trois-langages
+
+@ css
+cat: web
+nom: CSS
+dev: Cascading Style Sheets
+nom-fr: feuilles de style en cascade
+alias: feuille de style, stylesheet, .css, style, mise en page
+fr: Langage qui décrit l'apparence d'une page web : couleurs, polices, marges, position des éléments, adaptation à la taille de l'écran. Il se sépare du contenu (HTML) pour pouvoir changer l'un sans toucher l'autre.
+en: The language that describes a web page's appearance: colors, fonts, margins, element positioning, adaptation to screen size. It is kept apart from the content (HTML) so that either can change without touching the other.
+ex: css
+| .bouton {
+|   background: #2457d6;
+|   color: white;
+|   border-radius: 8px;
+| }
+ex-fr: Une règle : tout élément de classe « bouton » aura un fond bleu, un texte blanc et des coins arrondis.
+ex-en: A rule: every element of class “bouton” will get a blue background, white text and rounded corners.
+voir: html, js, responsive, flexbox
+schema: web-trois-langages
+
+@ dom
+cat: web
+nom: DOM
+dev: Document Object Model
+alias: document object model, arbre du dom, noeud, node, querySelector, virtual dom, dom virtuel
+fr: Représentation d'une page web sous forme d'arbre d'objets que le navigateur construit à partir du HTML. JavaScript lit et modifie cet arbre pour changer ce qui est affiché.
+en: A representation of a web page as a tree of objects that the browser builds from the HTML. JavaScript reads and modifies that tree to change what is displayed.
++fr: Chaque balise devient un nœud : modifier le DOM met la page à jour immédiatement, sans la recharger. Le DOM n'est pas le fichier HTML : c'est son état vivant, en mémoire.
++en: Each tag becomes a node: changing the DOM updates the page immediately, without reloading it. The DOM is not the HTML file: it is its living state, in memory.
+ex: js
+| const titre = document.createElement('h2');
+| titre.textContent = 'Nouveau titre';
+| document.body.appendChild(titre);
+ex-fr: Créer un titre, lui donner un texte et l'ajouter à la page.
+ex-en: Create a heading, give it some text and add it to the page.
+voir: html, js, evenement, xss
+schema: web-dom
+
+@ navigateur
+cat: web
+nom: Navigateur
+nom-en: browser
+alias: browser, chrome, firefox, safari, edge, moteur de rendu, blink, webkit, gecko
+fr: Logiciel qui télécharge des pages web, les interprète (HTML, CSS, JavaScript) et les affiche. Chrome et Edge utilisent le moteur Blink, Safari le moteur WebKit, Firefox le moteur Gecko.
+en: Software that downloads web pages, interprets them (HTML, CSS, JavaScript) and displays them. Chrome and Edge use the Blink engine, Safari uses WebKit, Firefox uses Gecko.
++fr: Le même code peut se comporter un peu différemment d'un navigateur à l'autre : on vérifie la compatibilité de chaque fonctionnalité avant de s'y fier.
++en: The same code can behave slightly differently from one browser to another: check each feature's compatibility before relying on it.
+voir: html, css, js, devtools, headless
+
+@ headless
+cat: web
+nom: Headless
+nom-fr: sans interface
+alias: headless browser, chrome headless, --headless, puppeteer, playwright, selenium, navigateur sans tête, sans tête, cms headless
+sens: Navigateur headless | Headless browser
+fr: Navigateur qui fonctionne sans fenêtre visible : il charge et exécute vraiment les pages, mais se pilote par programme. On s'en sert pour tester des applications, prendre des captures d'écran ou produire des PDF automatiquement.
+en: A browser that runs with no visible window: it truly loads and runs pages, but is driven by a program. It is used to test applications, take screenshots or produce PDFs automatically.
++fr: Chrome se lance ainsi avec --headless. Des outils comme Puppeteer et Playwright le pilotent depuis un script ; c'est aussi ce qui tourne dans les serveurs d'intégration continue, qui n'ont pas d'écran.
++en: Chrome starts this way with --headless. Tools like Puppeteer and Playwright drive it from a script; it is also what runs on continuous-integration servers, which have no screen.
+ex: bash
+| chrome --headless --screenshot=capture.png --window-size=390,844 https://exemple.org
+ex-fr: Ouvrir une page dans un Chrome invisible à la taille d'un téléphone et l'enregistrer en image.
+ex-en: Open a page in an invisible Chrome at phone size and save it as an image.
+schema: web-headless
+sens: Headless (CMS, API) | Headless (CMS, API)
+fr: Se dit d'un système de gestion de contenu qui n'a pas de « tête », c'est-à-dire pas d'affichage intégré : il ne fournit que les contenus, par une API, et n'importe quel site ou application peut les afficher à sa façon.
+en: Said of a content management system that has no “head”, meaning no built-in display: it only supplies content through an API, and any site or app can present it its own way.
+voir: navigateur, test-e2e, ci-cd, api, scraping
+
+@ service-worker
+cat: web
+nom: Service Worker
+alias: service workers, sw, worker de service, mode hors ligne, offline, cache offline, intercepter les requêtes
+fr: Script JavaScript que le navigateur exécute en arrière-plan, séparément de la page. Placé entre la page et le réseau, il peut intercepter chaque requête et répondre depuis un cache : c'est ce qui permet à un site de marcher hors ligne.
+en: A JavaScript script the browser runs in the background, separately from the page. Sitting between the page and the network, it can intercept each request and answer from a cache: this is what lets a site work offline.
++fr: Il n'a pas accès au DOM, fonctionne par événements (install, activate, fetch) et n'est disponible qu'en HTTPS (ou sur localhost). Il permet aussi les notifications push et la synchronisation en arrière-plan.
++en: It has no access to the DOM, works through events (install, activate, fetch) and is only available over HTTPS (or on localhost). It also enables push notifications and background sync.
+ex: js
+| self.addEventListener('fetch', (evenement) => {
+|   evenement.respondWith(
+|     caches.match(evenement.request).then((enCache) => enCache || fetch(evenement.request))
+|   );
+| });
+ex-fr: Pour chaque requête : répondre depuis le cache s'il a la réponse, sinon aller sur le réseau.
+ex-en: For each request: answer from the cache if it has the response, otherwise go to the network.
+attention-fr: Un service worker mis à jour n'est pas actif tout de suite : il attend que les pages ouvertes avec l'ancienne version soient fermées, sauf s'il force son activation.
+attention-en: An updated service worker is not active right away: it waits for the pages open with the old version to close, unless it forces its own activation.
+voir: sw-js, cache-api, pwa, web-worker, manifest
+schema: web-service-worker
+
+@ sw-js
+cat: web
+nom: sw.js
+alias: sw, service worker file, navigator.serviceWorker.register, scope, portée du service worker
+fr: Nom d'usage du fichier JavaScript qui contient le code du service worker. Il se place à la racine du site, car sa portée (scope) est limitée au dossier où il se trouve et à ses sous-dossiers.
+en: The customary name of the JavaScript file that holds the service worker's code. It is placed at the site's root, because its scope is limited to the folder it sits in and its subfolders.
++fr: La page l'enregistre avec navigator.serviceWorker.register('sw.js'). Le navigateur revérifie le fichier à chaque visite : si son contenu a changé d'un seul octet, il installe la nouvelle version.
++en: The page registers it with navigator.serviceWorker.register('sw.js'). The browser rechecks the file on every visit: if its content changed by a single byte, it installs the new version.
+ex: js
+| if ('serviceWorker' in navigator) {
+|   navigator.serviceWorker.register('sw.js')
+|     .then((reg) => console.log('Portée :', reg.scope));
+| }
+ex-fr: Enregistrer le service worker si le navigateur le permet, puis afficher le dossier qu'il contrôle.
+ex-en: Register the service worker if the browser allows it, then print the folder it controls.
+attention-fr: Un sw.js placé dans /js/ ne contrôlerait que les pages sous /js/ : c'est l'erreur la plus courante.
+attention-en: A sw.js placed in /js/ would only control pages under /js/: it is the most common mistake.
+voir: service-worker, cache-api, pwa, manifest
+schema: web-sw-cycle
+
+@ cache-api
+cat: web
+nom: Cache API
+nom-fr: API Cache
+alias: caches, cache storage, CacheStorage, caches.open, cache.put, cache.match
+fr: Interface JavaScript qui range des réponses HTTP complètes dans des caches nommés, chacun associant une requête à sa réponse. Un service worker s'en sert pour resservir des fichiers sans réseau.
+en: A JavaScript interface that stores whole HTTP responses in named caches, each pairing a request with its response. A service worker uses it to serve files again without a network.
++fr: On y range ce qu'on veut, quand on veut, et rien n'expire tout seul : c'est au code de supprimer les anciens caches à chaque nouvelle version.
++en: You store what you want, when you want, and nothing expires by itself: it is up to the code to delete old caches with each new version.
+ex: js
+| const cache = await caches.open('coquille-v1');
+| await cache.addAll(['/', '/style.css', '/app.js']);
+| const reponse = await caches.match('/style.css');
+ex-fr: Ouvrir un cache, y mettre trois fichiers, puis relire l'un d'eux.
+ex-en: Open a cache, put three files in it, then read one of them back.
+attention-fr: Ne pas confondre avec le cache HTTP du navigateur, géré automatiquement selon les en-têtes des réponses.
+attention-en: Not to be confused with the browser's HTTP cache, managed automatically according to the responses' headers.
+voir: service-worker, cache-http, localstorage, indexeddb
+
+@ pwa
+cat: web
+nom: PWA
+dev: Progressive Web App
+nom-fr: application web progressive
+alias: progressive web app, application web progressive, app installable, web app installable
+fr: Site web qui se comporte comme une application : installable sur l'écran d'accueil, ouvert en plein écran, utilisable hors ligne. Il repose sur trois piliers : HTTPS, un manifeste et un service worker.
+en: A website that behaves like an app: installable on the home screen, opened full screen, usable offline. It rests on three pillars: HTTPS, a manifest and a service worker.
++fr: Une PWA n'a pas besoin d'un magasin d'applications : on l'installe depuis le navigateur. On peut aussi l'empaqueter pour Google Play sous forme de TWA.
++en: A PWA does not need an app store: you install it from the browser. It can also be packaged for Google Play as a TWA.
+voir: manifest, service-worker, twa, https, webview
+schema: web-pwa
+
+@ manifest
+cat: web
+nom: Manifest
+nom-fr: manifeste
+alias: manifeste, manifest.json, manifest.webmanifest, web app manifest, AndroidManifest.xml, manifest.xml
+sens: Manifeste d'application web | Web app manifest
+fr: Fichier JSON (manifest.webmanifest) qui décrit une application web au navigateur : son nom, ses icônes, sa couleur, sa page de départ et son mode d'affichage. C'est lui qui la rend installable.
+en: A JSON file (manifest.webmanifest) that describes a web app to the browser: its name, icons, color, start page and display mode. It is what makes the app installable.
+ex: json
+| {
+|   "name": "Code en clair",
+|   "short_name": "Code",
+|   "start_url": "./",
+|   "display": "standalone",
+|   "theme_color": "#16213e",
+|   "icons": [{ "src": "icon-512.png", "sizes": "512x512", "type": "image/png" }]
+| }
+ex-fr: Un manifeste minimal : nom, page de départ, affichage sans barre d'adresse, couleur de thème et une icône.
+ex-en: A minimal manifest: name, start page, display without an address bar, theme color and an icon.
+schema: web-manifest
+sens: AndroidManifest.xml | AndroidManifest.xml
+fr: Fichier obligatoire de toute application Android : il déclare son identifiant (package), ses écrans (activités), les permissions qu'elle demande et les liens web qu'elle sait ouvrir.
+en: The mandatory file of every Android app: it declares its identifier (package), its screens (activities), the permissions it requests and the web links it knows how to open.
+ex: xml
+| <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+|           package="io.exemple.codeenclair">
+|   <uses-permission android:name="android.permission.INTERNET" />
+|   <application android:label="Code en clair" />
+| </manifest>
+ex-fr: Un AndroidManifest minimal : l'identifiant du paquet, une permission d'accès à Internet et le nom de l'application.
+ex-en: A minimal AndroidManifest: the package identifier, an Internet access permission and the app's name.
+sens: Manifeste (sens général) | Manifest (general sense)
+fr: Fichier qui décrit le contenu ou les caractéristiques d'un ensemble : liste des fichiers d'un paquet, version, dépendances, dates. On y trouve, par exemple, le manifeste d'un jeu de données ou d'un paquet.
+en: A file describing the content or characteristics of a set: a package's file list, version, dependencies, dates. An example is a dataset's or a package's manifest.
+voir: pwa, service-worker, twa, package-json, favicon
+
+@ web-worker
+cat: web
+nom: Web Worker
+alias: worker, dedicated worker, worker thread, thread navigateur
+fr: Script JavaScript exécuté dans un fil séparé de celui de la page, pour faire un gros calcul sans figer l'interface. Il ne touche pas au DOM et dialogue avec la page par des messages.
+en: A JavaScript script run on a separate thread from the page, to do heavy computation without freezing the interface. It does not touch the DOM and talks to the page through messages.
+ex: js
+| const calcul = new Worker('calcul.js');
+| calcul.postMessage({ n: 40 });
+| calcul.onmessage = (e) => console.log('Résultat', e.data);
+ex-fr: Lancer un calcul dans un worker et recevoir la réponse par message.
+ex-en: Start a computation in a worker and receive the answer by message.
+attention-fr: Un service worker est un type particulier de worker, mais il ne sert pas au calcul : il sert d'intermédiaire réseau.
+attention-en: A service worker is a special kind of worker, but it is not for computing: it acts as a network intermediary.
+voir: service-worker, thread, async-await
+
+@ localstorage
+cat: web
+nom: localStorage
+alias: local storage, sessionStorage, session storage, stockage local, web storage
+fr: Petit stockage clé-valeur du navigateur, propre à un site : il garde des chaînes de caractères (environ 5 Mo) qui survivent à la fermeture de la page. Il est synchrone et ne convient pas aux gros volumes.
+en: A small key-value store in the browser, specific to a site: it keeps strings (about 5 MB) that survive closing the page. It is synchronous and not suited to large volumes.
+ex: js
+| localStorage.setItem('theme', 'sombre');
+| const theme = localStorage.getItem('theme');
+| localStorage.removeItem('theme');
+ex-fr: Écrire, lire puis supprimer une valeur.
+ex-en: Write, read then delete a value.
+attention-fr: Tout script de la page peut lire localStorage : n'y rangez jamais de mot de passe ni de jeton sensible. sessionStorage, lui, s'efface à la fermeture de l'onglet.
+attention-en: Any script on the page can read localStorage: never store a password or a sensitive token there. sessionStorage, for its part, is erased when the tab closes.
+voir: indexeddb, cookie, cache-api, json
+
+@ cookie
+cat: web
+nom: Cookie
+alias: témoin de connexion, cookies, set-cookie, httponly, samesite, secure cookie, consentement
+fr: Petite donnée qu'un site demande au navigateur de garder, et que celui-ci renvoie automatiquement à chaque requête vers ce site. Elle sert à reconnaître un visiteur : session ouverte, préférences, mesure d'audience.
+en: A small piece of data that a site asks the browser to keep, and which the browser automatically sends back with every request to that site. It is used to recognize a visitor: open session, preferences, audience measurement.
++fr: Trois attributs protègent un cookie : HttpOnly (illisible par JavaScript), Secure (envoyé seulement en HTTPS) et SameSite (limité aux requêtes venant du même site).
++en: Three attributes protect a cookie: HttpOnly (unreadable by JavaScript), Secure (sent only over HTTPS) and SameSite (limited to requests coming from the same site).
+ex: http
+| Set-Cookie: session=abc123; HttpOnly; Secure; SameSite=Lax; Max-Age=3600
+ex-fr: Un serveur crée un cookie de session valable une heure et protégé.
+ex-en: A server creates a protected session cookie valid for one hour.
+voir: session, csrf, localstorage, header, https
+
+@ csp
+cat: web
+nom: CSP
+dev: Content Security Policy
+nom-fr: politique de sécurité du contenu
+alias: content security policy, politique de sécurité, script-src, default-src, connect-src
+fr: Règle envoyée par un site (en-tête HTTP ou balise meta) qui indique au navigateur d'où une page a le droit de charger scripts, styles, images et connexions. Elle limite les dégâts d'une faille XSS.
+en: A rule sent by a site (HTTP header or meta tag) that tells the browser where a page is allowed to load scripts, styles, images and connections from. It limits the damage of an XSS flaw.
+ex: html
+| <meta http-equiv="Content-Security-Policy"
+|       content="default-src 'self'; script-src 'self'; connect-src 'self'">
+ex-fr: Une page qui n'accepte que ce qui vient de son propre site : ni script, ni image, ni requête vers un autre hôte.
+ex-en: A page that only accepts what comes from its own site: no script, image or request to another host.
+attention-fr: Avec cette règle, les scripts et styles écrits directement dans le HTML (« en ligne ») sont bloqués : tout doit être dans des fichiers.
+attention-en: With this rule, scripts and styles written directly in the HTML (“inline”) are blocked: everything must be in files.
+voir: xss, header, https, cors
+schema: web-csp
+
+@ cors
+cat: web
+nom: CORS
+dev: Cross-Origin Resource Sharing
+nom-fr: partage de ressources entre origines
+alias: cross-origin resource sharing, same-origin policy, politique de même origine, access-control-allow-origin, preflight, requête pré-vol, origine
+fr: Mécanisme par lequel un serveur autorise des pages d'un autre site à lire ses réponses. Par défaut, le navigateur bloque cette lecture (politique de même origine) ; le serveur l'autorise avec l'en-tête Access-Control-Allow-Origin.
+en: A mechanism by which a server allows pages from another site to read its responses. By default the browser blocks such reads (same-origin policy); the server allows them with the Access-Control-Allow-Origin header.
++fr: Une origine se compose du protocole, du domaine et du port : http://a.org et https://a.org sont deux origines différentes. Pour certaines requêtes, le navigateur envoie d'abord une demande « pré-vol » (OPTIONS).
++en: An origin is made of the protocol, the domain and the port: http://a.org and https://a.org are two different origins. For some requests, the browser first sends a “preflight” request (OPTIONS).
+ex: http
+| Access-Control-Allow-Origin: https://mon-site.org
+| Access-Control-Allow-Methods: GET, POST
+ex-fr: Deux en-têtes de réponse : seul mon-site.org peut lire, avec les méthodes GET et POST.
+ex-en: Two response headers: only mon-site.org may read, with the GET and POST methods.
+attention-fr: Le blocage a lieu dans le navigateur, pas sur le serveur : un script Node ou curl n'est jamais gêné par CORS.
+attention-en: The blocking happens in the browser, not on the server: a Node script or curl is never hindered by CORS.
+voir: header, http, csp, api
+schema: web-cors
+
+@ viewport
+cat: web
+nom: Viewport
+nom-fr: zone d'affichage
+alias: meta viewport, vw, vh, fenêtre d'affichage, initial-scale, width=device-width
+fr: Zone visible d'une page dans la fenêtre du navigateur. Sur mobile, la balise meta viewport indique à quelle largeur le navigateur doit composer la page ; sans elle, il simule un grand écran et rétrécit tout.
+en: The visible area of a page in the browser window. On mobile, the meta viewport tag tells the browser what width to lay the page out at; without it, the browser simulates a large screen and shrinks everything.
+ex: html
+| <meta name="viewport" content="width=device-width, initial-scale=1">
+ex-fr: La ligne indispensable de toute page adaptée au mobile.
+ex-en: The essential line of every mobile-friendly page.
+voir: responsive, css, html
+
+@ responsive
+cat: web
+nom: Responsive design
+nom-fr: conception adaptative
+alias: responsive, media query, media queries, requête média, adaptatif, mobile first, breakpoint
+fr: Manière de concevoir une page pour qu'elle s'adapte à toutes les tailles d'écran, du téléphone au grand moniteur. Elle repose sur des mises en page souples et sur des requêtes média (media queries) en CSS.
+en: A way of designing a page so that it adapts to every screen size, from phone to large monitor. It relies on flexible layouts and on CSS media queries.
+ex: css
+| .colonnes { display: flex; flex-direction: column; }
+| @media (min-width: 48rem) {
+|   .colonnes { flex-direction: row; }
+| }
+ex-fr: Les colonnes s'empilent sur téléphone et se mettent côte à côte dès que l'écran fait au moins 48 rem de large.
+ex-en: The columns stack on phones and sit side by side as soon as the screen is at least 48 rem wide.
+voir: viewport, css, flexbox
+
+@ flexbox
+cat: web
+nom: Flexbox
+alias: flex, display flex, justify-content, align-items, mise en page flexible, css grid, grid
+fr: Mode de mise en page CSS qui aligne des éléments sur une ligne ou une colonne et répartit l'espace disponible entre eux, pour les centrer, les espacer ou les laisser grandir. On l'active avec display: flex.
+en: A CSS layout mode that lines up elements in a row or a column and distributes the available space among them, to center them, space them out or let them grow. It is enabled with display: flex.
++fr: Flexbox travaille dans une seule direction. Pour une grille à deux dimensions (lignes et colonnes ensemble), on préfère CSS Grid : display: grid.
++en: Flexbox works in a single direction. For a two-dimensional grid (rows and columns together), prefer CSS Grid: display: grid.
+ex: css
+| .barre {
+|   display: flex;
+|   justify-content: space-between;
+|   align-items: center;
+|   gap: 1rem;
+| }
+ex-fr: Une barre dont les éléments sont écartés aux extrémités, centrés verticalement, et séparés d'au moins 1 rem.
+ex-en: A bar whose items are pushed to the ends, vertically centered, and separated by at least 1 rem.
+voir: css, responsive
+schema: web-flexbox
+
+@ spa
+cat: web
+nom: SPA
+dev: Single-Page Application
+nom-fr: application monopage
+alias: single page application, application mono-page, react, vue, angular, routage côté client
+fr: Application web dont le navigateur ne charge qu'une seule page HTML : ensuite, JavaScript remplace le contenu à l'écran sans rechargement, ce qui donne une navigation fluide, comme dans une application native.
+en: A web application in which the browser loads only one HTML page: afterwards, JavaScript replaces the content on screen without reloading, giving smooth navigation like a native app.
++fr: En contrepartie, le premier affichage est plus lent (il faut télécharger le JavaScript) et le référencement demande des précautions.
++en: In return, the first display is slower (the JavaScript must be downloaded) and search-engine indexing needs care.
+voir: js, dom, seo, framework
+
+@ websocket
+cat: web
+nom: WebSocket
+alias: web socket, ws, wss, temps réel, realtime, connexion persistante, socket.io
+fr: Protocole qui ouvre entre un navigateur et un serveur une connexion durable dans les deux sens : chacun peut envoyer un message quand il veut, sans que le client ait à redemander. Idéal pour un chat ou un tableau de bord en direct.
+en: A protocol that opens a lasting two-way connection between a browser and a server: either side can send a message whenever it wants, without the client having to ask again. Ideal for a chat or a live dashboard.
+ex: js
+| const canal = new WebSocket('wss://exemple.org/direct');
+| canal.onmessage = (e) => console.log('Reçu :', e.data);
+| canal.onopen = () => canal.send('bonjour');
+ex-fr: Ouvrir la connexion, afficher chaque message reçu et saluer le serveur dès qu'elle est établie.
+ex-en: Open the connection, print each message received and greet the server as soon as it is established.
+voir: http, api, webhook
+
+@ webassembly
+cat: web
+nom: WebAssembly
+alias: wasm, .wasm, wat, assemblage web
+fr: Format de code binaire compact que les navigateurs exécutent à une vitesse proche du natif. On y compile des langages comme C, C++ ou Rust ; il s'utilise à côté de JavaScript, sans le remplacer.
+en: A compact binary code format that browsers run at near-native speed. Languages like C, C++ or Rust compile to it; it is used alongside JavaScript, not instead of it.
+voir: js, navigateur, compilation
+
+@ canvas
+cat: web
+nom: Canvas
+alias: canvas 2d, getContext, webgl, dessin dans le navigateur, balise canvas
+fr: Élément HTML qui offre une surface de dessin en pixels que JavaScript peint : formes, images, graphiques, jeux. Une fois dessiné, le contenu n'est plus qu'une image : le navigateur ne connaît plus les formes.
+en: An HTML element that offers a pixel drawing surface that JavaScript paints on: shapes, images, charts, games. Once drawn, the content is just an image: the browser no longer knows about the shapes.
+ex: js
+| const ctx = document.querySelector('canvas').getContext('2d');
+| ctx.fillStyle = '#2457d6';
+| ctx.fillRect(10, 10, 100, 50);
+ex-fr: Peindre un rectangle bleu de 100 sur 50 pixels.
+ex-en: Paint a blue rectangle 100 by 50 pixels.
+attention-fr: Contrairement au SVG, dont chaque forme reste un objet modifiable et accessible, un canvas se redessine en entier.
+attention-en: Unlike SVG, whose every shape remains an editable and accessible object, a canvas is redrawn in full.
+voir: svg, dom, pixel
+
+@ evenement
+cat: web
+nom: Événement
+nom-en: event
+alias: event, addEventListener, click, listener, écouteur, gestionnaire d'événement, bubbling, propagation, event handler
+fr: Signal émis quand quelque chose se produit dans la page : un clic, une frappe, la fin d'un chargement. Le code déclare un écouteur (listener) qui sera appelé à chaque occurrence.
+en: A signal emitted when something happens on the page: a click, a keystroke, the end of a load. The code declares a listener that will be called at each occurrence.
++fr: Un événement remonte d'un élément à ses parents (bouillonnement, ou bubbling) : on peut l'écouter sur un conteneur pour surveiller tous ses enfants.
++en: An event travels up from an element to its parents (bubbling): you can listen on a container to watch all of its children.
+ex: js
+| document.addEventListener('keydown', (e) => {
+|   if (e.key === 'Escape') fermerLaFiche();
+| });
+ex-fr: Réagir à la touche Échap.
+ex-en: React to the Escape key.
+voir: callback, dom, js, event-loop
+
+@ devtools
+cat: web
+nom: DevTools
+dev: Developer Tools
+nom-fr: outils de développement
+alias: outils de développement, developer tools, console, inspecteur, F12, inspect element, onglet réseau
+fr: Panneau intégré aux navigateurs (touche F12) pour examiner et déboguer une page : inspecter le DOM et le CSS, lire la console, suivre les requêtes réseau, mesurer les performances, arrêter le code pas à pas.
+en: A panel built into browsers (F12 key) for examining and debugging a page: inspecting the DOM and CSS, reading the console, following network requests, measuring performance, stepping through code.
+voir: dom, debugger, navigateur, console-log
+
+@ polyfill
+cat: web
+nom: Polyfill
+alias: shim, rétrocompatibilité, compatibilité navigateur, core-js
+fr: Morceau de code qui reproduit, dans un navigateur ancien, une fonctionnalité que les récents proposent nativement. Le code peut alors utiliser la fonctionnalité sans se soucier de qui la possède.
+en: A piece of code that reproduces, in an old browser, a feature that recent ones offer natively. Code can then use the feature without caring who has it.
+voir: navigateur, transpilation, js
+
+@ lazy-loading
+cat: web
+nom: Lazy loading
+nom-fr: chargement différé
+alias: chargement paresseux, loading=lazy, chargement différé, defer, async script
+fr: Technique qui retarde le chargement d'une ressource (image, script, module) jusqu'à ce qu'elle soit nécessaire, pour accélérer l'affichage initial et économiser de la bande passante.
+en: A technique that delays loading a resource (image, script, module) until it is needed, to speed up the initial display and save bandwidth.
+ex: html
+| <img src="grande-photo.webp" loading="lazy" alt="Vue du port" width="800" height="600">
+ex-fr: L'image ne sera téléchargée que lorsqu'elle approchera de l'écran.
+ex-en: The image is only downloaded when it gets close to the screen.
+voir: webp, cdn, bande-passante
+
+@ seo
+cat: web
+nom: SEO
+dev: Search Engine Optimization
+nom-fr: référencement naturel
+alias: référencement, search engine optimization, moteur de recherche, sitemap, robots.txt, balise title, meta description
+fr: Ensemble de pratiques qui aident les moteurs de recherche à comprendre un site et à le montrer aux bonnes personnes : titres clairs, contenu utile, pages rapides, structure propre, adresses lisibles.
+en: The set of practices that help search engines understand a site and show it to the right people: clear titles, useful content, fast pages, clean structure, readable addresses.
+voir: html, open-graph, spa, accessibilite
+
+@ scraping
+cat: web
+nom: Scraping
+nom-fr: aspiration de données
+alias: web scraping, crawler, robot d'indexation, bot, extraction de données, spider
+fr: Extraction automatique de données depuis des pages web, par un programme qui les télécharge et en lit le contenu. C'est utile pour collecter des informations publiques, mais soumis aux conditions du site et à la loi.
+en: Automatic extraction of data from web pages, by a program that downloads them and reads their content. It is useful for collecting public information, but subject to the site's terms and to the law.
++fr: Avant de collecter, on consulte le fichier robots.txt du site et ses conditions d'utilisation, et on ménage le serveur en espaçant les requêtes.
++en: Before collecting, check the site's robots.txt file and terms of use, and spare the server by spacing out requests.
+voir: clone-web, headless, api, curl
+
+@ open-graph
+cat: web
+nom: Open Graph
+alias: og:title, og:image, twitter card, aperçu de lien, link preview, méta-données de partage
+fr: Ensemble de balises meta placées dans le HTML (og:title, og:description, og:image) qui définissent l'aperçu affiché quand un lien est partagé dans une messagerie ou un réseau social.
+en: A set of meta tags placed in the HTML (og:title, og:description, og:image) that define the preview shown when a link is shared in a messaging app or social network.
+ex: html
+| <meta property="og:title" content="Code en clair">
+| <meta property="og:image" content="https://exemple.org/apercu.png">
+ex-fr: Le titre et l'image de l'aperçu ; l'adresse de l'image doit être complète, car un robot la lit hors contexte.
+ex-en: The preview's title and image; the image address must be complete, because a robot reads it out of context.
+voir: html, seo, favicon
+
+@ accessibilite
+cat: web
+nom: Accessibilité
+nom-en: accessibility
+alias: a11y, aria, wcag, lecteur d'écran, screen reader, contraste, texte alternatif, alt
+fr: Fait de concevoir un site ou une application utilisable par tous, y compris avec un handicap : texte alternatif sur les images, contrastes suffisants, navigation au clavier, structure lisible par un lecteur d'écran.
+en: Designing a site or app so that everyone can use it, including people with disabilities: alternative text on images, sufficient contrast, keyboard navigation, structure a screen reader can read.
++fr: Les règles internationales s'appellent WCAG. L'attribut ARIA complète le HTML quand une balise ordinaire ne dit pas assez sur le rôle d'un élément. « a11y » abrège accessibility : un a, onze lettres, un y.
++en: The international rules are called WCAG. ARIA attributes complete HTML when an ordinary tag does not say enough about an element's role. “a11y” abbreviates accessibility: an a, eleven letters, a y.
+ex: html
+| <button aria-label="Fermer">✕</button>
+| <img src="schema.png" alt="Schéma d'un dépôt Git">
+ex-fr: Un bouton sans texte reçoit un nom lisible par un lecteur d'écran ; une image reçoit sa description.
+ex-en: A textless button gets a name a screen reader can read; an image gets its description.
+voir: html, contraste-wcag, seo, responsive

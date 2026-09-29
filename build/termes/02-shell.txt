@@ -1,0 +1,451 @@
+# Terminal et shell.
+
+@ bash
+cat: shell
+nom: Bash
+dev: Bourne Again SHell
+alias: sh, zsh, shell unix, bourne again shell, script bash, git bash
+fr: Interpréteur de commandes (shell) très répandu sous Linux, macOS et, via Git Bash, Windows : il lit ce que vous tapez ou un fichier script, et lance les programmes correspondants.
+en: A very widespread command interpreter (shell) on Linux, macOS and, via Git Bash, Windows: it reads what you type or a script file, and runs the corresponding programs.
++fr: Son nom est un jeu de mots sur le shell de Bourne qu'il remplace. Zsh, le shell par défaut de macOS, lui ressemble beaucoup.
++en: Its name is a pun on the Bourne shell it replaces. Zsh, the default shell on macOS, is very similar to it.
+ex: bash
+| for f in *.png; do
+|   echo "Image : $f"
+| done
+ex-fr: Une boucle Bash qui affiche le nom de chaque fichier PNG du dossier.
+ex-en: A Bash loop that prints the name of every PNG file in the folder.
+attention-fr: Bash n'est pas le terminal : le terminal est la fenêtre, Bash le programme qui comprend les commandes dedans.
+attention-en: Bash is not the terminal: the terminal is the window, Bash is the program inside it that understands the commands.
+voir: shell, terminal, script, powershell, shebang
+schema: shell-terminal
+
+@ shell
+cat: shell
+nom: Shell
+nom-fr: interpréteur de commandes
+alias: interpréteur de commandes, coquille, sh, ksh, fish, zsh
+fr: Programme qui sert d'interface entre vous et le système d'exploitation : il lit vos commandes, les exécute et affiche le résultat. Bash, Zsh, Fish et PowerShell sont des shells.
+en: A program that acts as an interface between you and the operating system: it reads your commands, runs them and displays the result. Bash, Zsh, Fish and PowerShell are shells.
+voir: bash, terminal, cli, powershell
+schema: shell-terminal
+
+@ terminal
+cat: shell
+nom: Terminal
+alias: console, émulateur de terminal, terminal emulator, tty, invite de commandes, cmd
+fr: Fenêtre dans laquelle on tape des commandes et où s'affichent leurs résultats. Le terminal ne comprend rien lui-même : il transmet le texte au shell qui tourne dedans.
+en: A window in which you type commands and where their results appear. The terminal understands nothing itself: it passes the text to the shell running inside it.
+voir: shell, bash, cli, powershell
+schema: shell-terminal
+
+@ cli
+cat: shell
+nom: CLI
+dev: Command-Line Interface
+nom-fr: interface en ligne de commande
+alias: ligne de commande, command line, command-line interface, outil en ligne de commande, gui
+fr: Interface où l'on donne des ordres à un programme en tapant du texte plutôt qu'en cliquant. Git, npm ou adb sont des outils CLI, par opposition aux interfaces graphiques (GUI).
+en: An interface where you give a program orders by typing text rather than clicking. Git, npm or adb are CLI tools, as opposed to graphical interfaces (GUI).
++fr: Une CLI se prête à l'automatisation : ce qu'on tape à la main peut être écrit dans un script et rejoué à l'identique.
++en: A CLI lends itself to automation: what you type by hand can be written into a script and replayed identically.
+ex: bash
+| npm --version
+| git status
+voir: terminal, shell, argument, script
+
+@ powershell
+cat: shell
+nom: PowerShell
+alias: pwsh, ps1, powershell core, cmdlet
+fr: Shell et langage de script de Microsoft, disponible sous Windows, macOS et Linux. Au lieu de simple texte, ses commandes (cmdlets) échangent des objets, ce qui rend les traitements plus structurés.
+en: Microsoft's shell and scripting language, available on Windows, macOS and Linux. Instead of plain text, its commands (cmdlets) exchange objects, which makes processing more structured.
+ex: text
+| Get-ChildItem -Filter *.png | Select-Object Name, Length
+ex-fr: Lister les fichiers PNG en ne gardant que leur nom et leur taille (des propriétés d'objets).
+ex-en: List the PNG files keeping only their name and size (object properties).
+attention-fr: Ses commandes s'écrivent Verbe-Nom (Get-ChildItem) et ne sont pas celles de Bash, même si certains alias comme ls existent.
+attention-en: Its commands are written Verb-Noun (Get-ChildItem) and are not Bash's, even though some aliases such as ls exist.
+voir: shell, bash, terminal, script
+
+@ argument
+cat: shell
+nom: Argument
+alias: paramètre de commande, arguments, argv, $1, positional argument
+fr: Valeur donnée à une commande ou à un programme pour préciser sur quoi il doit agir. Dans « git commit -m message », commit est un argument de git ; -m est une option et message sa valeur.
+en: A value given to a command or a program to specify what it must act on. In “git commit -m message”, commit is an argument of git; -m is an option and message is its value.
+ex: bash
+| cp source.txt copie.txt
+| echo "Bonjour" "monde"
+ex-fr: cp reçoit deux arguments, l'origine et la destination ; echo en reçoit deux également, deux chaînes.
+ex-en: cp receives two arguments, the source and the destination; echo also receives two, two strings.
+voir: option, cli, parametre
+schema: shell-commande
+
+@ option
+cat: shell
+nom: Option
+nom-fr: option, drapeau
+nom-en: flag
+alias: flag, drapeau, switch, --option, -x, --help, paramètre nommé
+fr: Argument facultatif qui modifie le comportement d'une commande. Une option courte s'écrit avec un tiret (-a), une option longue avec deux (--all) ; certaines attendent une valeur.
+en: An optional argument that changes how a command behaves. A short option is written with one hyphen (-a), a long option with two (--all); some expect a value.
++fr: On peut souvent grouper les options courtes : ls -la équivaut à ls -l -a. Presque toutes les commandes documentent leurs options avec --help.
++en: Short options can often be grouped: ls -la is the same as ls -l -a. Almost every command documents its options with --help.
+ex: bash
+| ls -la
+| git commit --message "Correction"
+| npm install --save-dev vite
+ex-fr: Des options courtes groupées, une option longue avec sa valeur, et une option longue seule.
+ex-en: Grouped short options, a long option with its value, and a long option alone.
+voir: argument, cli, script
+schema: shell-commande
+
+@ flux-standard
+cat: shell
+nom: stdin, stdout, stderr
+nom-fr: flux standards
+alias: stdin, stdout, stderr, entrée standard, sortie standard, sortie d'erreur, standard streams, 2>&1
+fr: Les trois canaux par lesquels tout programme communique : l'entrée standard (stdin) d'où il lit, la sortie standard (stdout) où il écrit ses résultats, et la sortie d'erreur (stderr) où il écrit ses messages d'erreur.
+en: The three channels every program communicates through: standard input (stdin) it reads from, standard output (stdout) it writes its results to, and standard error (stderr) it writes its error messages to.
++fr: Ils portent les numéros 0, 1 et 2. Séparer résultats et erreurs permet de rediriger les uns sans les autres : commande > sortie.txt 2> erreurs.txt.
++en: They are numbered 0, 1 and 2. Separating results from errors makes it possible to redirect one without the other: command > out.txt 2> errors.txt.
+ex: bash
+| ls dossier-inconnu > sortie.txt 2> erreurs.txt
+| ls dossier-inconnu 2>&1 | grep "No such"
+ex-fr: Envoyer les résultats dans un fichier et les erreurs dans un autre ; puis fusionner les erreurs dans le flux normal pour les filtrer.
+ex-en: Send the results to one file and the errors to another; then merge the errors into the normal stream to filter them.
+voir: pipe, redirection, grep
+schema: shell-flux
+
+@ pipe
+cat: shell
+nom: Pipe
+nom-fr: tube
+alias: tube, |, pipeline, chaîner des commandes, barre verticale
+fr: Opérateur « | » qui envoie la sortie d'une commande directement en entrée de la suivante. On construit ainsi un traitement complexe en enchaînant de petites commandes simples.
+en: The “|” operator that sends one command's output straight into the next command's input. A complex job is thus built by chaining small, simple commands.
+ex: bash
+| cat journal.txt | grep ERREUR | sort | uniq -c
+ex-fr: Lire un journal, ne garder que les lignes contenant ERREUR, les trier, puis compter les doublons.
+ex-en: Read a log, keep only the lines containing ERREUR, sort them, then count the duplicates.
+voir: flux-standard, redirection, grep
+schema: shell-pipe
+
+@ redirection
+cat: shell
+nom: Redirection
+alias: >, >>, <, chevron, rediriger, redirect output
+fr: Renvoi de l'entrée ou de la sortie d'une commande vers un fichier au lieu du clavier ou de l'écran. > écrit dans un fichier en l'écrasant, >> ajoute à la fin, < lit un fichier comme entrée.
+en: Sending a command's input or output to a file instead of the keyboard or the screen. > writes to a file, overwriting it, >> appends to the end, < reads a file as input.
+ex: bash
+| echo "première ligne" > notes.txt
+| echo "seconde ligne" >> notes.txt
+| sort < notes.txt
+ex-fr: Créer un fichier, lui ajouter une ligne, puis le donner à sort comme entrée.
+ex-en: Create a file, append a line to it, then give it to sort as input.
+attention-fr: > écrase le fichier sans prévenir : un seul chevron de trop et son contenu précédent est perdu.
+attention-en: > overwrites the file without warning: one chevron too few and its previous content is lost.
+voir: pipe, flux-standard
+schema: shell-flux
+
+@ variable-denvironnement
+cat: shell
+nom: Variable d'environnement
+nom-en: environment variable
+alias: env, environment variable, export, $PATH, .env, dotenv, variable env
+fr: Paire nom-valeur définie dans l'environnement d'un processus et transmise aux programmes qu'il lance. Elle sert à les configurer sans modifier leur code : chemins, langue, clés d'accès.
+en: A name-value pair defined in a process's environment and passed on to the programs it launches. It configures them without changing their code: paths, language, access keys.
++fr: En développement, on les range souvent dans un fichier .env, jamais versionné, pour ne pas publier de secrets. Par convention, leurs noms sont en majuscules.
++en: In development they are often kept in a .env file, never versioned, so as not to publish secrets. By convention, their names are in capital letters.
+ex: bash
+| export API_URL="https://api.exemple.org"
+| echo "$API_URL"
+| API_URL=http://localhost:3000 npm start
+ex-fr: Définir une variable pour les programmes lancés ensuite, l'afficher, ou la définir pour une seule commande.
+ex-en: Define a variable for the programs launched afterwards, print it, or define it for a single command.
+voir: path, secret, gitignore, script
+schema: shell-env
+
+@ path
+cat: shell
+nom: PATH
+alias: variable PATH, $PATH, chemin de recherche, %PATH%
+fr: Variable d'environnement qui liste les dossiers où le shell cherche un programme quand vous tapez son nom. Elle explique pourquoi « commande introuvable » apparaît quand un outil n'est pas installé dans l'un d'eux.
+en: An environment variable listing the folders where the shell looks for a program when you type its name. It explains why “command not found” appears when a tool is not installed in one of them.
+ex: bash
+| echo $PATH
+| which git
+| export PATH="$HOME/bin:$PATH"
+ex-fr: Voir les dossiers de recherche, trouver où se trouve git, puis ajouter un dossier personnel en tête de liste.
+ex-en: See the search folders, find where git is located, then add a personal folder at the front of the list.
+attention-fr: PATH (les dossiers de recherche) n'est pas un chemin de fichier (path) : le premier est une liste, le second une adresse.
+attention-en: PATH (the search folders) is not a file path: the first is a list, the second is an address.
+voir: variable-denvironnement, chemin, cli
+schema: shell-path
+
+@ chemin
+cat: shell
+nom: Chemin
+nom-en: path
+alias: path, chemin absolu, chemin relatif, absolute path, relative path, ., .., ~, cwd, répertoire courant
+fr: Adresse d'un fichier ou d'un dossier dans le système de fichiers. Un chemin absolu part de la racine (/home/moi/notes.txt), un chemin relatif part du dossier courant (../notes.txt).
+en: The address of a file or folder in the file system. An absolute path starts from the root (/home/me/notes.txt), a relative path starts from the current folder (../notes.txt).
++fr: . désigne le dossier courant, .. son parent, ~ votre dossier personnel. Sous Windows, les chemins commencent par une lettre de lecteur et utilisent \ ; les URL et Unix utilisent /.
++en: . means the current folder, .. its parent, ~ your home folder. On Windows, paths start with a drive letter and use \ ; URLs and Unix use /.
+ex: bash
+| pwd
+| cd ../images
+| cat ~/notes.txt
+ex-fr: Afficher le dossier courant, monter d'un niveau puis entrer dans images, lire un fichier depuis le dossier personnel.
+ex-en: Print the current folder, go up one level then into images, read a file from the home folder.
+voir: slash, path, glob
+schema: shell-chemins
+
+@ slash
+cat: shell
+nom: Slash
+nom-fr: barre oblique
+alias: /, barre oblique, forward slash, backslash, antislash, \, git slash, slash command
+fr: Le signe « / ». Il sépare les dossiers d'un chemin sous Unix, dans une URL et dans Git. Le signe « \ » (antislash, backslash) sépare les dossiers sous Windows et introduit les séquences d'échappement dans les chaînes de caractères.
+en: The “/” character. It separates the folders of a path on Unix, in a URL and in Git. The “\” character (backslash) separates folders on Windows and introduces escape sequences in strings.
++fr: Un slash en fin de chemin indique en général un dossier (node_modules/), et un slash seul (/) est la racine du système de fichiers.
++en: A trailing slash usually indicates a folder (node_modules/), and a lone slash (/) is the root of the file system.
+ex: text
+| https://exemple.org/dossier/page.html
+| C:\Users\moi\Documents\notes.txt
+| "Il a dit \"bonjour\""
+ex-fr: Slash dans une URL, antislash dans un chemin Windows, antislash pour échapper un guillemet dans une chaîne.
+ex-en: Slash in a URL, backslash in a Windows path, backslash to escape a quote in a string.
+attention-fr: Dans une URL ou un chemin Unix, on n'utilise jamais l'antislash ; l'inverse est toléré sous Windows.
+attention-en: In a URL or a Unix path, never use the backslash; the reverse is tolerated on Windows.
+voir: chemin, echappement, slash-command, url
+
+@ echappement
+cat: shell
+nom: Échappement
+nom-en: escaping
+alias: escape, échapper, escape sequence, séquence d'échappement, \n, \t, quoting, guillemets
+fr: Technique qui retire son sens spécial à un caractère, ou qui en écrit un difficile à taper, à l'aide d'un préfixe, le plus souvent l'antislash. \" écrit un guillemet dans une chaîne, \n un saut de ligne, \t une tabulation.
+en: A technique that removes a character's special meaning, or writes one that is hard to type, using a prefix, most often the backslash. \" writes a quote inside a string, \n a line break, \t a tab.
+ex: js
+| const phrase = "Elle a dit : \"salut\"\nEt elle est partie.";
+| const chemin = "C:\\Users\\moi";
+| const accent = "caf\u00e9";
+ex-fr: Un guillemet et un saut de ligne échappés ; un antislash littéral doublé ; le caractère é écrit par son code Unicode.
+ex-en: An escaped quote and line break; a literal backslash doubled; the character é written by its Unicode code.
+voir: slash, regex, unicode, saut-de-ligne
+
+@ script
+cat: shell
+nom: Script
+alias: script shell, shell script, .sh, .ps1, scripting, langage de script
+fr: Fichier texte qui contient une suite de commandes ou d'instructions exécutées d'un trait par un interpréteur. Il sert à automatiser une tâche répétitive : sauvegarde, installation, génération de fichiers.
+en: A text file containing a sequence of commands or instructions run in one go by an interpreter. It automates a repetitive task: backup, installation, file generation.
+ex: bash
+| #!/bin/bash
+| set -e
+| npm ci
+| npm test
+| npm run build
+ex-fr: Un petit script de build : il s'arrête à la première erreur (set -e), installe, teste, puis construit.
+ex-en: A small build script: it stops at the first error (set -e), installs, tests, then builds.
+voir: bash, shebang, cli, code-de-sortie
+
+@ shebang
+cat: shell
+nom: Shebang
+alias: #!, hashbang, #!/bin/bash, #!/usr/bin/env node
+fr: Première ligne d'un script commençant par « #! » : elle indique quel programme, par exemple /bin/bash ou node, doit interpréter le fichier lorsqu'on l'exécute directement.
+en: The first line of a script starting with “#!”: it says which program, for example /bin/bash or node, must interpret the file when it is run directly.
+ex: bash
+| #!/usr/bin/env python3
+| print("Bonjour")
+ex-fr: Un script Python exécutable : env retrouve python3 dans le PATH, où qu'il soit installé.
+ex-en: An executable Python script: env finds python3 in the PATH, wherever it is installed.
++fr: Pour que le script s'exécute directement, il faut aussi lui donner le droit d'exécution avec chmod +x.
++en: For the script to run directly, it must also be given execute permission with chmod +x.
+voir: script, chmod, bash, path
+
+@ chmod
+cat: shell
+nom: chmod
+nom-fr: droits d'accès
+alias: permissions, droits, rwx, chmod +x, 755, 644, permissions unix, exécutable
+fr: Commande qui change les droits d'un fichier sous Unix : lire (r), écrire (w), exécuter (x), séparément pour le propriétaire, son groupe et les autres. Chaque droit vaut un chiffre : 4, 2, 1, additionnés.
+en: A command that changes a file's permissions on Unix: read (r), write (w), execute (x), separately for the owner, their group and everyone else. Each permission is a number: 4, 2, 1, added together.
+ex: bash
+| chmod +x deploy.sh
+| chmod 644 index.html
+| chmod 755 deploy.sh
+ex-fr: Rendre un script exécutable ; 644 : lecture et écriture pour le propriétaire, lecture pour les autres ; 755 : tous peuvent exécuter.
+ex-en: Make a script executable; 644: read and write for the owner, read for everyone else; 755: everyone can execute.
+voir: sudo, shebang, script
+schema: shell-chmod
+
+@ sudo
+cat: shell
+nom: sudo
+dev: superuser do
+alias: root, administrateur, super-utilisateur, élévation de privilèges, run as administrator
+fr: Commande qui exécute la suivante avec les droits de l'administrateur (root) après demande de votre mot de passe. Elle donne un pouvoir presque illimité sur la machine : à utiliser en sachant ce que la commande fait.
+en: A command that runs the next one with administrator (root) rights after asking for your password. It gives almost unlimited power over the machine: use it only knowing what the command does.
+ex: bash
+| sudo apt update
+ex-fr: Mettre à jour la liste des paquets du système, opération réservée à l'administrateur.
+ex-en: Update the system's package list, an operation reserved for the administrator.
+attention-fr: Ne collez jamais dans un terminal, avec sudo, une commande dont vous ne comprenez pas l'effet, surtout tirée d'une page web.
+attention-en: Never paste into a terminal, with sudo, a command whose effect you do not understand, especially one taken from a web page.
+voir: chmod, moindre-privilege, shell
+
+@ glob
+cat: shell
+nom: Glob
+nom-fr: joker
+alias: wildcard, joker, *, ?, **, globbing, motif de fichiers
+fr: Motif qui désigne plusieurs fichiers d'un coup à l'aide de jokers : * remplace n'importe quelle suite de signes, ? un seul signe, [abc] un signe parmi ceux listés, ** traverse les sous-dossiers.
+en: A pattern that designates several files at once using wildcards: * stands for any run of characters, ? for a single character, [abc] for one of the listed characters, ** goes through subfolders.
+ex: bash
+| ls *.png
+| rm photo-?.jpg
+| ls src/**/*.js
+ex-fr: Tous les PNG du dossier, les fichiers photo-1.jpg à photo-9.jpg, tous les JS sous src.
+ex-en: All PNGs in the folder, files photo-1.jpg to photo-9.jpg, all JS files under src.
+attention-fr: Un glob n'est pas une expression régulière : * y veut dire « n'importe quoi », alors qu'en regex il répète le signe précédent.
+attention-en: A glob is not a regular expression: * means “anything” there, whereas in a regex it repeats the previous character.
+voir: regex, grep, gitignore
+
+@ code-de-sortie
+cat: shell
+nom: Code de sortie
+nom-en: exit code
+alias: exit code, exit status, $?, statut de sortie, return code, code de retour
+fr: Nombre qu'un programme renvoie en se terminant : 0 signifie que tout s'est bien passé, tout autre nombre signale une erreur. Les scripts et les outils d'intégration continue s'appuient dessus pour savoir s'il faut continuer.
+en: A number a program returns when it ends: 0 means everything went well, any other number signals an error. Scripts and continuous-integration tools rely on it to know whether to carry on.
+ex: bash
+| grep "motif" fichier.txt
+| echo $?
+| npm test && echo "OK" || echo "ÉCHEC"
+ex-fr: Lire le code de la dernière commande (0 si trouvé, 1 sinon) ; enchaîner selon la réussite (&&) ou l'échec (||).
+ex-en: Read the last command's code (0 if found, 1 otherwise); chain depending on success (&&) or failure (||).
+voir: script, ci-cd, hook, flux-standard
+
+@ heredoc
+cat: shell
+nom: Heredoc
+nom-fr: document en ligne
+alias: here document, <<EOF, <<, bloc de texte
+fr: Notation qui fournit à une commande un bloc de texte de plusieurs lignes écrit directement dans le script, jusqu'à une ligne repère (souvent EOF). Pratique pour créer un fichier ou passer un long message.
+en: A notation that feeds a command a multi-line block of text written directly in the script, up to a marker line (often EOF). Handy to create a file or pass a long message.
+ex: bash
+| cat > bienvenue.txt <<'EOF'
+| Bonjour $USER
+| Les lignes sont copiées telles quelles.
+| EOF
+ex-fr: Écrire un fichier de deux lignes ; les apostrophes autour de EOF empêchent l'interprétation de $USER.
+ex-en: Write a two-line file; the quotes around EOF prevent $USER from being interpreted.
+voir: redirection, script, echappement
+
+@ grep
+cat: shell
+nom: grep
+alias: ripgrep, rg, findstr, recherche de texte, recherche dans les fichiers
+fr: Commande qui cherche dans des fichiers ou dans un flux les lignes contenant un motif (un texte ou une expression régulière) et les affiche.
+en: A command that searches files or a stream for lines containing a pattern (a text or a regular expression) and prints them.
+ex: bash
+| grep -rn "TODO" src/
+| grep -i "erreur" journal.txt
+| git log --oneline | grep fix
+ex-fr: Chercher TODO dans tout src avec numéros de ligne ; sans tenir compte de la casse ; filtrer un historique Git.
+ex-en: Search for TODO throughout src with line numbers; ignoring case; filter a Git history.
+voir: regex, pipe, glob, flux-standard
+
+@ curl
+cat: shell
+nom: curl
+alias: wget, requête en ligne de commande, télécharger, http client
+fr: Outil en ligne de commande qui envoie une requête vers une adresse (HTTP, HTTPS, FTP…) et affiche ou enregistre la réponse. Il sert à télécharger un fichier ou à tester une API.
+en: A command-line tool that sends a request to an address (HTTP, HTTPS, FTP…) and displays or saves the response. It is used to download a file or to test an API.
+ex: bash
+| curl -I https://exemple.org
+| curl -X POST -H "Content-Type: application/json" -d '{"nom":"Zoé"}' https://exemple.org/api
+| curl -o page.html https://exemple.org
+ex-fr: Lire les en-têtes seuls, envoyer un JSON en POST, enregistrer la page dans un fichier.
+ex-en: Read only the headers, send JSON as a POST, save the page to a file.
+voir: http, methode-http, header, api
+
+@ ssh
+cat: shell
+nom: SSH
+dev: Secure Shell
+alias: secure shell, clé ssh, ssh-keygen, connexion à distance, ssh key
+fr: Protocole et outil qui ouvrent un terminal sécurisé sur une machine distante, ou transfèrent des fichiers, par un canal chiffré. On s'y authentifie par mot de passe ou, mieux, par une paire de clés.
+en: A protocol and tool that open a secure terminal on a remote machine, or transfer files, through an encrypted channel. You authenticate with a password or, better, a key pair.
++fr: La clé privée reste chez vous ; on dépose la clé publique sur le serveur, ou sur GitHub pour pousser du code sans mot de passe.
++en: The private key stays with you; you put the public key on the server, or on GitHub to push code without a password.
+ex: bash
+| ssh-keygen -t ed25519 -C "mon-compte@exemple.org"
+| ssh utilisateur@serveur.exemple.org
+ex-fr: Créer une paire de clés, puis se connecter à un serveur.
+ex-en: Create a key pair, then connect to a server.
+voir: cle-publique-privee, chiffrement, terminal, remote
+
+@ cron
+cat: shell
+nom: cron
+alias: crontab, tâche planifiée, scheduled task, planificateur, cron job
+fr: Planificateur de tâches d'Unix : il lance des commandes à heures fixes ou à intervalle régulier, décrits par cinq champs (minute, heure, jour du mois, mois, jour de la semaine).
+en: Unix's task scheduler: it runs commands at fixed times or regular intervals, described by five fields (minute, hour, day of month, month, day of week).
+ex: text
+| 30 2 * * 1-5  /home/moi/sauvegarde.sh
+ex-fr: Lancer le script de sauvegarde à 2 h 30, du lundi au vendredi.
+ex-en: Run the backup script at 02:30, Monday to Friday.
+voir: script, processus, ci-cd
+
+@ processus
+cat: shell
+nom: Processus
+nom-en: process
+alias: process, pid, daemon, démon, tâche de fond, kill, background process
+fr: Programme en cours d'exécution, avec sa mémoire et son identifiant (PID). Un processus peut lancer d'autres processus ; un démon est un processus qui tourne en arrière-plan sans interface.
+en: A program being executed, with its own memory and its identifier (PID). A process can start other processes; a daemon is a process that runs in the background with no interface.
+ex: bash
+| ps aux | grep node
+| kill 4242
+| npm start &
+ex-fr: Lister les processus node, arrêter le processus 4242, lancer un serveur en arrière-plan avec &.
+ex-en: List the node processes, stop process 4242, start a server in the background with &.
+attention-fr: Un processus n'est pas un fil d'exécution (thread) : les threads d'un même processus partagent sa mémoire.
+attention-en: A process is not a thread: the threads of one process share its memory.
+voir: thread, shell, cron
+
+@ slash-command
+cat: shell
+nom: Slash command
+nom-fr: commande slash
+alias: commande slash, /commande, slash commands, /help, /clear
+fr: Commande introduite par une barre oblique (/help, /clear) que l'on tape dans une interface de conversation ou dans l'invite d'un outil, comme un assistant de code ou une messagerie, pour déclencher une action précise plutôt qu'envoyer du texte.
+en: A command introduced by a slash (/help, /clear) that you type in a chat interface or in a tool's prompt, such as a coding assistant or a messaging app, to trigger a precise action rather than send text.
++fr: Ce n'est pas une commande du shell : c'est le programme qui l'interprète. Chaque outil définit la sienne, et beaucoup permettent d'en écrire de nouvelles.
++en: It is not a shell command: the program itself interprets it. Each tool defines its own, and many let you write new ones.
+ex: text
+| /help
+| /clear
+ex-fr: Afficher l'aide de l'outil, puis vider la conversation en cours.
+ex-en: Show the tool's help, then clear the current conversation.
+voir: cli, slash, assistant-de-code, prompt
+schema: shell-slash
+
+@ saut-de-ligne
+cat: data
+nom: Saut de ligne
+nom-en: line ending
+alias: newline, line break, LF, CRLF, \n, \r\n, fin de ligne, retour chariot, carriage return, eol
+fr: Caractère de contrôle qui termine une ligne de texte. Unix et macOS utilisent LF (\n), Windows historiquement CRLF (\r\n) : deux caractères. Le mélange des deux produit des diffs pleins de lignes « modifiées » sans raison.
+en: A control character that ends a line of text. Unix and macOS use LF (\n), Windows historically CRLF (\r\n): two characters. Mixing the two produces diffs full of lines “changed” for no reason.
+ex: ini
+| * text=auto eol=lf
+ex-fr: Une ligne de .gitattributes qui impose LF dans le dépôt, quel que soit le système de chacun.
+ex-en: A .gitattributes line that enforces LF in the repository, whatever each person's system.
+voir: gitattributes, echappement, ascii, encodage
+schema: data-saut-de-ligne

@@ -1,0 +1,443 @@
+# Git et GitHub — seconde moitié : partager, défaire, comprendre les entrailles.
+
+@ remote
+cat: git
+nom: Remote
+nom-fr: dépôt distant
+alias: git remote, dépôt distant, remote repository, serveur distant
+fr: Dépôt Git hébergé ailleurs (GitHub, un serveur d'entreprise…) auquel votre dépôt local est relié par un nom court et une adresse. On y envoie et on y récupère des commits.
+en: A Git repository hosted elsewhere (GitHub, a company server…) to which your local repository is linked by a short name and an address. You send commits to it and fetch commits from it.
++fr: Un dépôt local peut connaître plusieurs remotes. Le nom d'usage du premier est origin ; celui du projet d'origine, quand on travaille sur un fork, est upstream.
++en: A local repository can know several remotes. The usual name of the first is origin; the name of the original project, when you work on a fork, is upstream.
+ex: bash
+| git remote -v
+| git remote add upstream https://github.com/auteur/projet.git
+ex-fr: Lister les remotes avec leurs adresses, puis en ajouter un nommé upstream.
+ex-en: List the remotes with their addresses, then add one named upstream.
+voir: origin, upstream, fetch, push, clone
+schema: git-remote
+
+@ origin
+cat: git
+nom: origin
+alias: origin/main, git origin, remote origin
+fr: Nom donné par défaut au dépôt distant dont on a cloné le projet. C'est une simple étiquette : origin/main désigne la copie locale de la branche main telle qu'elle était sur ce serveur à votre dernier fetch.
+en: The default name given to the remote repository you cloned a project from. It is just a label: origin/main designates the local copy of the main branch as it was on that server at your last fetch.
+ex: bash
+| git remote get-url origin
+| git log origin/main..main
+ex-fr: Lire l'adresse d'origin, puis lister les commits de main qui ne sont pas encore sur origin/main.
+ex-en: Read origin's address, then list the commits on main that are not on origin/main yet.
+attention-fr: origin n'a rien de spécial pour Git : on peut le renommer ou le supprimer.
+attention-en: origin is nothing special to Git: you can rename or delete it.
+voir: remote, upstream, clone, push
+schema: git-remote
+
+@ upstream
+cat: git
+nom: upstream
+alias: upstream branch, branche amont, amont, set-upstream, -u
+fr: Deux emplois proches : le remote qui désigne le projet d'origine quand on travaille sur un fork, et la branche distante qu'une branche locale suit, ce qui permet de taper git push ou git pull sans arguments.
+en: Two close uses: the remote naming the original project when you work on a fork, and the remote branch that a local branch tracks, which lets you type git push or git pull with no arguments.
+ex: bash
+| git push --set-upstream origin ma-fonction
+| git branch -vv
+ex-fr: Envoyer une nouvelle branche en la reliant à sa branche distante, puis voir à quoi chaque branche est reliée.
+ex-en: Push a new branch and link it to its remote branch, then see what each branch is tracking.
+voir: remote, origin, fork, push, pull
+schema: git-remote
+
+@ fetch
+cat: git
+nom: Fetch
+alias: git fetch, fetch(), fetch api, requête javascript, récupérer
+sens: Git | Git
+fr: Commande qui télécharge depuis le dépôt distant les nouveaux commits et met à jour les branches distantes (origin/main), sans toucher à vos branches ni à vos fichiers.
+en: A command that downloads new commits from the remote repository and updates the remote-tracking branches (origin/main), without touching your branches or your files.
++fr: C'est la façon prudente de voir ce qui a changé avant de décider de fusionner. git pull est un fetch suivi d'une fusion.
++en: It is the cautious way to see what changed before deciding to merge. git pull is a fetch followed by a merge.
+ex: bash
+| git fetch origin
+| git log main..origin/main --oneline
+ex-fr: Récupérer les nouveautés, puis lister les commits présents sur origin/main mais pas sur main.
+ex-en: Fetch the updates, then list the commits on origin/main that are not on main.
+schema: git-fetch
+sens: JavaScript (web) | JavaScript (web)
+fr: Fonction JavaScript intégrée au navigateur qui envoie une requête HTTP et renvoie une promesse qui se résout avec la réponse. C'est la manière moderne d'appeler une API depuis une page web.
+en: A JavaScript function built into the browser that sends an HTTP request and returns a promise that resolves with the response. It is the modern way to call an API from a web page.
++fr: fetch ne rejette la promesse que si le réseau échoue : une réponse 404 ou 500 « réussit », il faut tester response.ok soi-même.
++en: fetch only rejects the promise when the network fails: a 404 or 500 response “succeeds”, so you must test response.ok yourself.
+ex: js
+| const reponse = await fetch('/api/termes.json');
+| if (!reponse.ok) throw new Error('HTTP ' + reponse.status);
+| const termes = await reponse.json();
+ex-fr: Télécharger un fichier JSON, vérifier le code de statut, puis en lire le contenu.
+ex-en: Download a JSON file, check the status code, then read its content.
+voir: pull, remote, promesse, http, api
+
+@ pull
+cat: git
+nom: Pull
+alias: git pull, tirer, git pull --rebase
+fr: Commande qui met à jour la branche courante avec le dépôt distant : elle fait un fetch, puis fusionne (ou rebase) les nouveaux commits dans votre branche et votre dossier de travail.
+en: A command that updates the current branch from the remote repository: it runs a fetch, then merges (or rebases) the new commits into your branch and your working tree.
+ex: bash
+| git pull
+| git pull --rebase
+ex-fr: Récupérer et fusionner, ou récupérer et rejouer ses propres commits par-dessus (rebase).
+ex-en: Fetch and merge, or fetch and replay your own commits on top (rebase).
+attention-fr: Ne pas confondre avec une pull request : le pull est une commande locale, la pull request une demande de fusion sur GitHub.
+attention-en: Not to be confused with a pull request: a pull is a local command, a pull request is a merge proposal on GitHub.
+voir: fetch, merge, rebase, push, pull-request
+schema: git-pull
+
+@ push
+cat: git
+nom: Push
+alias: git push, pousser, envoyer
+fr: Commande qui envoie vers le dépôt distant les commits que vous avez faits en local. Elle est refusée si le distant contient des commits que vous n'avez pas : il faut d'abord les récupérer.
+en: A command that sends the commits you made locally to the remote repository. It is refused if the remote holds commits you do not have: you must fetch them first.
+ex: bash
+| git push
+| git push -u origin ma-fonction
+| git push origin --tags
+ex-fr: Envoyer la branche courante, envoyer une nouvelle branche en la reliant, envoyer les tags.
+ex-en: Send the current branch, send a new branch and link it, send the tags.
+voir: pull, commit, remote, force-push, upstream
+schema: git-push
+
+@ force-push
+cat: git
+nom: Force push
+alias: git push --force, --force-with-lease, push -f, écraser le distant
+fr: Envoi qui impose votre historique au dépôt distant, même s'il diverge du sien, en écrasant les commits qui s'y trouvaient. On en a besoin après un amend ou un rebase de commits déjà envoyés.
+en: A push that imposes your history on the remote repository even when it diverges from it, overwriting the commits that were there. You need it after an amend or a rebase of commits already pushed.
++fr: Préférez --force-with-lease : il refuse d'écraser si quelqu'un a poussé entre-temps. Ne jamais forcer sur une branche partagée sans prévenir l'équipe.
++en: Prefer --force-with-lease: it refuses to overwrite if someone pushed in the meantime. Never force a shared branch without warning the team.
+ex: bash
+| git push --force-with-lease
+ex-fr: Écraser le distant, mais seulement s'il est toujours tel que vous l'avez vu.
+ex-en: Overwrite the remote, but only if it is still as you last saw it.
+voir: push, amend, rebase, reflog
+
+@ diff
+cat: git
+nom: Diff
+alias: git diff, différence, patch, comparer, delta
+fr: Comparaison de deux versions d'un texte : la liste des lignes ajoutées, supprimées ou modifiées. Dans Git, git diff montre ce qui a changé entre deux états du projet.
+en: A comparison of two versions of a text: the list of added, removed or changed lines. In Git, git diff shows what changed between two states of the project.
++fr: Dans l'affichage habituel, les lignes supprimées commencent par - et les ajoutées par +. Chaque bloc de changements (hunk) est introduit par une ligne @@ qui donne sa position.
++en: In the usual display, removed lines start with - and added lines with +. Each block of changes (a hunk) is introduced by an @@ line giving its position.
+ex: diff
+| @@ -1,3 +1,3 @@
+|  <h1>Code en clair</h1>
+| -<p>Bienvenu</p>
+| +<p>Bienvenue</p>
+|  <footer></footer>
+ex-fr: Un extrait de diff : une ligne supprimée (rouge), une ligne ajoutée (verte), deux lignes inchangées pour le contexte.
+ex-en: A diff excerpt: a removed line (red), an added line (green), two unchanged lines for context.
+voir: patch, commit, status, blame
+schema: git-diff
+
+@ patch
+cat: git
+nom: Patch
+nom-fr: correctif
+alias: git apply, git format-patch, correctif, rustine, .patch
+fr: Fichier texte qui contient une différence (un diff) et peut être appliqué à un projet pour reproduire des modifications. C'est aussi, plus généralement, un petit correctif logiciel.
+en: A text file containing a difference (a diff) that can be applied to a project to reproduce changes. More generally, it also means a small software fix.
+ex: bash
+| git format-patch -1 HEAD
+| git apply 0001-correction.patch
+ex-fr: Écrire le dernier commit dans un fichier .patch, puis appliquer un patch reçu.
+ex-en: Write the last commit into a .patch file, then apply a patch you received.
+voir: diff, commit, cherry-pick
+
+@ blame
+cat: git
+nom: Blame
+alias: git blame, annotate, qui a écrit cette ligne
+fr: Commande qui affiche un fichier ligne par ligne, chaque ligne accompagnée du commit et de l'auteur qui l'ont modifiée en dernier. Sert à comprendre pourquoi une ligne existe, pas à chercher un coupable.
+en: A command that displays a file line by line, each line annotated with the commit and author that last changed it. It helps understand why a line exists, not to find someone to blame.
+ex: bash
+| git blame -L 10,20 src/app.js
+ex-fr: Voir qui a modifié en dernier les lignes 10 à 20 de app.js, et dans quel commit.
+ex-en: See who last changed lines 10 to 20 of app.js, and in which commit.
+voir: log, diff, commit
+
+@ log
+cat: git
+nom: git log
+alias: log, historique, git log --oneline, --graph
+fr: Commande qui affiche l'historique des commits de la branche courante, du plus récent au plus ancien : empreinte, auteur, date et message.
+en: A command that displays the commit history of the current branch, from newest to oldest: hash, author, date and message.
+ex: bash
+| git log --oneline --graph --all
+| git log --author="Claire" --since="2 weeks ago"
+ex-fr: Une ligne par commit avec un petit dessin des branches, puis un filtre par auteur et par date.
+ex-en: One line per commit with a small branch drawing, then a filter by author and date.
+voir: commit, reflog, blame, diff
+
+@ reflog
+cat: git
+nom: Reflog
+alias: git reflog, journal des références, filet de sécurité
+fr: Journal privé, tenu par Git sur votre machine, de tous les endroits où HEAD est passé. Il permet de retrouver un commit qui semble perdu après un reset, un rebase ou un amend.
+en: A private journal, kept by Git on your machine, of every place HEAD has been. It lets you find a commit that seems lost after a reset, a rebase or an amend.
++fr: Les entrées expirent au bout de quelques semaines. Le reflog n'est pas partagé : il n'existe que sur l'ordinateur où les actions ont eu lieu.
++en: Entries expire after a few weeks. The reflog is not shared: it only exists on the computer where the actions took place.
+ex: bash
+| git reflog
+| git reset --hard HEAD@{2}
+ex-fr: Lister les anciennes positions de HEAD, puis revenir à celle d'il y a deux étapes.
+ex-en: List HEAD's past positions, then go back to the one from two steps ago.
+voir: reset, amend, rebase, head
+
+@ reset
+cat: git
+nom: Reset
+alias: git reset, --soft, --mixed, --hard, annuler
+fr: Commande qui déplace la branche courante vers un autre commit, et, selon le mode, remet aussi l'index (--mixed, par défaut) et le dossier de travail (--hard) dans cet état.
+en: A command that moves the current branch to another commit and, depending on the mode, also resets the index (--mixed, the default) and the working tree (--hard) to that state.
++fr: --soft défait seulement le commit et garde tout en attente ; --mixed garde les fichiers mais vide l'index ; --hard efface aussi les modifications de vos fichiers, sans retour.
++en: --soft only undoes the commit and keeps everything staged; --mixed keeps the files but empties the index; --hard also erases your file changes, with no way back.
+ex: bash
+| git reset --soft HEAD~1
+| git reset --hard origin/main
+ex-fr: Défaire le dernier commit en gardant ses modifications, ou aligner la branche sur le distant en jetant tout le reste.
+ex-en: Undo the last commit while keeping its changes, or align the branch with the remote and throw everything else away.
+attention-fr: Reset réécrit l'historique local ; pour annuler un commit déjà partagé, utilisez plutôt revert.
+attention-en: Reset rewrites local history; to undo a commit that has already been shared, use revert instead.
+voir: revert, checkout, head, reflog
+schema: git-reset
+
+@ revert
+cat: git
+nom: Revert
+alias: git revert, annuler un commit, défaire
+fr: Commande qui annule l'effet d'un commit en créant un nouveau commit qui fait exactement l'inverse. L'historique n'est pas réécrit : c'est la méthode sûre pour annuler quelque chose déjà partagé.
+en: A command that undoes a commit's effect by creating a new commit that does exactly the opposite. History is not rewritten: it is the safe way to undo something already shared.
+ex: bash
+| git revert 3f2a9c1
+ex-fr: Créer un commit qui annule les changements du commit 3f2a9c1.
+ex-en: Create a commit that cancels the changes of commit 3f2a9c1.
+voir: reset, commit, cherry-pick
+schema: git-revert
+
+@ gitignore
+cat: git
+nom: .gitignore
+alias: gitignore, ignorer, fichier ignoré, ignore file
+fr: Fichier texte à la racine d'un projet qui liste les fichiers et dossiers que Git doit ignorer : dépendances téléchargées, fichiers générés, secrets, fichiers propres à votre système.
+en: A text file at the root of a project listing the files and folders Git must ignore: downloaded dependencies, generated files, secrets, files specific to your system.
++fr: Chaque ligne est un motif : node_modules/ ignore un dossier, *.log tous les fichiers .log, !important.log en excepte un. Un fichier déjà suivi n'est pas concerné : il faut d'abord git rm --cached.
++en: Each line is a pattern: node_modules/ ignores a folder, *.log all .log files, !important.log makes an exception. A file that is already tracked is not affected: run git rm --cached first.
+ex: text
+| node_modules/
+| dist/
+| .env
+| *.log
+| .DS_Store
+ex-fr: Ignorer les dépendances, le dossier de build, le fichier de secrets, les journaux et un fichier système de macOS.
+ex-en: Ignore the dependencies, the build folder, the secrets file, the logs and a macOS system file.
+attention-fr: Ignorer un fichier après l'avoir commité ne l'efface pas de l'historique : un secret déjà publié doit être changé, pas seulement ignoré.
+attention-en: Ignoring a file after committing it does not erase it from the history: a secret that was already published must be replaced, not merely ignored.
+voir: dossier-git, add, status, secret
+schema: git-gitignore
+
+@ gitattributes
+cat: git
+nom: .gitattributes
+alias: gitattributes, fins de ligne, eol, text=auto, binary
+fr: Fichier qui règle, chemin par chemin, la façon dont Git traite certains fichiers : normalisation des fins de ligne, fichiers binaires, fusion ou comparaison particulières.
+en: A file that sets, path by path, how Git treats certain files: line-ending normalization, binary files, special merge or diff behavior.
+ex: ini
+| * text=auto eol=lf
+| *.png binary
+| *.webp binary
+ex-fr: Normaliser tous les textes en fins de ligne LF, et déclarer les images comme binaires.
+ex-en: Normalize all text to LF line endings, and declare images as binary.
+voir: gitignore, diff, saut-de-ligne
+
+@ fork
+cat: git
+nom: Fork
+nom-fr: bifurcation, copie personnelle
+alias: forker, fourche, git fork
+fr: Copie personnelle, sur GitHub, du dépôt d'un autre projet. Elle vous appartient, vous pouvez y pousser des commits, puis proposer vos changements à l'auteur d'origine par une pull request.
+en: Your own copy, on GitHub, of another project's repository. It belongs to you, you can push commits to it, then propose your changes to the original author with a pull request.
+ex: bash
+| git clone https://github.com/moi/projet.git
+| git remote add upstream https://github.com/auteur/projet.git
+| git fetch upstream
+ex-fr: Cloner son fork, déclarer le projet d'origine comme upstream, puis récupérer ses nouveautés.
+ex-en: Clone your fork, declare the original project as upstream, then fetch its updates.
+attention-fr: Un fork vit sur GitHub, un clone sur votre ordinateur : on fait d'abord un fork, puis un clone de ce fork.
+attention-en: A fork lives on GitHub, a clone on your computer: you first fork, then clone that fork.
+voir: clone, pull-request, remote, upstream
+schema: git-fork
+
+@ pull-request
+cat: git
+nom: Pull request
+alias: PR, merge request, MR, demande de fusion, demande de tirage
+fr: Demande, faite sur GitHub, de fusionner les commits d'une branche dans une autre. Elle sert de lieu de discussion : les relecteurs commentent, demandent des changements, puis approuvent.
+en: A request, made on GitHub, to merge a branch's commits into another. It serves as a place for discussion: reviewers comment, request changes, then approve.
++fr: Sur GitLab, la même chose s'appelle merge request. Les tests automatiques se lancent en général sur chaque pull request avant qu'on accepte la fusion.
++en: On GitLab the same thing is called a merge request. Automated tests usually run on every pull request before the merge is accepted.
+ex: bash
+| git push -u origin ma-fonction
+| gh pr create --fill
+ex-fr: Envoyer la branche, puis ouvrir la pull request avec l'outil en ligne de commande gh en reprenant le titre du commit.
+ex-en: Push the branch, then open the pull request with the gh command-line tool, reusing the commit title.
+voir: fork, merge, github, code-review, push
+schema: git-pull-request
+
+@ objet-git
+cat: git
+nom: Objet Git
+nom-en: Git object
+alias: git object, tree, arbre, git cat-file, objects
+fr: Brique de stockage de Git, identifiée par l'empreinte de son contenu. Il en existe quatre sortes : le blob (contenu d'un fichier), l'arbre (un dossier), le commit et le tag annoté.
+en: A storage building block of Git, identified by the hash of its content. There are four kinds: the blob (a file's content), the tree (a folder), the commit and the annotated tag.
++fr: Un commit désigne un arbre, qui désigne des blobs et d'autres arbres : tout l'historique est un graphe d'objets. Deux fichiers identiques partagent le même blob.
++en: A commit points to a tree, which points to blobs and other trees: the whole history is a graph of objects. Two identical files share the same blob.
+ex: bash
+| git cat-file -t HEAD
+| git cat-file -p HEAD^{tree}
+ex-fr: Demander le type de l'objet HEAD (commit), puis afficher le contenu de l'arbre du dernier commit.
+ex-en: Ask for the type of the HEAD object (commit), then print the content of the last commit's tree.
+voir: blob, commit, hash, plumbing, dossier-git
+schema: git-objets
+
+@ porcelain
+cat: git
+nom: Porcelain
+nom-fr: porcelaine
+alias: git porcelain, --porcelain, commandes porcelaine, sortie porcelain
+fr: Désigne les commandes de Git conçues pour les humains (add, commit, push, status…), par opposition à la « plomberie » de bas niveau. L'option --porcelain d'une commande produit une sortie stable, faite pour être lue par un programme.
+en: Refers to the Git commands designed for humans (add, commit, push, status…), as opposed to the low-level “plumbing”. A command's --porcelain option produces stable output, made to be read by a program.
++fr: Le format de git status --porcelain ne change pas d'une version de Git à l'autre, ce qui le rend fiable dans un script, contrairement à l'affichage habituel qui évolue.
++en: The format of git status --porcelain does not change from one Git version to another, which makes it reliable in a script, unlike the usual display which evolves.
+ex: bash
+| git status --porcelain
+ex-fr: Une ligne par fichier, un code de deux lettres suivi du chemin (par exemple « M  fichier.js »), facile à analyser dans un script.
+ex-en: One line per file, a two-letter code followed by the path (for example “M  file.js”), easy to parse in a script.
+voir: plumbing, status, objet-git
+schema: git-porcelaine
+
+@ plumbing
+cat: git
+nom: Plumbing
+nom-fr: plomberie
+alias: git plumbing, commandes plomberie, hash-object, cat-file, update-ref, rev-parse
+fr: Désigne les commandes de bas niveau de Git (hash-object, cat-file, update-ref, rev-parse…) sur lesquelles reposent les commandes courantes. Elles manipulent directement les objets et les références.
+en: Refers to Git's low-level commands (hash-object, cat-file, update-ref, rev-parse…) on which the everyday commands are built. They manipulate objects and references directly.
+ex: bash
+| echo "bonjour" | git hash-object --stdin
+| git rev-parse HEAD
+ex-fr: Calculer l'empreinte qu'aurait un texte dans Git, puis afficher l'empreinte complète du commit HEAD.
+ex-en: Compute the hash a piece of text would get in Git, then print HEAD's full commit hash.
+voir: porcelain, objet-git, hash
+schema: git-porcelaine
+
+@ noreply
+cat: git
+nom: Adresse noreply
+nom-en: noreply address
+alias: identity noreply, identité noreply, no-reply, users.noreply.github.com, adresse e-mail masquée, keep my email private
+fr: Adresse e-mail de remplacement fournie par GitHub, de la forme ID+nom@users.noreply.github.com, qu'on met dans ses commits pour ne pas publier sa vraie adresse. Aucun message n'y arrive.
+en: A substitute email address provided by GitHub, of the form ID+name@users.noreply.github.com, that you put in your commits so as not to publish your real address. No mail is delivered to it.
++fr: Chaque commit porte le nom et l'adresse de son auteur, lisibles par tous sur un dépôt public. Réglée par dépôt, l'identité noreply évite d'y exposer son adresse personnelle.
++en: Every commit carries its author's name and address, readable by everyone on a public repository. Set per repository, the noreply identity avoids exposing your personal address there.
+ex: bash
+| git config user.name "mon-compte"
+| git config user.email "12345678+mon-compte@users.noreply.github.com"
+ex-fr: Régler, pour ce dépôt seulement, le nom et l'adresse noreply utilisés dans les prochains commits.
+ex-en: Set, for this repository only, the name and noreply address used in the next commits.
+attention-fr: Changer l'adresse n'efface pas celle des commits déjà faits : elle reste dans l'historique publié.
+attention-en: Changing the address does not erase the one in commits already made: it stays in the published history.
+voir: commit, github, remote
+schema: git-noreply
+
+@ hook
+cat: git
+nom: Hook
+nom-fr: crochet
+alias: git hook, pre-commit, post-commit, pre-push, crochet git, husky
+fr: Script que Git exécute automatiquement à un moment précis : avant un commit (pre-commit), après (post-commit), avant un push (pre-push). Un script qui échoue peut bloquer l'action.
+en: A script that Git runs automatically at a specific moment: before a commit (pre-commit), after it (post-commit), before a push (pre-push). A script that fails can block the action.
++fr: Les hooks vivent dans .git/hooks, qui n'est pas versionné : pour les partager avec l'équipe, on utilise un outil comme Husky ou pre-commit.
++en: Hooks live in .git/hooks, which is not versioned: to share them with the team, use a tool such as Husky or pre-commit.
+ex: bash
+| #!/bin/sh
+| npm test || exit 1
+ex-fr: Un hook pre-commit minimal : si les tests échouent, le code de sortie 1 refuse le commit.
+ex-en: A minimal pre-commit hook: if the tests fail, exit code 1 refuses the commit.
+voir: commit, lint, ci-cd, shebang
+schema: git-hook
+
+@ bisect
+cat: git
+nom: Bisect
+alias: git bisect, dichotomie, chercher le commit fautif
+fr: Commande qui trouve, par recherche dichotomique, le commit qui a introduit un bug. On indique un commit bon et un mauvais ; Git en propose un au milieu, on le teste, et ainsi de suite.
+en: A command that finds, through binary search, the commit that introduced a bug. You give a good commit and a bad one; Git proposes one in the middle, you test it, and so on.
++fr: Sur mille commits, une dizaine d'essais suffisent. Avec git bisect run et un script de test, Git fait toute la recherche seul.
++en: Out of a thousand commits, about ten tries are enough. With git bisect run and a test script, Git does the whole search on its own.
+ex: bash
+| git bisect start
+| git bisect bad
+| git bisect good v1.0
+| git bisect run npm test
+ex-fr: Démarrer, déclarer le commit actuel mauvais et v1.0 bon, puis laisser les tests désigner le fautif.
+ex-en: Start, declare the current commit bad and v1.0 good, then let the tests point out the culprit.
+voir: log, commit, test-unitaire
+schema: git-bisect
+
+@ squash
+cat: git
+nom: Squash
+nom-fr: écraser, regrouper
+alias: git squash, fixup, rebase -i, squash and merge, regrouper des commits
+fr: Regrouper plusieurs commits en un seul, pour présenter un historique propre : trois commits d'essais deviennent un commit qui dit clairement ce qui a été fait.
+en: Combining several commits into one, to present a clean history: three trial commits become a single commit that clearly says what was done.
+ex: bash
+| git rebase -i HEAD~3
+| git merge --squash ma-fonction
+ex-fr: Réunir les trois derniers commits en choisissant « squash » dans l'éditeur, ou fusionner toute une branche en un seul commit.
+ex-en: Combine the last three commits by choosing “squash” in the editor, or merge a whole branch as a single commit.
+voir: rebase, merge, amend, pull-request
+schema: git-squash
+
+@ submodule
+cat: git
+nom: Submodule
+nom-fr: sous-module
+alias: git submodule, sous-module
+fr: Dépôt Git inclus dans un autre, à un emplacement précis et figé sur un commit donné. Le dépôt principal ne contient pas son code, seulement l'adresse et le commit à récupérer.
+en: A Git repository included inside another one, at a specific location and pinned to a given commit. The main repository does not hold its code, only the address and the commit to fetch.
+ex: bash
+| git submodule add https://github.com/auteur/lib.git vendor/lib
+| git submodule update --init --recursive
+ex-fr: Ajouter un sous-module, puis initialiser ceux d'un dépôt fraîchement cloné.
+ex-en: Add a submodule, then initialize those of a freshly cloned repository.
+voir: repository, clone, dependance
+schema: git-submodule
+
+@ tag
+cat: git
+nom: Tag
+nom-fr: étiquette
+alias: git tag, étiquette, version, release tag, v1.0
+fr: Étiquette fixe posée sur un commit précis, en général pour marquer une version publiée (v1.0.0). Contrairement à une branche, elle ne bouge pas quand on ajoute des commits.
+en: A fixed label placed on a specific commit, usually to mark a released version (v1.0.0). Unlike a branch, it does not move when commits are added.
++fr: Un tag léger est un simple nom ; un tag annoté est un objet complet avec auteur, date et message. Les tags ne partent pas avec un push ordinaire : git push --tags.
++en: A lightweight tag is just a name; an annotated tag is a full object with an author, a date and a message. Tags are not sent by an ordinary push: use git push --tags.
+ex: bash
+| git tag -a v1.0.0 -m "Première version"
+| git push origin v1.0.0
+ex-fr: Créer un tag annoté sur le commit courant, puis l'envoyer au dépôt distant.
+ex-en: Create an annotated tag on the current commit, then send it to the remote repository.
+voir: commit, branch, release, semver
+schema: git-tag

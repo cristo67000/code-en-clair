@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <!-- L'application ne parle à personne : ni police distante, ni mesure
+       d'audience. `connect-src 'self'` suffit, et le dit. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data:; connect-src 'self'; manifest-src 'self'; base-uri 'self'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+  <meta name="description" content="Glossaire bilingue du codage : définitions claires en français et en anglais, schémas, exemples de code, notes personnelles et quiz. Git, web, terminal, sécurité… Hors ligne, sans compte, sans publicité. / Bilingual coding glossary: clear definitions in French and English, diagrams, code examples, your own notes and a quiz. Offline, no account, no ads.">
+  <meta name="theme-color" content="#16213e">
+  <!-- La version de la coquille, la même que dans sw.js : à l'installation,
+       le service worker refuse une page d'une autre version. -->
+  <meta name="application-version" content="v1.0.0">
+  <title>Code en clair — glossaire du codage FR · EN</title>
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="Code en clair">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Code en clair">
+  <meta property="og:title" content="Code en clair — glossaire du codage FR · EN">
+  <meta property="og:description" content="Amend, blob, hash, headless, service worker, token… définis clairement en français et en anglais, avec schémas, exemples, notes et quiz. Hors ligne.">
+  <meta property="og:url" content="https://cristo67000.github.io/code-en-clair/">
+  <meta property="og:image" content="https://cristo67000.github.io/code-en-clair/icons/apercu-1200x630.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="Code en clair — glossaire du codage en français et en anglais">
+  <meta property="og:locale" content="fr_FR">
+  <meta property="og:locale:alternate" content="en_GB">
+  <meta name="twitter:card" content="summary_large_image">
+
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="icons/icon-192.png" type="image/png">
+  <link rel="apple-touch-icon" href="icons/icon-192.png">
+  <link rel="stylesheet" href="css/theme.css">
+  <link rel="stylesheet" href="css/schema.css">
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+
+  <div id="demarrage" role="status">
+    <div class="marque">{ Code en clair }</div>
+    <p data-t="demarrage.ouverture">Ouverture du glossaire…</p>
+  </div>
+
+  <header id="barre">
+    <h1><span class="marque-petite">{ Code en clair }</span></h1>
+    <p class="sous-titre" data-t="app.sous-titre">le glossaire du codage</p>
+  </header>
+
+  <main id="scene">
+
+    <!-- ————— Glossaire ————— -->
+    <section id="vue-glossaire" class="vue">
+      <div id="bloc-recherche">
+        <input id="q" type="search" autocomplete="off" autocapitalize="off"
+               autocorrect="off" spellcheck="false" enterkeyhint="search"
+               data-t-ph="chercher.placeholder" data-t-aria="chercher.aria"
+               placeholder="Un terme : amend, hash…" aria-label="Chercher un terme">
+        <button id="q-vider" type="button" data-t-aria="effacer" aria-label="Effacer" hidden>✕</button>
+      </div>
+
+      <div id="filtres" class="filtres" role="group" data-t-aria="filtre.aria" aria-label="Filtrer par catégorie"></div>
+
+      <div id="accueil">
+        <section id="du-jour" hidden></section>
+        <div id="recents"></div>
+      </div>
+
+      <p id="compte" class="discret compte"></p>
+      <div id="liste"></div>
+
+      <div id="rien" hidden>
+        <p class="rien-titre" data-t="rien.titre">Aucun terme ne correspond.</p>
+        <p class="discret" data-t="rien.conseil"></p>
+        <button id="b-ajouter-depuis-recherche" type="button" class="bouton-discret ajouter-terme"></button>
+      </div>
+    </section>
+
+    <!-- ————— Quiz ————— -->
+    <section id="vue-quiz" class="vue" hidden>
+      <div id="quiz-contenu"></div>
+    </section>
+
+    <!-- ————— Carnet ————— -->
+    <section id="vue-carnet" class="vue" hidden>
+      <h2 data-t="carnet.titre">Mon carnet</h2>
+      <div class="segments segments-carnet" role="group" id="carnet-onglets" data-t-aria="carnet.rubriques" aria-label="Rubriques du carnet">
+        <button type="button" data-rubrique="favoris" data-t="carnet.favoris" aria-pressed="true">Favoris</button>
+        <button type="button" data-rubrique="a-revoir" data-t="carnet.a-revoir" aria-pressed="false">À revoir</button>
+        <button type="button" data-rubrique="notes" data-t="carnet.notes" aria-pressed="false">Notes</button>
+        <button type="button" data-rubrique="exemples" data-t="carnet.exemples" aria-pressed="false">Exemples</button>
+        <button type="button" data-rubrique="termes" data-t="carnet.termes" aria-pressed="false">Mes termes</button>
+      </div>
+      <input id="carnet-filtre" type="search" autocomplete="off" autocapitalize="off"
+             spellcheck="false" data-t-ph="carnet.filtre" data-t-aria="carnet.filtre-aria"
+             placeholder="Filtrer…" aria-label="Filtrer la liste">
+      <div id="carnet-contenu"></div>
+    </section>
+
+    <!-- ————— Réglages ————— -->
+    <section id="vue-reglages" class="vue" hidden>
+      <div id="reglages-contenu"></div>
+    </section>
+
+  </main>
+
+  <div id="mise-a-jour" role="status" aria-live="polite" hidden>
+    <p id="mise-a-jour-texte" data-t="maj.texte">Une nouvelle version est prête.</p>
+    <div class="maj-boutons">
+      <button id="b-mettre-a-jour" type="button" class="bouton-principal" data-t="maj.appliquer">Mettre à jour</button>
+      <button id="b-maj-plus-tard" type="button" class="lien-discret" data-t="maj.plus-tard">Plus tard</button>
+    </div>
+  </div>
+
+  <div id="annonce" role="status" aria-live="polite" hidden></div>
+
+  <nav id="onglets" data-t-aria="sections" aria-label="Sections">
+    <button type="button" data-vue="glossaire" aria-current="true">
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3V4z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg>
+      <span data-t="onglet.glossaire">Glossaire</span>
+    </button>
+    <button type="button" data-vue="quiz">
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><circle cx="12" cy="12" r="9"/><path d="M8 12.5l3 3 5-6"/></svg>
+      <span data-t="onglet.quiz">Quiz</span>
+    </button>
+    <button type="button" data-vue="carnet">
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 20h4L19 9l-4-4L4 16v4z"/><path d="M13.5 6.5l4 4"/></svg>
+      <span data-t="onglet.carnet">Carnet</span>
+    </button>
+    <button type="button" data-vue="reglages">
+      <svg class="icone" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 7h8M18 7h2M4 12h2M12 12h8M4 17h10M20 17h0"/><circle cx="15" cy="7" r="2"/><circle cx="9" cy="12" r="2"/><circle cx="17" cy="17" r="2"/></svg>
+      <span data-t="onglet.reglages">Réglages</span>
+    </button>
+  </nav>
+
+  <aside id="fiche" hidden aria-modal="true" role="dialog">
+    <div id="fiche-contenu"></div>
+  </aside>
+
+  <aside id="editeur" hidden aria-modal="true" role="dialog">
+    <div id="editeur-contenu"></div>
+  </aside>
+
+  <script src="js/outils.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/store.js"></script>
+  <script src="js/glossaire.js"></script>
+  <script src="js/surlignage.js"></script>
+  <script src="js/schema.js"></script>
+  <script src="js/schemas/git.js"></script>
+  <script src="js/schemas/shell.js"></script>
+  <script src="js/schemas/web.js"></script>
+  <script src="js/schemas/reseau.js"></script>
+  <script src="js/schemas/data.js"></script>
+  <script src="js/schemas/secu.js"></script>
+  <script src="js/schemas/langage.js"></script>
+  <script src="js/schemas/outils.js"></script>
+  <script src="js/schemas/image.js"></script>
+  <script src="js/schemas/bdd.js"></script>
+  <script src="js/schemas/mobile.js"></script>
+  <script src="js/schemas/ia.js"></script>
+  <script src="js/schemas/qualite.js"></script>
+  <script src="js/schemas/archi.js"></script>
+  <script src="js/editeur.js"></script>
+  <script src="js/fiche.js"></script>
+  <script src="js/liste.js"></script>
+  <script src="js/carnet.js"></script>
+  <script src="js/quiz.js"></script>
+  <script src="js/sauvegarde.js"></script>
+  <script src="js/installer.js"></script>
+  <script src="js/miseajour.js"></script>
+  <script src="js/reglages.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/demarrage.js"></script>
+</body>
+</html>

@@ -1,0 +1,281 @@
+# Android et mobile.
+
+@ android
+cat: mobile
+nom: Android
+alias: système android, os mobile, api level, niveau d'api, sdk android, aosp, kotlin, art, dalvik
+fr: Système d'exploitation mobile de Google, fondé sur le noyau Linux, utilisé par la majorité des téléphones du monde. Ses applications s'écrivent surtout en Kotlin ou en Java, et se distribuent par le Play Store ou par fichier APK.
+en: Google's mobile operating system, based on the Linux kernel, used by most of the world's phones. Its apps are written mostly in Kotlin or Java, and distributed through the Play Store or as an APK file.
++fr: Chaque version d'Android correspond à un niveau d'API (Android 14 = niveau 34). Les applications déclarent le niveau minimum qu'elles supportent et celui qu'elles visent.
++en: Each Android version corresponds to an API level (Android 14 = level 34). Apps declare the minimum level they support and the one they target.
+voir: apk, aab, play-store, sdk-versions, adb
+schema: mobile-webview
+
+@ apk
+cat: mobile
+nom: APK
+dev: Android Package
+alias: android package, .apk, fichier apk, installer un apk, dex, classes.dex, apksigner, zipalign
+fr: Fichier d'installation d'une application Android : une archive qui contient le code compilé (DEX), les ressources, le manifeste et la signature. On peut l'installer directement sur un appareil, sans passer par un magasin.
+en: An Android app's installation file: an archive containing the compiled code (DEX), the resources, the manifest and the signature. It can be installed straight onto a device, without going through a store.
+ex: bash
+| adb install app-debug.apk
+| unzip -l app-debug.apk
+ex-fr: Installer un APK sur un téléphone branché, puis lister son contenu (un APK est un fichier zip).
+ex-en: Install an APK on a connected phone, then list its contents (an APK is a zip file).
+voir: aab, adb, sideload, keystore, gradle
+schema: mobile-apk-aab
+
+@ aab
+cat: mobile
+nom: AAB
+dev: Android App Bundle
+alias: android app bundle, .aab, app bundle, bundle android, bundletool, bundlerelease
+fr: Format de publication des applications sur Google Play : un paquet unique qui contient tout le code et toutes les ressources. Google en tire, à l'installation, un APK sur mesure pour chaque appareil (bonne langue, bonne densité, bon processeur), plus léger qu'un APK universel.
+en: The publishing format for apps on Google Play: a single package containing all the code and resources. Google derives from it, at installation, a tailored APK for each device (right language, right density, right processor), lighter than a universal APK.
+ex: bash
+| ./gradlew bundleRelease
+ex-fr: Construire l'AAB de production ; il est ensuite signé avec la clé d'importation puis déposé dans la Play Console.
+ex-en: Build the production AAB; it is then signed with the upload key and uploaded to the Play Console.
+attention-fr: Un AAB ne s'installe pas directement sur un téléphone : pour un essai local, on utilise un APK.
+attention-en: An AAB cannot be installed directly on a phone: for a local test, use an APK.
+voir: apk, play-console, play-app-signing, gradle
+schema: mobile-apk-aab
+
+@ twa
+cat: mobile
+nom: TWA
+dev: Trusted Web Activity
+alias: trusted web activity, pwa android, custom tabs, application web android, bubblewrap, pwabuilder, activité web de confiance
+fr: Activité Android qui affiche une PWA en plein écran, sans barre d'adresse, grâce au navigateur Chrome. Le site est vérifié par Digital Asset Links : c'est ce qui permet de publier une PWA sur Google Play comme une application ordinaire.
+en: An Android activity that displays a PWA full screen, with no address bar, using the Chrome browser. The site is verified through Digital Asset Links: this is what allows a PWA to be published on Google Play like an ordinary app.
++fr: L'application Android n'est qu'une enveloppe : tout le contenu vient du site, qui se met à jour sans republier l'application. Si la vérification échoue, une barre d'adresse s'affiche en haut.
++en: The Android app is only a wrapper: all the content comes from the site, which updates without republishing the app. If verification fails, an address bar shows at the top.
+voir: pwa, assetlinks, bubblewrap, webview, play-console
+schema: mobile-twa
+
+@ assetlinks
+cat: mobile
+nom: assetlinks.json
+dev: Digital Asset Links
+alias: digital asset links, .well-known, well-known, assetlinks, statement list, relation de confiance, delegate_permission
+fr: Fichier JSON placé sur un site à l'adresse /.well-known/assetlinks.json, qui déclare quelle application Android (son identifiant et l'empreinte SHA-256 de sa clé de signature) est autorisée à représenter ce domaine. Il prouve le lien entre le site et l'application.
+en: A JSON file placed on a site at /.well-known/assetlinks.json, declaring which Android app (its identifier and its signing key's SHA-256 fingerprint) is allowed to represent that domain. It proves the link between the site and the app.
+ex: json
+| [{
+|   "relation": ["delegate_permission/common.handle_all_urls"],
+|   "target": {
+|     "namespace": "android_app",
+|     "package_name": "io.exemple.codeenclair",
+|     "sha256_cert_fingerprints": ["AB:CD:…:12"]
+|   }
+| }]
+ex-fr: Une déclaration : l'application io.exemple.codeenclair, signée par la clé d'empreinte donnée, peut ouvrir les liens du domaine.
+ex-en: A declaration: the app io.exemple.codeenclair, signed by the key with the given fingerprint, may open the domain's links.
+attention-fr: Le fichier doit se trouver à la racine du domaine, jamais dans un sous-dossier. Avec Play App Signing, il faut y ajouter l'empreinte de la clé de signature de Google, pas seulement celle de la clé d'importation.
+attention-en: The file must sit at the domain's root, never in a subfolder. With Play App Signing, Google's signing-key fingerprint must be added to it, not only the upload key's.
+voir: twa, empreinte, keystore, play-app-signing
+schema: mobile-assetlinks
+
+@ webview
+cat: mobile
+nom: WebView
+alias: android webview, wkwebview, vue web, navigateur intégré, custom tabs, chrome custom tabs
+fr: Composant d'une application mobile qui affiche des pages web à l'intérieur de l'application, avec le moteur du navigateur. Beaucoup d'applications hybrides ne sont qu'une WebView autour d'un site.
+en: A component of a mobile app that displays web pages inside the app, using the browser's engine. Many hybrid apps are just a WebView around a site.
+attention-fr: Une WebView n'est pas une TWA : elle n'a pas les fonctions d'un vrai navigateur (cookies partagés, service worker, mises à jour de sécurité) au même niveau.
+attention-en: A WebView is not a TWA: it does not have a real browser's features (shared cookies, service worker, security updates) at the same level.
+voir: twa, pwa, navigateur, android
+schema: mobile-webview
+
+@ keystore
+cat: mobile
+nom: Keystore
+nom-fr: magasin de clés
+alias: magasin de clés, jks, pkcs12, .keystore, keytool, clé d'importation, upload key, clé de signature, signing key, clé de publication
+fr: Fichier protégé par mot de passe qui contient les clés privées servant à signer une application Android. Sans sa clé, plus personne ne peut publier de mise à jour de l'application : il faut donc la sauvegarder en lieu sûr et ne jamais la publier.
+en: A password-protected file containing the private keys used to sign an Android app. Without its key, nobody can publish an update to the app: it must therefore be backed up safely and never published.
+ex: bash
+| keytool -genkeypair -v -keystore android.keystore -alias cle -keyalg RSA -keysize 2048 -validity 10000
+ex-fr: Créer un magasin de clés avec une clé RSA de 2048 bits valable 10 000 jours ; l'outil demande des mots de passe.
+ex-en: Create a keystore with a 2048-bit RSA key valid for 10,000 days; the tool asks for passwords.
+attention-fr: Ne jamais versionner un keystore ni ses mots de passe dans Git : ajoutez-le à .gitignore et gardez deux copies chiffrées ailleurs.
+attention-en: Never commit a keystore or its passwords to Git: add it to .gitignore and keep two encrypted copies elsewhere.
+voir: play-app-signing, signature-numerique, empreinte, secret, apk
+schema: mobile-signature
+
+@ play-app-signing
+cat: mobile
+nom: Play App Signing
+alias: signature par google play, app signing key, clé de signature de l'application, upload key, clé d'importation, google signe l'application
+fr: Service de Google Play où Google garde la clé qui signe les applications distribuées aux utilisateurs. Le développeur signe ses envois avec une clé d'importation (upload key), qu'il peut faire remplacer en cas de perte, ce qui protège contre le blocage définitif.
+en: A Google Play service where Google keeps the key that signs the apps distributed to users. The developer signs their uploads with an upload key, which can be replaced if lost, which protects against permanent lockout.
++fr: Conséquence : l'application installée depuis le Play Store porte la signature de Google, dont l'empreinte est différente de celle de votre clé. C'est cette empreinte-là, lue dans la Play Console, qu'il faut ajouter à assetlinks.json.
++en: Consequence: the app installed from the Play Store carries Google's signature, whose fingerprint differs from your key's. It is that fingerprint, read in the Play Console, that must be added to assetlinks.json.
+voir: keystore, assetlinks, aab, play-console
+schema: mobile-signature
+
+@ package-name
+cat: mobile
+nom: Identifiant d'application
+nom-en: application ID
+alias: package name, applicationid, package id, nom de paquet, io.github, com.exemple, identifiant du paquet
+fr: Nom unique, en notation inversée de domaine (io.github.compte.monapp), qui identifie une application Android sur un appareil et sur le Play Store. Une fois l'application publiée, il ne peut plus être changé.
+en: A unique name, in reversed-domain notation (io.github.account.myapp), that identifies an Android app on a device and on the Play Store. Once the app is published, it can no longer be changed.
+voir: manifest, play-console, assetlinks, apk
+
+@ versioncode
+cat: mobile
+nom: versionCode et versionName
+alias: version code, version name, versionname, code de version, numéro de version android, appversioncode
+fr: Deux numéros de version d'une application Android : versionCode, un entier qui doit augmenter à chaque envoi sur le Play Store, et versionName, le texte affiché aux utilisateurs (1.2.0). Le premier sert à la machine, le second à l'humain.
+en: Two version numbers of an Android app: versionCode, an integer that must increase with each upload to the Play Store, and versionName, the text shown to users (1.2.0). The first is for the machine, the second for humans.
+voir: semver, gradle, release, aab
+
+@ sdk-versions
+cat: mobile
+nom: minSdk, targetSdk, compileSdk
+alias: minsdkversion, targetsdkversion, compilesdkversion, niveau d'api, api level, target api, exigence de niveau d'api
+fr: Trois niveaux d'API Android déclarés dans un projet : minSdk, le plus ancien Android sur lequel l'application s'installe ; targetSdk, celui pour lequel elle a été testée et dont elle adopte le comportement ; compileSdk, celui contre lequel on compile.
+en: Three Android API levels declared in a project: minSdk, the oldest Android on which the app installs; targetSdk, the one it was tested for and whose behavior it adopts; compileSdk, the one it is compiled against.
+attention-fr: Le Play Store exige chaque année un targetSdk récent pour les nouvelles applications et leurs mises à jour : un niveau trop ancien bloque la publication.
+attention-en: The Play Store requires a recent targetSdk every year for new apps and their updates: a level that is too old blocks publication.
+voir: android, gradle, play-console, manifest
+
+@ play-console
+cat: mobile
+nom: Play Console
+alias: google play console, console développeur, developer console, fiche play store, store listing, piste de test, release track, déploiement progressif
+fr: Site web où le développeur gère ses applications Google Play : fiche du magasin (textes, captures, icône), envoi des AAB, pistes de test, déclarations obligatoires (sécurité des données, classification du contenu, public cible), déploiement.
+en: The website where the developer manages their Google Play apps: store listing (texts, screenshots, icon), AAB uploads, testing tracks, mandatory declarations (data safety, content rating, target audience), rollout.
++fr: Les comptes personnels créés récemment doivent d'abord mener un test fermé avec au moins 12 testeurs pendant 14 jours consécutifs avant de demander l'accès à la production. Les comptes d'organisation en sont dispensés.
++en: Recently created personal accounts must first run a closed test with at least 12 testers for 14 consecutive days before requesting production access. Organization accounts are exempt.
+voir: aab, play-store, data-safety, play-app-signing, test-ferme
+
+@ test-ferme
+cat: mobile
+nom: Test fermé
+nom-en: closed testing
+alias: closed testing, internal testing, test interne, open testing, test ouvert, testeurs, piste de test, testing track, 12 testeurs
+fr: Piste de la Play Console où une application est distribuée à un groupe restreint de testeurs invités par e-mail, avant sa publication. Ils l'installent depuis le Play Store, mais elle n'est pas visible du public.
+en: A Play Console track where an app is distributed to a limited group of testers invited by email, before its publication. They install it from the Play Store, but it is not visible to the public.
+voir: play-console, aab, release, play-store
+
+@ data-safety
+cat: mobile
+nom: Sécurité des données
+nom-en: Data safety
+alias: data safety, safety section, déclaration de données, privacy policy, politique de confidentialité, règles de confidentialité, collecte de données, rgpd
+fr: Formulaire de la Play Console où le développeur déclare quelles données son application collecte ou partage, pourquoi, et comment elles sont protégées. Il s'affiche sur la fiche de l'application et doit être exact et cohérent avec la politique de confidentialité.
+en: A Play Console form where the developer declares what data their app collects or shares, why, and how it is protected. It appears on the app's listing and must be accurate and consistent with the privacy policy.
++fr: Une application qui ne collecte rien et ne l'envoie à personne peut le déclarer ; une page de politique de confidentialité en ligne reste obligatoire dans tous les cas.
++en: An app that collects nothing and sends it to no one can declare that; an online privacy policy page is still mandatory in every case.
+voir: play-console, permission-android, cookie, moindre-privilege
+
+@ adb
+cat: mobile
+nom: adb
+dev: Android Debug Bridge
+alias: android debug bridge, adb install, adb logcat, adb shell, débogage usb, usb debugging, logcat, platform-tools
+fr: Outil en ligne de commande qui parle à un appareil Android branché en USB (ou par le réseau) : installer une application, lire ses journaux, copier des fichiers, ouvrir un terminal sur le téléphone. Il demande d'activer le débogage USB.
+en: A command-line tool that talks to an Android device connected by USB (or over the network): install an app, read its logs, copy files, open a shell on the phone. It requires enabling USB debugging.
+ex: bash
+| adb devices
+| adb install app-debug.apk
+| adb logcat -s chromium
+ex-fr: Lister les appareils, installer un APK, puis suivre les messages du navigateur.
+ex-en: List the devices, install an APK, then follow the browser's messages.
+voir: apk, emulateur, android, debugger
+
+@ emulateur
+cat: mobile
+nom: Émulateur
+nom-en: emulator
+alias: emulator, avd, android virtual device, simulateur, simulator, ios simulator, émulateur android
+fr: Programme qui imite un appareil mobile sur un ordinateur, pour tester une application sans téléphone physique : plusieurs tailles d'écran, plusieurs versions d'Android. Rien ne remplace un vrai appareil pour les performances et les capteurs.
+en: A program that imitates a mobile device on a computer, to test an app without a physical phone: several screen sizes, several Android versions. Nothing replaces a real device for performance and sensors.
+voir: adb, vm, android
+
+@ gradle
+cat: mobile
+nom: Gradle
+alias: gradlew, build.gradle, ./gradlew, assembledebug, bundlerelease, agp, android gradle plugin, r8, proguard
+fr: Système de construction utilisé pour Android : il compile le code, assemble les ressources et produit l'APK ou l'AAB, en téléchargeant lui-même les bibliothèques nécessaires. Le script gradlew lance la bonne version de Gradle pour le projet.
+en: The build system used for Android: it compiles the code, assembles the resources and produces the APK or AAB, downloading the required libraries itself. The gradlew script launches the right Gradle version for the project.
+ex: bash
+| ./gradlew assembleDebug
+| ./gradlew bundleRelease
+ex-fr: Construire un APK de débogage, puis l'AAB de production.
+ex-en: Build a debug APK, then the production AAB.
+voir: build, apk, aab, bubblewrap, sdk-versions
+schema: mobile-gradle
+
+@ bubblewrap
+cat: mobile
+nom: Bubblewrap
+alias: bubblewrap cli, @bubblewrap/cli, pwabuilder, twa-manifest.json, bubblewrap init, bubblewrap build
+fr: Outil en ligne de commande de Google qui génère un projet Android (une TWA) à partir du manifeste d'une PWA, puis le construit en APK et AAB. Il pose quelques questions (nom, identifiant, icônes, clé de signature) et écrit le fichier twa-manifest.json.
+en: A Google command-line tool that generates an Android project (a TWA) from a PWA's manifest, then builds it into an APK and AAB. It asks a few questions (name, identifier, icons, signing key) and writes the twa-manifest.json file.
+ex: bash
+| npx @bubblewrap/cli init --manifest https://exemple.org/manifest.webmanifest
+| npx @bubblewrap/cli build
+ex-fr: Générer le projet Android depuis le manifeste publié, puis construire les paquets signés.
+ex-en: Generate the Android project from the published manifest, then build the signed packages.
+voir: twa, pwa, gradle, keystore, manifest
+schema: mobile-twa
+
+@ permission-android
+cat: mobile
+nom: Permission Android
+nom-en: Android permission
+alias: permissions, uses-permission, android.permission.internet, camera permission, location permission, permission dangereuse, runtime permission, permission d'exécution
+fr: Autorisation qu'une application déclare dans son manifeste pour accéder à une ressource protégée (Internet, appareil photo, position). Les permissions sensibles sont demandées à l'utilisateur au moment de s'en servir.
+en: A permission an app declares in its manifest to access a protected resource (Internet, camera, location). Sensitive permissions are asked from the user at the moment of use.
++fr: Moins une application demande de permissions, plus elle inspire confiance et moins elle pose de questions à la revue du Play Store : ne déclarer que le strict nécessaire est le principe du moindre privilège.
++en: The fewer permissions an app requests, the more trust it inspires and the fewer questions it raises at Play Store review: declaring only what is strictly necessary is the principle of least privilege.
+voir: manifest, moindre-privilege, sandbox, data-safety
+
+@ intent
+cat: mobile
+nom: Intent
+alias: intent android, intent filter, deep link, lien profond, app link, startactivity, share intent, action_view
+fr: Message par lequel une application Android demande une action : ouvrir un écran, partager du texte, afficher un lien. Un filtre d'intention (intent filter) déclare ce qu'une application sait traiter, par exemple les liens d'un site web (deep link).
+en: A message by which an Android app asks for an action: opening a screen, sharing text, showing a link. An intent filter declares what an app can handle, for example a website's links (deep link).
+voir: activity, manifest, twa, assetlinks
+
+@ activity
+cat: mobile
+nom: Activity
+nom-fr: activité
+alias: activité android, écran android, onCreate, onResume, cycle de vie, lifecycle, fragment, launcher activity
+fr: Composant qui représente un écran d'une application Android. Elle a un cycle de vie (création, affichage, pause, destruction) que le système pilote : une TWA n'en contient qu'une, qui affiche le site.
+en: A component that represents one screen of an Android app. It has a lifecycle (creation, display, pause, destruction) that the system drives: a TWA contains just one, which displays the site.
+voir: intent, manifest, twa
+
+@ play-store
+cat: mobile
+nom: Play Store
+nom-fr: Google Play
+alias: google play, boutique d'applications, app store, magasin d'applications, revue des applications, politique google play, règles google play
+fr: Boutique d'applications officielle d'Android. Chaque application y est examinée avant publication et doit respecter ses règles : contenu, données personnelles, fonctionnalité minimale, usurpation d'identité, publicité.
+en: Android's official app store. Each app is reviewed before publication and must follow its policies: content, personal data, minimum functionality, impersonation, advertising.
++fr: L'équivalent d'Apple s'appelle l'App Store. Une application qui n'est qu'un site sans valeur propre est refusée : c'est le rôle du « minimum de fonctionnalités ».
++en: Apple's equivalent is called the App Store. An app that is merely a website with no value of its own is refused: this is what the “minimum functionality” rule is for.
+voir: play-console, aab, data-safety, sideload, ios
+
+@ sideload
+cat: mobile
+nom: Sideloading
+nom-fr: installation hors magasin
+alias: sideload, installer un apk, sources inconnues, unknown sources, installation manuelle, apk hors play store, f-droid
+fr: Installation d'une application Android à partir d'un fichier APK obtenu hors du Play Store. Elle demande d'autoriser les sources inconnues et prive des contrôles du magasin : on ne le fait qu'avec un fichier dont on connaît l'origine.
+en: Installing an Android app from an APK file obtained outside the Play Store. It requires allowing unknown sources and forgoes the store's checks: only do it with a file whose origin you know.
+voir: apk, play-store, adb, signature-numerique
+
+@ ios
+cat: mobile
+nom: iOS
+alias: iphone, ipad, app store, swift, apple, xcode, ipados, wkwebview
+fr: Système d'exploitation mobile d'Apple (iPhone, iPad). Ses applications s'écrivent surtout en Swift, avec Xcode, et se distribuent par l'App Store. Les PWA s'y installent depuis Safari, mais sans équivalent de la TWA pour les publier dans le magasin.
+en: Apple's mobile operating system (iPhone, iPad). Its apps are mostly written in Swift, with Xcode, and distributed through the App Store. PWAs install there from Safari, but with no TWA equivalent to publish them in the store.
+voir: android, pwa, play-store, webview

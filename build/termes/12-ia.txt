@@ -1,0 +1,210 @@
+# IA et assistants de code.
+
+@ ia
+cat: ia
+nom: IA
+dev: Intelligence Artificielle
+nom-en: AI
+alias: intelligence artificielle, artificial intelligence, ai, ia générative, generative ai, genai, chatgpt, chatbot, agent conversationnel
+fr: Ensemble de techniques qui permettent à un programme d'accomplir des tâches qu'on attribue d'ordinaire à l'intelligence humaine : comprendre du texte, reconnaître une image, traduire, écrire du code. Les IA actuelles apprennent leurs comportements à partir de très grandes quantités d'exemples.
+en: A set of techniques that let a program perform tasks usually attributed to human intelligence: understanding text, recognizing an image, translating, writing code. Today's AIs learn their behavior from very large amounts of examples.
++fr: L'« IA générative » produit du contenu nouveau (texte, image, code, son) plutôt que de seulement classer ou prédire.
++en: “Generative AI” produces new content (text, image, code, sound) rather than merely classifying or predicting.
+voir: machine-learning, llm, modele, prompt
+schema: ia-llm
+
+@ machine-learning
+cat: ia
+nom: Machine learning
+nom-fr: apprentissage automatique
+alias: apprentissage automatique, ml, deep learning, apprentissage profond, réseau de neurones, neural network, apprentissage supervisé
+fr: Approche où l'on n'écrit pas les règles à la main : on montre au programme de nombreux exemples, et il ajuste lui-même ses paramètres pour reproduire ce qu'on attend. Le résultat de cet apprentissage s'appelle un modèle.
+en: An approach where the rules are not written by hand: the program is shown many examples and adjusts its own parameters to reproduce what is expected. The result of this learning is called a model.
+voir: ia, modele, entrainement, inference
+
+@ llm
+cat: ia
+nom: LLM
+dev: Large Language Model
+nom-fr: grand modèle de langage
+alias: large language model, grand modèle de langage, modèle de langage, gpt, claude, gemini, llama, transformer, modèle génératif
+fr: Modèle d'IA entraîné sur d'énormes quantités de texte (et de code) pour prédire la suite d'un texte, un token après l'autre. Cette simple prédiction, répétée, lui permet de répondre à des questions, de résumer, de traduire et d'écrire du code.
+en: An AI model trained on enormous amounts of text (and code) to predict what follows in a text, one token after another. That simple prediction, repeated, lets it answer questions, summarize, translate and write code.
++fr: Un LLM ne « sait » rien de façon garantie : il produit ce qui est probable à la suite du texte reçu. D'où l'importance de vérifier ses réponses, surtout pour des faits ou du code destiné à la production.
++en: An LLM does not “know” anything with any guarantee: it produces what is likely to follow the text it received. Hence the importance of checking its answers, especially for facts or code intended for production.
+voir: token, prompt, context-window, hallucination, modele
+schema: ia-llm
+
+@ modele
+cat: ia
+nom: Modèle
+nom-en: model
+alias: model, poids, weights, paramètres, parameters, checkpoint, modèle d'ia, modèle open source, modèle fermé
+fr: Résultat d'un entraînement : un très grand ensemble de nombres (les paramètres ou « poids ») qui encode ce que l'IA a appris. Le programme qui l'utilise le lit pour transformer une entrée en sortie, sans plus rien apprendre.
+en: The outcome of training: a very large set of numbers (the parameters or “weights”) that encodes what the AI has learned. The program that uses it reads it to turn an input into an output, learning nothing more.
+voir: entrainement, inference, llm, fine-tuning
+
+@ entrainement
+cat: ia
+nom: Entraînement
+nom-en: training
+alias: training, apprentissage, pré-entraînement, pretraining, jeu de données, dataset, données d'entraînement, epoch, fonction de perte
+fr: Phase, longue et coûteuse, pendant laquelle un modèle ajuste ses paramètres en s'exerçant sur un immense jeu de données, jusqu'à devenir bon à la tâche visée. Il précède l'utilisation du modèle, qu'on appelle l'inférence.
+en: The long, costly phase during which a model adjusts its parameters by practicing on an immense dataset, until it becomes good at the target task. It comes before the model is used, which is called inference.
+voir: modele, inference, fine-tuning, machine-learning
+
+@ inference
+cat: ia
+nom: Inférence
+nom-en: inference
+alias: inference, utiliser un modèle, génération, generation, latence d'inférence, api de modèle, appel de modèle
+fr: Utilisation d'un modèle déjà entraîné pour produire une réponse à partir d'une entrée. Chaque appel d'un assistant à un LLM est une inférence : elle consomme des tokens et un peu de temps de calcul.
+en: Using an already trained model to produce an answer from an input. Each call of an assistant to an LLM is an inference: it consumes tokens and some computing time.
+voir: entrainement, modele, token, latence
+
+@ prompt
+cat: ia
+nom: Prompt
+nom-fr: consigne, invite
+alias: invite, consigne, instruction, requête à l'ia, prompt engineering, system prompt, prompt système, few-shot, zero-shot, chaîne de pensée
+fr: Texte donné à un modèle d'IA pour lui dire ce qu'on attend : question, consigne, exemples, contexte. La qualité de la réponse dépend beaucoup de sa clarté : contexte utile, tâche précise, format de sortie voulu.
+en: The text given to an AI model to tell it what is expected: question, instruction, examples, context. The quality of the answer depends greatly on its clarity: useful context, precise task, desired output format.
++fr: Le « prompt système » fixe le rôle et les règles générales de l'assistant, avant même que la personne écrive quoi que ce soit ; les exemples fournis dans le prompt s'appellent « few-shot ».
++en: The “system prompt” sets the assistant's role and general rules before the person even writes anything; the examples provided in the prompt are called “few-shot”.
+ex: text
+| Tu es relecteur de code. Voici une fonction JavaScript.
+| Dis-moi (1) ce qu'elle fait, (2) un bug possible, (3) une correction.
+| Réponds en trois puces courtes.
+ex-fr: Un prompt clair : un rôle, une tâche découpée en trois points et un format de réponse.
+ex-en: A clear prompt: a role, a task split into three points and an answer format.
+voir: llm, context-window, token, assistant-de-code, slash-command
+
+@ context-window
+cat: ia
+nom: Fenêtre de contexte
+nom-en: context window
+alias: context window, contexte, longueur de contexte, context length, mémoire du modèle, limite de tokens, compaction
+fr: Quantité maximale de texte, comptée en tokens, qu'un modèle peut prendre en compte d'un coup : les consignes, la conversation en cours, les fichiers fournis et sa propre réponse. Ce qui dépasse est oublié ou doit être résumé.
+en: The maximum amount of text, counted in tokens, that a model can take into account at once: the instructions, the ongoing conversation, the files provided and its own answer. What exceeds it is forgotten or must be summarized.
++fr: Le modèle ne garde aucun souvenir d'une conversation à l'autre : tout ce qu'il « sait » d'elle est renvoyé à chaque échange, dans la fenêtre. Plus elle se remplit, plus l'appel coûte cher et plus les détails du début risquent de se perdre.
++en: The model keeps no memory from one conversation to another: everything it “knows” of it is sent again with each exchange, inside the window. The fuller it gets, the more the call costs and the more the early details risk being lost.
+voir: token, prompt, llm, rag
+schema: ia-contexte
+
+@ hallucination
+cat: ia
+nom: Hallucination
+nom-en: hallucination
+alias: hallucinations, invention, confabulation, fait inventé, fausse référence, réponse plausible mais fausse
+fr: Réponse d'un modèle d'IA qui semble crédible et sûre d'elle, mais qui est fausse ou inventée : une fonction qui n'existe pas dans une bibliothèque, une référence introuvable, un fait erroné. Elle vient du fait que le modèle produit du plausible, pas du vérifié.
+en: An AI model's answer that seems credible and confident but is false or made up: a function that does not exist in a library, an untraceable reference, a wrong fact. It comes from the model producing what is plausible, not what is verified.
+attention-fr: En programmation, exécutez le code proposé et lisez la documentation officielle : un appel de fonction inventé a l'air parfaitement normal.
+attention-en: In programming, run the proposed code and read the official documentation: a made-up function call looks perfectly normal.
+voir: llm, rag, test-unitaire, code-review
+
+@ temperature
+cat: ia
+nom: Température
+nom-en: temperature
+alias: temperature, top-p, top-k, sampling, échantillonnage, aléatoire, créativité, déterminisme
+fr: Réglage qui contrôle le caractère aléatoire des réponses d'un modèle. Basse (proche de 0), il choisit presque toujours le token le plus probable : réponses stables, prévisibles. Haute, il ose des choix moins probables : réponses plus variées, mais plus risquées.
+en: A setting that controls how random a model's answers are. Low (close to 0), it almost always picks the most likely token: stable, predictable answers. High, it dares less likely choices: more varied answers, but riskier.
+voir: llm, token, inference
+schema: ia-temperature
+
+@ embedding
+cat: ia
+nom: Embedding
+nom-fr: plongement, représentation vectorielle
+alias: plongement, vecteur, vector, représentation vectorielle, vector database, base vectorielle, recherche sémantique, semantic search, similarité cosinus
+fr: Suite de nombres (un vecteur) qui représente le sens d'un texte, d'une image ou d'un code : deux contenus de sens proche ont des vecteurs proches. Elle permet la recherche par sens plutôt que par mots exacts.
+en: A sequence of numbers (a vector) that represents the meaning of a text, image or piece of code: two contents of similar meaning have nearby vectors. It enables search by meaning rather than by exact words.
+voir: rag, llm, table-de-hachage
+schema: ia-embedding
+
+@ rag
+cat: ia
+nom: RAG
+dev: Retrieval-Augmented Generation
+nom-fr: génération augmentée par la recherche
+alias: retrieval augmented generation, génération augmentée, retrieval, recherche documentaire, base de connaissances, knowledge base
+fr: Technique qui, avant de faire répondre le modèle, va chercher dans une base de documents les passages pertinents et les ajoute au prompt. Le modèle répond alors d'après ces sources à jour et vérifiables, plutôt que de sa seule mémoire.
+en: A technique that, before having the model answer, looks up relevant passages in a document base and adds them to the prompt. The model then answers from these up-to-date, checkable sources rather than from its memory alone.
+voir: embedding, hallucination, context-window, prompt
+schema: ia-rag
+
+@ fine-tuning
+cat: ia
+nom: Fine-tuning
+nom-fr: ajustement fin, spécialisation
+alias: ajustement fin, finetuning, spécialisation, affinage, lora, adaptation d'un modèle, distillation
+fr: Poursuite de l'entraînement d'un modèle existant sur un petit jeu de données spécialisé, pour l'adapter à un domaine ou à un style. C'est bien moins coûteux qu'un entraînement complet, mais moins souple que de simplement bien rédiger le prompt.
+en: Continuing the training of an existing model on a small specialized dataset, to adapt it to a domain or a style. It is much cheaper than full training, but less flexible than simply writing a good prompt.
+voir: entrainement, modele, prompt, rag
+
+@ agent
+cat: ia
+nom: Agent
+nom-en: AI agent
+alias: ai agent, agent ia, agentique, agentic, boucle d'agent, agent loop, agent autonome, orchestrateur, workflow agentique
+fr: Programme qui confie à un modèle d'IA un objectif, puis le laisse agir en boucle : le modèle décide d'une action (lire un fichier, lancer une commande, appeler une API), en observe le résultat, et recommence jusqu'à avoir fini ou échoué.
+en: A program that gives an AI model a goal, then lets it act in a loop: the model decides on an action (read a file, run a command, call an API), observes the result, and repeats until it is done or has failed.
++fr: Plus l'agent a de pouvoir (écrire des fichiers, exécuter du code), plus il faut encadrer ses droits et relire ce qu'il produit : c'est le principe du moindre privilège appliqué à l'IA.
++en: The more power the agent has (writing files, running code), the more its rights must be limited and its output reviewed: it is the principle of least privilege applied to AI.
+voir: function-calling, mcp, sous-agent, assistant-de-code, moindre-privilege
+schema: ia-agent
+
+@ function-calling
+cat: ia
+nom: Function calling
+nom-fr: appel d'outils
+alias: tool use, appel de fonction, appel d'outil, outils, tools, structured output, sortie structurée, json mode
+fr: Capacité d'un modèle à demander l'exécution d'une fonction extérieure (chercher sur le web, lire un fichier, interroger une base) en produisant un appel structuré. Le programme exécute la fonction et renvoie le résultat au modèle, qui poursuit sa réponse.
+en: A model's ability to request the execution of an outside function (search the web, read a file, query a database) by producing a structured call. The program runs the function and sends the result back to the model, which continues its answer.
+ex: json
+| {
+|   "outil": "lire_fichier",
+|   "arguments": { "chemin": "src/app.js" }
+| }
+ex-fr: Ce que le modèle produit : le nom de l'outil voulu et ses arguments, que le programme exécutera à sa place.
+ex-en: What the model produces: the name of the wanted tool and its arguments, which the program will run in its place.
+voir: agent, mcp, api, json
+schema: ia-agent
+
+@ mcp
+cat: ia
+nom: MCP
+dev: Model Context Protocol
+alias: model context protocol, serveur mcp, mcp server, client mcp, protocole de contexte, connecteur, connector
+fr: Protocole ouvert, introduit fin 2024, qui standardise la façon dont un assistant d'IA se connecte à des outils et à des sources de données (fichiers, bases, services). Un serveur MCP expose des outils ; n'importe quel client compatible peut les utiliser.
+en: An open protocol, introduced in late 2024, that standardizes how an AI assistant connects to tools and data sources (files, databases, services). An MCP server exposes tools; any compatible client can use them.
+voir: agent, function-calling, api, json
+schema: ia-mcp
+
+@ sous-agent
+cat: ia
+nom: Sous-agent
+nom-en: subagent
+alias: subagent, sub-agent, agent secondaire, multi-agent, multi-agents, orchestration, délégation, agent spécialisé
+fr: Agent lancé par un autre agent pour accomplir une sous-tâche précise (explorer un dépôt, relire du code) avec son propre contexte. Il rend un résumé à l'agent principal, qui garde ainsi sa fenêtre de contexte propre.
+en: An agent launched by another agent to accomplish a specific subtask (explore a repository, review code) with its own context. It hands a summary back to the main agent, which thus keeps its own context window clean.
+voir: agent, context-window, assistant-de-code
+
+@ vibe-coding
+cat: ia
+nom: Vibe coding
+alias: programmation à l'ambiance, coder à l'intuition, coder avec l'ia, ai pair programming, programmation assistée par ia
+fr: Manière de programmer où l'on décrit ce qu'on veut en langage courant à un assistant d'IA, qui écrit le code, en acceptant le résultat surtout d'après ce qu'on voit tourner. Rapide pour un prototype, risqué pour du code qu'on ne relit pas.
+en: A way of programming where you describe what you want in everyday language to an AI assistant, which writes the code, accepting the result mostly based on what you see running. Fast for a prototype, risky for code you do not review.
+attention-fr: Ce qu'on ne comprend pas, on ne peut ni le déboguer, ni le sécuriser : relire, tester et versionner le code produit reste indispensable.
+attention-en: What you do not understand, you can neither debug nor secure: reviewing, testing and versioning the produced code remains essential.
+voir: assistant-de-code, code-review, test-unitaire, hallucination
+
+@ assistant-de-code
+cat: ia
+nom: Assistant de code
+nom-en: coding assistant
+alias: coding assistant, copilot, code assistant, assistant de programmation, ai coding tool, agent de code, claude code, cursor, complétion de code
+fr: Outil d'IA qui aide à programmer : il complète le code, explique une erreur, écrit des tests, corrige un bug, ou, sous forme d'agent, lit un projet, modifie plusieurs fichiers et lance des commandes à la demande.
+en: An AI tool that helps with programming: it completes code, explains an error, writes tests, fixes a bug, or, as an agent, reads a project, edits several files and runs commands on request.
+voir: agent, prompt, vibe-coding, slash-command, ide

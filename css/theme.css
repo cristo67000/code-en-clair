@@ -1,0 +1,151 @@
+/*
+ * Code en clair — couleurs et polices.
+ *
+ * Trois jeux de variables : le thème clair (par défaut), le thème sombre suivi
+ * automatiquement quand le téléphone est en mode sombre, et les deux forcés
+ * depuis les Réglages par l'attribut `data-theme` de <html>.
+ *
+ * Deux familles de caractères, et ce n'est pas une coquetterie : ce qui est
+ * *du code* — un terme, une commande, un exemple — est composé en chasse
+ * fixe, comme dans un éditeur ; ce qui l'*explique* — définitions, interface —
+ * en caractères sans empattements. On voit d'un coup d'œil ce qu'on tape et ce
+ * qu'on lit. Aucune police n'est téléchargée : ce sont celles du système.
+ */
+
+:root {
+  --fond: #f4f6fb;
+  --carte: #ffffff;
+  --encre: #182033;
+  --encre-douce: #46526b;
+  --encre-legere: #76829a;
+  --trait: #dde3ee;
+  --trait-fort: #b9c3d6;
+  --accent: #2457d6;
+  --accent-fort: #1a3fa3;
+  --accent-clair: #e8eefc;
+  --sur-accent: #ffffff;
+  --ok: #12805c;
+  --ok-fond: #e1f4ec;
+  --warn: #a8500a;
+  --warn-fond: #fdf0dc;
+  --bad: #c0342b;
+  --bad-fond: #fdeceb;
+  --v: #6d3fc7;
+  --v-fond: #efe9fb;
+  --info: #0a7d8c;
+  --info-fond: #dff3f6;
+  --ombre: 0 1px 3px rgba(24, 32, 51, .08), 0 6px 20px rgba(24, 32, 51, .06);
+  --rayon: 12px;
+
+  /* un bloc de code est sombre dans les deux thèmes : c'est un terminal */
+  --code-fond: #121a2c;
+  --code-encre: #dde5f5;
+  --code-legere: #7f8ba6;
+
+  --c-git: #d9480f;
+  --c-shell: #2b8a3e;
+  --c-web: #1971c2;
+  --c-reseau: #6741d9;
+  --c-data: #0b7285;
+  --c-secu: #c2255c;
+  --c-langage: #e8590c;
+  --c-outils: #495e78;
+  --c-image: #b07000;
+  --c-bdd: #5c3fc4;
+  --c-mobile: #2f9e44;
+  --c-ia: #ae3ec9;
+  --c-qualite: #0c8599;
+  --c-archi: #364fc7;
+  --c-autre: #6b7488;
+
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", sans-serif;
+  --mono: ui-monospace, "Cascadia Mono", "SF Mono", "Roboto Mono", Consolas, "DejaVu Sans Mono", monospace;
+  --echelle: 1;
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="clair"]) {
+    --fond: #0d1220;
+    --carte: #151c2e;
+    --encre: #e8edf7;
+    --encre-douce: #b3bdd3;
+    --encre-legere: #7d89a3;
+    --trait: #26304a;
+    --trait-fort: #3a4766;
+    --accent: #8fb0ff;
+    --accent-fort: #b3c8ff;
+    --accent-clair: #1b2848;
+    --sur-accent: #0d1220;
+    --ok: #5fd3a4;
+    --ok-fond: #12291f;
+    --warn: #f2b155;
+    --warn-fond: #33260f;
+    --bad: #ff8b80;
+    --bad-fond: #351a19;
+    --v: #b79cf2;
+    --v-fond: #251c3d;
+    --info: #5fd0de;
+    --info-fond: #0f2c31;
+    --ombre: 0 1px 3px rgba(0, 0, 0, .5), 0 6px 20px rgba(0, 0, 0, .35);
+    --code-fond: #0a0f1c;
+    --c-git: #ff922b;
+    --c-shell: #69db7c;
+    --c-web: #74c0fc;
+    --c-reseau: #b197fc;
+    --c-data: #3bc9db;
+    --c-secu: #f783ac;
+    --c-langage: #ffa94d;
+    --c-outils: #a3b4cc;
+    --c-image: #ffd43b;
+    --c-bdd: #9c8cf5;
+    --c-mobile: #8ce99a;
+    --c-ia: #e599f7;
+    --c-qualite: #66d9e8;
+    --c-archi: #91a7ff;
+    --c-autre: #a0a8b8;
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="sombre"] {
+  --fond: #0d1220;
+  --carte: #151c2e;
+  --encre: #e8edf7;
+  --encre-douce: #b3bdd3;
+  --encre-legere: #7d89a3;
+  --trait: #26304a;
+  --trait-fort: #3a4766;
+  --accent: #8fb0ff;
+  --accent-fort: #b3c8ff;
+  --accent-clair: #1b2848;
+  --sur-accent: #0d1220;
+  --ok: #5fd3a4;
+  --ok-fond: #12291f;
+  --warn: #f2b155;
+  --warn-fond: #33260f;
+  --bad: #ff8b80;
+  --bad-fond: #351a19;
+  --v: #b79cf2;
+  --v-fond: #251c3d;
+  --info: #5fd0de;
+  --info-fond: #0f2c31;
+  --ombre: 0 1px 3px rgba(0, 0, 0, .5), 0 6px 20px rgba(0, 0, 0, .35);
+  --code-fond: #0a0f1c;
+  --c-git: #ff922b;
+  --c-shell: #69db7c;
+  --c-web: #74c0fc;
+  --c-reseau: #b197fc;
+  --c-data: #3bc9db;
+  --c-secu: #f783ac;
+  --c-langage: #ffa94d;
+  --c-outils: #a3b4cc;
+  --c-image: #ffd43b;
+  --c-bdd: #9c8cf5;
+  --c-mobile: #8ce99a;
+  --c-ia: #e599f7;
+  --c-qualite: #66d9e8;
+  --c-archi: #91a7ff;
+  --c-autre: #a0a8b8;
+  color-scheme: dark;
+}

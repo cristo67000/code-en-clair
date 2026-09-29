@@ -1,0 +1,708 @@
+# Langages et programmation.
+
+@ variable
+cat: langage
+nom: Variable
+alias: affectation, assignation, let, var, déclaration, declare, assign, identifiant de variable
+fr: Nom qui désigne une valeur gardée en mémoire et pouvant changer au fil du programme. On la déclare, on lui donne une valeur (l'affectation), puis on la relit ou on la modifie par son nom.
+en: A name that designates a value kept in memory and able to change as the program runs. You declare it, give it a value (assignment), then read or change it by its name.
+ex: js
+| let score = 0;
+| score = score + 10;
+| console.log(score);
+ex-fr: Déclarer score à 0, y ajouter 10, puis afficher 10.
+ex-en: Declare score as 0, add 10 to it, then print 10.
+voir: constante, type, portee, mutabilite
+
+@ constante
+cat: langage
+nom: Constante
+nom-en: constant
+alias: const, constant, final, readonly, valeur fixe, immutable binding
+fr: Nom lié à une valeur qui ne changera plus après sa définition. Déclarer ce qui ne doit pas changer (const en JavaScript, final en Java) protège d'une modification par erreur et rend le code plus lisible.
+en: A name bound to a value that will no longer change after its definition. Declaring what must not change (const in JavaScript, final in Java) protects against accidental modification and makes code more readable.
+ex: js
+| const TVA = 0.2;
+| TVA = 0.3;
+ex-fr: La deuxième ligne provoque une erreur : on ne peut pas réaffecter une constante.
+ex-en: The second line throws an error: a constant cannot be reassigned.
+attention-fr: const empêche de réaffecter le nom, pas de modifier un objet ou un tableau qu'il désigne : on peut toujours y ajouter des éléments.
+attention-en: const prevents reassigning the name, not modifying an object or array it designates: you can still add elements to it.
+voir: variable, mutabilite, type
+
+@ type
+cat: langage
+nom: Type
+nom-en: data type
+alias: type de données, typage, typage statique, typage dynamique, static typing, dynamic typing, typescript, cast, conversion de type, coercion
+fr: Catégorie d'une valeur, qui détermine ce qu'on peut en faire : nombre, chaîne, booléen, tableau, objet. Un langage à typage statique vérifie les types avant l'exécution (Java, TypeScript) ; à typage dynamique, pendant l'exécution (Python, JavaScript).
+en: The category of a value, which determines what can be done with it: number, string, boolean, array, object. A statically typed language checks types before running (Java, TypeScript); a dynamically typed one, while running (Python, JavaScript).
+ex: js
+| typeof 42
+| typeof 'texte'
+| '5' + 1
+| '5' * 2
+ex-fr: number, string ; puis « 51 » (le nombre est converti en texte) et 10 (le texte est converti en nombre) : la coercition de JavaScript.
+ex-en: number, string; then “51” (the number is converted to text) and 10 (the text is converted to a number): JavaScript's coercion.
+voir: variable, string, null, nombre-flottant
+
+@ fonction
+cat: langage
+nom: Fonction
+nom-en: function
+alias: function, méthode, procédure, appel de fonction, fonction fléchée, arrow function, lambda, fonction anonyme, return, valeur de retour, subroutine
+fr: Bloc de code nommé qui accomplit une tâche précise : on l'écrit une fois, on l'appelle autant de fois qu'on veut, en lui passant des valeurs (paramètres). Elle peut renvoyer un résultat avec return.
+en: A named block of code that performs a specific task: you write it once, call it as many times as you want, passing it values (parameters). It can send a result back with return.
+ex: js
+| function carre(x) {
+|   return x * x;
+| }
+| const cube = (x) => x * x * x;
+| carre(4) + cube(2)
+ex-fr: Une fonction classique, une fonction fléchée, puis leur usage : 16 + 8 = 24.
+ex-en: A regular function, an arrow function, then their use: 16 + 8 = 24.
++fr: Une fonction est dite « pure » quand son résultat ne dépend que de ses paramètres et qu'elle ne modifie rien autour d'elle (pas d'effet de bord) : elle est plus facile à tester.
++en: A function is called “pure” when its result depends only on its parameters and it changes nothing around it (no side effects): it is easier to test.
+voir: parametre, portee, callback, closure, recursion
+
+@ parametre
+cat: langage
+nom: Paramètre et argument
+nom-en: parameter and argument
+alias: parameter, argument, arguments, paramètre par défaut, default parameter, rest parameter, paramètre nommé, kwargs, args
+fr: Le paramètre est le nom que la fonction déclare pour recevoir une valeur ; l'argument est la valeur réelle qu'on lui passe à l'appel. Dans « function saluer(nom) » et « saluer('Zoé') », nom est le paramètre et 'Zoé' l'argument.
+en: The parameter is the name the function declares to receive a value; the argument is the actual value passed at call time. In “function greet(name)” and “greet('Zoé')”, name is the parameter and 'Zoé' is the argument.
+ex: js
+| function saluer(nom, formule = 'Bonjour') {
+|   return `${formule} ${nom}`;
+| }
+| saluer('Zoé')
+| saluer('Zoé', 'Salut')
+ex-fr: Un paramètre a une valeur par défaut : « Bonjour Zoé » puis « Salut Zoé ».
+ex-en: A parameter has a default value: “Bonjour Zoé” then “Salut Zoé”.
+voir: fonction, argument, portee
+
+@ portee
+cat: langage
+nom: Portée
+nom-en: scope
+alias: scope, variable locale, variable globale, local, global, portée de bloc, block scope, hoisting, shadowing
+fr: Zone du programme où un nom est visible et utilisable. Une variable déclarée dans une fonction ou un bloc est locale : invisible à l'extérieur. Une variable globale est visible partout, ce qui la rend risquée.
+en: The area of a program where a name is visible and usable. A variable declared in a function or block is local: invisible outside. A global variable is visible everywhere, which makes it risky.
+ex: js
+| let a = 'globale';
+| function f() {
+|   let a = 'locale';
+|   return a;
+| }
+| f() + ' / ' + a
+ex-fr: La fonction a sa propre variable a : le résultat est « locale / globale ».
+ex-en: The function has its own variable a: the result is “locale / globale”.
+attention-fr: La portée de sw.js (service worker) est autre chose : ici, il s'agit de portée de noms de variables.
+attention-en: The scope of sw.js (service worker) is something else: here we mean the scope of variable names.
+voir: variable, closure, fonction
+schema: langage-portee
+
+@ closure
+cat: langage
+nom: Closure
+nom-fr: fermeture
+alias: fermeture, clôture, lexical scope, portée lexicale, fonction interne
+fr: Fonction qui garde l'accès aux variables de l'endroit où elle a été créée, même quand ce dernier a fini de s'exécuter. C'est ce qui permet à une fonction de « se souvenir » d'un état privé.
+en: A function that keeps access to the variables of the place where it was created, even after that place has finished running. It is what lets a function “remember” a private state.
+ex: js
+| function compteur() {
+|   let n = 0;
+|   return () => ++n;
+| }
+| const suivant = compteur();
+| suivant(); suivant();
+ex-fr: Chaque appel de suivant() augmente le n caché : il renvoie 1 puis 2, alors que compteur() est terminé.
+ex-en: Each call of suivant() increments the hidden n: it returns 1 then 2, although compteur() has finished.
+voir: portee, fonction, callback
+schema: langage-closure
+
+@ callback
+cat: langage
+nom: Callback
+nom-fr: fonction de rappel
+alias: fonction de rappel, rappel, handler, gestionnaire, hook function, continuation, callback hell
+fr: Fonction qu'on passe en argument à une autre fonction pour qu'elle l'appelle plus tard, quand un événement survient ou quand une opération se termine (la fin d'un chargement, un clic, un délai écoulé).
+en: A function passed as an argument to another function so that it calls it later, when an event occurs or an operation finishes (the end of a load, a click, a delay elapsed).
+ex: js
+| setTimeout(() => console.log('trois secondes plus tard'), 3000);
+| [1, 2, 3].forEach((n) => console.log(n * 2));
+ex-fr: Une fonction appelée après un délai ; une autre appelée pour chaque élément d'un tableau.
+ex-en: A function called after a delay; another called for each element of an array.
+attention-fr: Des callbacks imbriqués sur plusieurs niveaux deviennent illisibles (callback hell) : les promesses et async/await les remplacent.
+attention-en: Callbacks nested over several levels become unreadable (callback hell): promises and async/await replace them.
+voir: promesse, evenement, async-await, fonction
+schema: langage-callback
+
+@ promesse
+cat: langage
+nom: Promise
+nom-fr: promesse
+alias: promesse, promise, then, catch, finally, thenable, future, resolve, reject, pending, promise.all
+fr: Objet qui représente le résultat futur d'une opération asynchrone : au départ « en attente » (pending), il finit soit tenu (fulfilled, avec une valeur), soit rompu (rejected, avec une erreur). On y enchaîne des traitements avec then et catch.
+en: An object that represents the future result of an asynchronous operation: at first “pending”, it ends up either fulfilled (with a value) or rejected (with an error). Processing is chained onto it with then and catch.
+ex: js
+| fetch('/termes.json')
+|   .then((r) => r.json())
+|   .then((termes) => console.log(termes.length))
+|   .catch((erreur) => console.error(erreur));
+ex-fr: Télécharger un fichier, le lire en JSON, afficher le nombre d'éléments, et gérer toute erreur à la fin de la chaîne.
+ex-en: Download a file, read it as JSON, print the number of items, and handle any error at the end of the chain.
+voir: async-await, callback, fetch, event-loop
+schema: langage-promesse
+
+@ async-await
+cat: langage
+nom: async / await
+alias: async, await, asynchrone, asynchronous, synchrone, synchronous, code asynchrone, non bloquant, non-blocking
+fr: Syntaxe qui permet d'écrire du code asynchrone comme s'il était séquentiel : await suspend la fonction (déclarée async) jusqu'à ce qu'une promesse soit résolue, sans bloquer le reste du programme.
+en: A syntax that lets you write asynchronous code as if it were sequential: await suspends the (async-declared) function until a promise resolves, without blocking the rest of the program.
+ex: js
+| async function charger() {
+|   try {
+|     const reponse = await fetch('/termes.json');
+|     return await reponse.json();
+|   } catch (erreur) {
+|     console.error('Échec', erreur);
+|   }
+| }
+ex-fr: Le même enchaînement que les promesses, mais lisible de haut en bas, avec try/catch pour les erreurs.
+ex-en: The same chain as with promises, but readable from top to bottom, with try/catch for errors.
+attention-fr: Asynchrone ne veut pas dire « en parallèle » : en JavaScript, le code reste sur un seul fil, mais il ne l'occupe pas pendant qu'il attend.
+attention-en: Asynchronous does not mean “in parallel”: in JavaScript the code stays on a single thread, but does not occupy it while waiting.
+voir: promesse, callback, event-loop, fetch
+
+@ event-loop
+cat: langage
+nom: Event loop
+nom-fr: boucle d'événements
+alias: boucle d'événements, boucle événementielle, call stack, pile d'appels, task queue, file de tâches, microtask, macrotask, single thread
+fr: Mécanisme qui permet à JavaScript, malgré son fil d'exécution unique, de gérer des opérations qui prennent du temps. Il attend que la pile d'appels soit vide, puis prend la tâche suivante en attente (un clic, un délai écoulé, une réponse réseau).
+en: The mechanism that lets JavaScript, despite its single thread of execution, handle operations that take time. It waits for the call stack to be empty, then takes the next waiting task (a click, an elapsed delay, a network response).
++fr: Un calcul long qui n'en finit pas bloque cette boucle : la page se fige, car plus aucun clic n'est traité. On le confie à un Web Worker, ou on le découpe.
++en: A long-running computation blocks this loop: the page freezes, because no click is processed any more. It is handed to a Web Worker, or split up.
+voir: callback, promesse, async-await, thread, web-worker
+schema: langage-event-loop
+
+@ thread
+cat: langage
+nom: Thread
+nom-fr: fil d'exécution
+alias: fil d'exécution, fil, multithreading, multi-thread, concurrence, concurrency, parallélisme, parallelism, mutex, race condition, deadlock
+fr: Suite d'instructions qui s'exécute de façon indépendante à l'intérieur d'un processus. Plusieurs threads partagent la même mémoire et peuvent avancer en même temps sur plusieurs cœurs, ce qui accélère les calculs mais introduit des risques de conflits.
+en: A sequence of instructions that runs independently inside a process. Several threads share the same memory and can advance at the same time on several cores, which speeds up computation but introduces risks of conflicts.
++fr: Deux threads qui modifient la même donnée sans coordination créent une « condition de concurrence » (race condition) aux résultats imprévisibles. On l'évite avec des verrous (mutex) ou en partageant le moins possible.
++en: Two threads modifying the same data without coordination create a “race condition” with unpredictable results. It is avoided with locks (mutexes) or by sharing as little as possible.
+voir: processus, event-loop, web-worker, async-await
+
+@ boucle
+cat: langage
+nom: Boucle
+nom-en: loop
+alias: loop, for, while, do while, foreach, itération, itérer, iteration, boucle infinie, infinite loop, break, continue
+fr: Structure qui répète un bloc d'instructions : un nombre de fois connu (for), tant qu'une condition reste vraie (while), ou pour chaque élément d'une collection (for…of). break sort de la boucle, continue passe au tour suivant.
+en: A structure that repeats a block of instructions: a known number of times (for), as long as a condition stays true (while), or for each element of a collection (for…of). break leaves the loop, continue skips to the next round.
+ex: js
+| for (let i = 1; i <= 3; i++) console.log(i);
+| for (const langage of ['js', 'py']) console.log(langage);
+| let n = 3;
+| while (n > 0) n--;
+ex-fr: Compter de 1 à 3 ; parcourir un tableau ; décrémenter jusqu'à zéro.
+ex-en: Count from 1 to 3; run through an array; decrement down to zero.
+attention-fr: Une condition d'arrêt qui n'est jamais atteinte produit une boucle infinie : le programme ne rend plus la main.
+attention-en: A stop condition that is never reached produces an infinite loop: the program never gives control back.
+voir: condition, tableau, recursion, algorithme
+schema: langage-boucle
+
+@ condition
+cat: langage
+nom: Condition
+nom-en: conditional
+alias: if, else, switch, booléen, boolean, opérateur ternaire, ternary, and or not, &&, ||, !, truthy, falsy, vrai faux
+fr: Instruction qui exécute un bloc de code seulement si une expression est vraie (if), éventuellement un autre sinon (else). Les expressions se combinent avec ET (&&), OU (||) et NON (!).
+en: An instruction that runs a block of code only if an expression is true (if), possibly another one otherwise (else). Expressions are combined with AND (&&), OR (||) and NOT (!).
+ex: js
+| const age = 17;
+| if (age >= 18) {
+|   console.log('majeur');
+| } else {
+|   console.log('mineur');
+| }
+| const statut = age >= 18 ? 'majeur' : 'mineur';
+ex-fr: Un if/else classique, puis la même chose en une ligne avec l'opérateur ternaire.
+ex-en: A classic if/else, then the same thing on one line with the ternary operator.
+attention-fr: En JavaScript, 0, "", null, undefined et NaN sont « faux » dans une condition ; utilisez === plutôt que == pour comparer sans conversion.
+attention-en: In JavaScript, 0, "", null, undefined and NaN are “falsy” in a condition; use === rather than == to compare without conversion.
+voir: boucle, type, operateur
+
+@ operateur
+cat: langage
+nom: Opérateur
+nom-en: operator
+alias: operator, opérande, +, -, *, /, %, ==, ===, &&, ||, ?., ??, ++, incrément, modulo, affectation
+fr: Symbole qui effectue une opération sur des valeurs (les opérandes) : arithmétique (+ - * / %), comparaison (== === < >), logique (&& || !), affectation (= +=).
+en: A symbol that performs an operation on values (the operands): arithmetic (+ - * / %), comparison (== === < >), logic (&& || !), assignment (= +=).
+ex: js
+| 7 % 3
+| 5 === '5'
+| 5 == '5'
+| null ?? 'défaut'
+ex-fr: Le reste de 7 ÷ 3 (1) ; égalité stricte (false) ; égalité avec conversion (true) ; valeur par défaut si null (« défaut »).
+ex-en: The remainder of 7 ÷ 3 (1); strict equality (false); loose equality (true); default value if null (“défaut”).
+voir: condition, variable, type
+
+@ recursion
+cat: langage
+nom: Récursivité
+nom-en: recursion
+alias: récursion, récursif, recursive, appel récursif, cas de base, base case, stack overflow, dépassement de pile
+fr: Technique où une fonction s'appelle elle-même sur un cas plus petit du même problème, jusqu'à atteindre un cas de base qui s'arrête. Elle convient bien aux structures en arbre.
+en: A technique where a function calls itself on a smaller case of the same problem, until reaching a base case that stops. It suits tree-shaped structures well.
+ex: js
+| function factorielle(n) {
+|   if (n <= 1) return 1;
+|   return n * factorielle(n - 1);
+| }
+| factorielle(4)
+ex-fr: factorielle(4) = 4 × 3 × 2 × 1 = 24 ; le cas de base est n ≤ 1.
+ex-en: factorielle(4) = 4 × 3 × 2 × 1 = 24; the base case is n ≤ 1.
+attention-fr: Sans cas de base, ou trop profonde, la récursivité remplit la pile d'appels : l'erreur « stack overflow » (dépassement de pile) arrête le programme.
+attention-en: With no base case, or too deep, recursion fills the call stack: the “stack overflow” error stops the program.
+voir: fonction, pile, arbre-donnees, boucle
+schema: langage-recursion
+
+@ algorithme
+cat: langage
+nom: Algorithme
+nom-en: algorithm
+alias: algorithm, algo, pseudo-code, pseudocode, tri, recherche dichotomique, heuristique
+fr: Suite finie et précise d'étapes qui résout un problème ou accomplit une tâche. Une recette de cuisine en est un ; en informatique, on en étudie l'exactitude et le coût (temps, mémoire).
+en: A finite, precise sequence of steps that solves a problem or performs a task. A cooking recipe is one; in computing, their correctness and cost (time, memory) are studied.
+ex: js
+| function recherche(tableauTrie, cible) {
+|   let bas = 0, haut = tableauTrie.length - 1;
+|   while (bas <= haut) {
+|     const milieu = Math.floor((bas + haut) / 2);
+|     if (tableauTrie[milieu] === cible) return milieu;
+|     if (tableauTrie[milieu] < cible) bas = milieu + 1; else haut = milieu - 1;
+|   }
+|   return -1;
+| }
+ex-fr: La recherche dichotomique : on coupe l'intervalle en deux à chaque étape, comme git bisect.
+ex-en: Binary search: the interval is cut in two at each step, like git bisect.
+voir: complexite, boucle, recursion, bisect
+
+@ complexite
+cat: langage
+nom: Complexité
+nom-en: complexity, Big O
+alias: big o, o(n), o(1), o(log n), notation grand o, complexity, complexité temporelle, complexité spatiale, performance algorithmique
+fr: Manière de mesurer comment le temps (ou la mémoire) d'un algorithme grandit avec la taille n des données, sans tenir compte de la machine. On la note O(n) : O(1) constant, O(log n) très lent à croître, O(n) proportionnel, O(n²) qui explose.
+en: A way of measuring how an algorithm's time (or memory) grows with the size n of the data, regardless of the machine. It is written O(n): O(1) constant, O(log n) very slow-growing, O(n) proportional, O(n²) which explodes.
++fr: Chercher dans un tableau non trié coûte O(n) ; dans un tableau trié par dichotomie, O(log n) ; dans une table de hachage, O(1) en moyenne. Le choix de la structure de données fait donc la performance.
++en: Searching an unsorted array costs O(n); a sorted array with binary search, O(log n); a hash table, O(1) on average. The choice of data structure therefore makes the performance.
+voir: algorithme, table-de-hachage, boucle, benchmark
+schema: langage-complexite
+
+@ pile
+cat: langage
+nom: Pile
+nom-en: stack
+alias: stack, lifo, call stack, pile d'appels, push pop, structure de pile, stack trace, trace d'appels
+fr: Structure de données où le dernier élément ajouté est le premier retiré (LIFO, « dernier entré, premier sorti »), comme une pile d'assiettes. La pile d'appels d'un programme s'en sert pour suivre les fonctions en cours.
+en: A data structure in which the last element added is the first one removed (LIFO, “last in, first out”), like a stack of plates. A program's call stack uses it to track running functions.
++fr: Quand une erreur survient, le message affiche la « trace de pile » : la liste des fonctions appelées, de la plus récente à la plus ancienne. C'est le premier indice pour trouver un bug.
++en: When an error occurs, the message shows the “stack trace”: the list of functions called, from the most recent to the oldest. It is the first clue for finding a bug.
+ex: js
+| const pile = [];
+| pile.push('a');
+| pile.push('b');
+| pile.pop()
+ex-fr: Empiler a puis b ; dépiler renvoie b, le dernier arrivé.
+ex-en: Push a then b; popping returns b, the last one in.
+voir: file-fifo, recursion, tableau, event-loop
+schema: langage-pile
+
+@ file-fifo
+cat: langage
+nom: File (queue)
+nom-en: queue
+alias: queue, fifo, file d'attente, file, enqueue, dequeue, file de messages, deque
+fr: Structure de données où le premier élément ajouté est le premier retiré (FIFO, « premier entré, premier sorti »), comme une file d'attente à un guichet. Elle sert à traiter des tâches dans leur ordre d'arrivée.
+en: A data structure in which the first element added is the first one removed (FIFO, “first in, first out”), like a queue at a counter. It is used to process tasks in the order they arrive.
+ex: js
+| const file = [];
+| file.push('tâche 1');
+| file.push('tâche 2');
+| file.shift()
+ex-fr: Ajouter deux tâches ; retirer par l'avant renvoie « tâche 1 », la plus ancienne.
+ex-en: Add two tasks; removing from the front returns “tâche 1”, the oldest.
+voir: pile, event-loop, file-attente-messages
+schema: langage-file
+
+@ liste-chainee
+cat: langage
+nom: Liste chaînée
+nom-en: linked list
+alias: linked list, chaînage, noeud, node, pointeur suivant, liste doublement chaînée, doubly linked list
+fr: Structure de données où chaque élément (nœud) contient sa valeur et un lien vers le suivant. On insère ou retire un élément n'importe où sans déplacer les autres, mais on ne peut pas atteindre directement le n-ième.
+en: A data structure in which each element (node) holds its value and a link to the next one. You insert or remove an element anywhere without moving the others, but cannot reach the n-th one directly.
+voir: tableau, pointeur, arbre-donnees, graphe
+schema: langage-liste-chainee
+
+@ arbre-donnees
+cat: langage
+nom: Arbre
+nom-en: tree
+alias: tree, arbre binaire, binary tree, binary search tree, bst, noeud, racine, feuille, root, leaf, trie, tas, heap
+fr: Structure de données hiérarchique : une racine, qui a des enfants, qui en ont à leur tour, jusqu'aux feuilles (sans enfant). Le DOM, un système de fichiers et un JSON sont des arbres.
+en: A hierarchical data structure: a root, which has children, which have children in turn, down to the leaves (with no children). The DOM, a file system and a JSON document are trees.
++fr: Un arbre binaire de recherche range les valeurs plus petites à gauche et plus grandes à droite : retrouver une valeur y coûte O(log n) si l'arbre est équilibré.
++en: A binary search tree puts smaller values on the left and larger ones on the right: finding a value costs O(log n) if the tree is balanced.
+voir: dom, recursion, graphe, json, liste-chainee
+schema: langage-arbre
+
+@ graphe
+cat: langage
+nom: Graphe
+nom-en: graph
+alias: graph, sommet, noeud, arête, edge, vertex, graphe orienté, directed graph, dag, réseau social, chemin le plus court
+fr: Structure de données faite de sommets (des points) reliés par des arêtes (des liens), orientées ou non. Elle décrit un réseau : routes, relations entre personnes, dépendances d'un projet, historique Git.
+en: A data structure made of vertices (points) joined by edges (links), directed or not. It describes a network: roads, relationships between people, a project's dependencies, Git history.
++fr: Un graphe orienté sans cycle (DAG) décrit l'historique Git : chaque commit pointe vers ses parents, jamais vers ses descendants.
++en: A directed acyclic graph (DAG) describes Git history: each commit points to its parents, never to its descendants.
+voir: arbre-donnees, dependance, commit, liste-chainee
+schema: langage-graphe
+
+@ table-de-hachage
+cat: langage
+nom: Table de hachage
+nom-en: hash table
+alias: hash table, hashmap, hash map, dictionnaire, map, bucket, collision, clé valeur, table de hashage
+fr: Structure de données qui range des paires clé-valeur et les retrouve presque instantanément : une fonction de hachage transforme la clé en un numéro de case du tableau où la valeur est rangée.
+en: A data structure that stores key-value pairs and finds them almost instantly: a hash function turns the key into the number of the array slot where the value is kept.
++fr: Deux clés peuvent tomber dans la même case (collision) : la table doit alors les départager. Les dictionnaires de Python et les Map de JavaScript en sont des exemples.
++en: Two keys may land in the same slot (a collision): the table must then tell them apart. Python dictionaries and JavaScript Maps are examples.
+voir: hash, dictionnaire, complexite, tableau
+schema: langage-hachage
+
+@ objet
+cat: langage
+nom: Objet
+nom-en: object
+alias: object, poo, programmation orientée objet, oop, propriété, property, méthode, attribut, this, encapsulation
+fr: Ensemble regroupant des données (ses propriétés) et des fonctions qui agissent dessus (ses méthodes). La programmation orientée objet organise un programme en objets qui collaborent, plutôt qu'en une longue suite d'instructions.
+en: A bundle grouping data (its properties) and the functions that act on it (its methods). Object-oriented programming organizes a program as collaborating objects, rather than one long sequence of instructions.
+ex: js
+| const chien = {
+|   nom: 'Rex',
+|   aboyer() { return this.nom + ' : ouaf'; },
+| };
+| chien.aboyer()
+ex-fr: Un objet avec une propriété (nom) et une méthode (aboyer) qui utilise this pour lire l'objet lui-même.
+ex-en: An object with a property (nom) and a method (aboyer) that uses this to read the object itself.
+voir: classe, instance, heritage, dictionnaire
+
+@ classe
+cat: langage
+nom: Classe
+nom-en: class
+alias: class, constructeur, constructor, poo, modèle d'objet, extends, new
+fr: Plan qui décrit comment fabriquer des objets d'un même type : les propriétés qu'ils auront et les méthodes qu'ils sauront exécuter. On crée ensuite autant d'objets, appelés instances, que nécessaire avec new.
+en: A blueprint describing how to build objects of the same kind: the properties they will have and the methods they will be able to run. You then create as many objects, called instances, as needed with new.
+ex: js
+| class Chien {
+|   constructor(nom) { this.nom = nom; }
+|   aboyer() { return this.nom + ' : ouaf'; }
+| }
+| const rex = new Chien('Rex');
+| const fido = new Chien('Fido');
+ex-fr: Une classe Chien, et deux instances indépendantes créées à partir d'elle.
+ex-en: A Chien class, and two independent instances created from it.
+voir: objet, instance, heritage, interface
+schema: langage-classe
+
+@ instance
+cat: langage
+nom: Instance
+alias: instanciation, instantiate, instancier, instanceof, new, objet créé
+fr: Objet concret fabriqué à partir d'une classe. La classe est le plan, l'instance est la maison construite : chaque instance a ses propres valeurs pour les propriétés décrites par la classe.
+en: A concrete object built from a class. The class is the blueprint, the instance is the house built: each instance has its own values for the properties described by the class.
+ex: js
+| const rex = new Chien('Rex');
+| rex instanceof Chien
+ex-fr: Créer une instance de Chien, puis vérifier qu'elle en est bien une (true).
+ex-en: Create an instance of Chien, then check that it is one (true).
+voir: classe, objet, heritage
+schema: langage-classe
+
+@ heritage
+cat: langage
+nom: Héritage
+nom-en: inheritance
+alias: inheritance, extends, super, sous-classe, subclass, classe mère, superclass, classe fille, prototype, chaîne de prototypes
+fr: Mécanisme par lequel une classe reprend les propriétés et les méthodes d'une autre, et peut en ajouter ou les modifier. Un Chien et un Chat, classes filles, héritent de la classe mère Animal ce qu'ils ont en commun.
+en: A mechanism by which a class takes over the properties and methods of another, and may add to or change them. A Dog and a Cat, child classes, inherit from the parent class Animal what they have in common.
+ex: js
+| class Animal { manger() { return 'miam'; } }
+| class Chat extends Animal {
+|   miauler() { return 'miaou'; }
+| }
+| new Chat().manger()
+ex-fr: Chat hérite de manger() sans l'écrire : « miam ».
+ex-en: Chat inherits manger() without writing it: “miam”.
+attention-fr: Un héritage profond devient vite rigide ; on préfère souvent la composition (un objet en contient d'autres) à l'héritage.
+attention-en: A deep inheritance becomes rigid quickly; composition (an object containing others) is often preferred over inheritance.
+voir: classe, polymorphisme, interface, objet
+schema: langage-heritage
+
+@ polymorphisme
+cat: langage
+nom: Polymorphisme
+nom-en: polymorphism
+alias: polymorphism, surcharge, override, redéfinition, overloading, duck typing
+fr: Capacité d'objets différents à répondre au même appel de façon adaptée à chacun. Appeler parler() sur un Chien produit « ouaf », sur un Chat « miaou », sans que l'appelant ait à connaître leur type exact.
+en: The ability of different objects to answer the same call in a way suited to each. Calling parler() on a Dog produces “woof”, on a Cat “meow”, without the caller needing to know their exact type.
+voir: heritage, interface, classe
+
+@ interface
+cat: langage
+nom: Interface
+alias: contrat, contract, implements, abstract, classe abstraite, protocol, api publique
+fr: Description de ce qu'un objet ou un module sait faire (les noms et les formes de ses méthodes), sans dire comment. Tout objet qui la respecte peut être utilisé à sa place : c'est un contrat entre celui qui l'écrit et celui qui l'utilise.
+en: A description of what an object or module can do (the names and shapes of its methods), without saying how. Any object that respects it can be used in its place: it is a contract between whoever writes it and whoever uses it.
+ex: ts
+| interface Terme {
+|   id: string;
+|   nom: string;
+|   definition?: string;
+| }
+ex-fr: En TypeScript, une interface décrit la forme d'un terme : deux champs obligatoires et un facultatif (?).
+ex-en: In TypeScript, an interface describes a term's shape: two required fields and one optional (?).
+attention-fr: Ne pas confondre avec l'interface utilisateur (UI), ce que la personne voit à l'écran.
+attention-en: Not to be confused with the user interface (UI), what the person sees on screen.
+voir: classe, api, heritage, polymorphisme
+
+@ module
+cat: langage
+nom: Module
+alias: module javascript, es module, esm, commonjs, require, import export, module.exports, fichier module
+fr: Fichier de code qui garde son contenu privé et n'expose que ce qu'il choisit de partager (export), qu'un autre fichier récupère avec import. Découper un programme en modules le rend plus lisible et réutilisable.
+en: A code file that keeps its content private and only exposes what it chooses to share (export), which another file retrieves with import. Splitting a program into modules makes it more readable and reusable.
+ex: js
+| // outils.js
+| export function majuscule(texte) { return texte.toUpperCase(); }
+|
+| // app.js
+| import { majuscule } from './outils.js';
+| majuscule('git')
+ex-fr: outils.js exporte une fonction ; app.js l'importe et s'en sert : « GIT ».
+ex-en: outils.js exports a function; app.js imports it and uses it: “GIT”.
+voir: bibliotheque, paquet, dependance, portee
+
+@ bibliotheque
+cat: langage
+nom: Bibliothèque
+nom-en: library
+alias: library, lib, librairie, bibliothèque logicielle, dépendance, jquery, lodash, dll, .so
+fr: Ensemble de fonctions déjà écrites qu'un programme appelle pour ne pas réinventer la roue : dates, graphiques, requêtes. C'est votre code qui décide quand appeler la bibliothèque.
+en: A set of already-written functions that a program calls so as not to reinvent the wheel: dates, charts, requests. Your code decides when to call the library.
+attention-fr: « Librairie » est un faux ami de library : en français correct, c'est un magasin de livres. Une bibliothèque ne vous impose pas sa structure, contrairement à un framework.
+attention-en: A library does not impose its structure on your program, unlike a framework, which calls your code.
+voir: framework, paquet, dependance, npm, module
+
+@ paquet-logiciel
+cat: langage
+nom: Paquet
+nom-en: package
+alias: package, paquetage, package manager, gestionnaire de paquets, pip, apt, brew, npm package, distribution
+fr: Ensemble de code prêt à installer, avec un nom, une version et la liste de ce dont il dépend, distribué par un gestionnaire de paquets (npm, pip, apt). On l'installe d'une commande et on le met à jour de même.
+en: A set of code ready to install, with a name, a version and the list of what it depends on, distributed by a package manager (npm, pip, apt). It is installed with a command and updated the same way.
+ex: bash
+| npm install lodash
+| pip install requests
+ex-fr: Installer un paquet JavaScript, puis un paquet Python.
+ex-en: Install a JavaScript package, then a Python package.
+voir: npm, dependance, bibliotheque, semver
+
+@ dependance
+cat: langage
+nom: Dépendance
+nom-en: dependency
+alias: dependency, dependencies, devdependencies, dépendance transitive, transitive, arbre de dépendances, supply chain, chaîne d'approvisionnement
+fr: Bibliothèque ou paquet dont un projet a besoin pour fonctionner. Les dépendances ont elles-mêmes des dépendances (transitives) : un petit projet peut en tirer des centaines.
+en: A library or package a project needs in order to work. Dependencies have dependencies of their own (transitive): a small project can pull in hundreds.
++fr: Chaque dépendance est du code qu'on n'a pas écrit et qu'on ne relit pas : il faut les tenir à jour et se méfier d'un paquet douteux, car une faille ou un code malveillant y arrive dans votre projet.
++en: Each dependency is code you did not write and do not review: keep them up to date and beware of a dubious package, since a flaw or malicious code gets into your project through it.
+voir: npm, paquet-logiciel, vulnerabilite, lockfile, package-json
+
+@ compilation
+cat: langage
+nom: Compilation
+nom-en: compilation
+alias: compilateur, compiler, compile, build, code source, code machine, binaire exécutable, linker, transpiler
+fr: Traduction du code source, écrit par un humain, en code machine que le processeur exécute directement (ou en un code intermédiaire). Le résultat est un programme prêt à lancer ; la compilation détecte aussi de nombreuses erreurs avant l'exécution.
+en: Translation of source code, written by a human, into machine code that the processor runs directly (or into intermediate code). The result is a program ready to run; compilation also detects many errors before execution.
+ex: bash
+| gcc bonjour.c -o bonjour
+| ./bonjour
+ex-fr: Compiler un programme C en exécutable, puis le lancer.
+ex-en: Compile a C program into an executable, then run it.
+voir: interpretation, bytecode, transpilation, runtime
+schema: langage-compilation
+
+@ interpretation
+cat: langage
+nom: Interprétation
+nom-en: interpretation
+alias: interpréteur, interpreter, interprété, jit, just-in-time, script, exécution ligne à ligne
+fr: Exécution d'un programme instruction après instruction par un interpréteur, sans produire de fichier compilé au préalable. Python et le shell sont interprétés ; les moteurs JavaScript modernes mêlent interprétation et compilation à la volée (JIT).
+en: Running a program instruction by instruction through an interpreter, without producing a compiled file beforehand. Python and the shell are interpreted; modern JavaScript engines mix interpretation and just-in-time (JIT) compilation.
+voir: compilation, runtime, bytecode, script
+schema: langage-compilation
+
+@ bytecode
+cat: langage
+nom: Bytecode
+alias: code intermédiaire, jvm, java virtual machine, machine virtuelle, .class, python bytecode, .pyc
+fr: Code intermédiaire, plus compact que le texte et indépendant du processeur, qu'une machine virtuelle exécute. Java compile en bytecode pour la JVM ; Python enregistre le sien dans des fichiers .pyc.
+en: Intermediate code, more compact than text and independent of the processor, which a virtual machine runs. Java compiles to bytecode for the JVM; Python saves its own in .pyc files.
+voir: compilation, interpretation, runtime, apk
+
+@ runtime
+cat: langage
+nom: Runtime
+nom-fr: environnement d'exécution
+alias: environnement d'exécution, execution environment, moteur, jvm, node.js, v8, temps d'exécution, à l'exécution, run time
+fr: Environnement qui exécute un programme et lui fournit ce dont il a besoin : gestion de la mémoire, entrées-sorties, bibliothèques de base. Node.js est un runtime JavaScript, la JVM un runtime Java. « À l'exécution » s'oppose à « à la compilation ».
+en: The environment that runs a program and supplies what it needs: memory management, input/output, base libraries. Node.js is a JavaScript runtime, the JVM a Java runtime. “At runtime” is opposed to “at compile time”.
+voir: nodejs, compilation, bytecode, garbage-collector
+
+@ garbage-collector
+cat: langage
+nom: Garbage collector
+nom-fr: ramasse-miettes
+alias: ramasse-miettes, ramasse miettes, gc, gestion de la mémoire, memory management, fuite de mémoire, memory leak, mémoire
+fr: Mécanisme qui libère automatiquement la mémoire des objets qu'un programme n'utilise plus, pour que le programmeur n'ait pas à le faire à la main. JavaScript, Java, Python en possèdent un ; C et Rust, non.
+en: A mechanism that automatically frees the memory of objects a program no longer uses, so the programmer does not have to do it by hand. JavaScript, Java and Python have one; C and Rust do not.
+attention-fr: Il ne prévient pas les fuites de mémoire : un objet encore référencé quelque part (une liste globale, un écouteur oublié) n'est jamais libéré.
+attention-en: It does not prevent memory leaks: an object still referenced somewhere (a global list, a forgotten listener) is never freed.
+voir: pointeur, runtime, mutabilite
+
+@ mutabilite
+cat: langage
+nom: Mutabilité
+nom-en: mutability
+alias: mutable, immutable, immuable, immutabilité, immutability, object.freeze, copie, copy, référence vs valeur, structuredclone
+fr: Propriété d'une donnée qui peut être modifiée sur place (mutable : tableau, objet) ou non (immuable : nombre, chaîne). Modifier une donnée mutable partagée peut changer ce que d'autres parties du programme voient.
+en: A property of data that can be modified in place (mutable: array, object) or not (immutable: number, string). Modifying shared mutable data can change what other parts of the program see.
+ex: js
+| const a = [1, 2];
+| const b = a;
+| b.push(3);
+| a
+| const c = [...a];
+ex-fr: b désigne le même tableau que a : a vaut [1, 2, 3] ; c en est une copie indépendante.
+ex-en: b designates the same array as a: a is [1, 2, 3]; c is an independent copy of it.
+voir: constante, pointeur, variable, garbage-collector
+
+@ pointeur
+cat: langage
+nom: Pointeur et référence
+nom-en: pointer and reference
+alias: pointer, reference, référence, adresse mémoire, memory address, déréférencer, null pointer, passage par valeur, passage par référence
+fr: Un pointeur (ou une référence) est une valeur qui désigne l'emplacement en mémoire d'une autre donnée, au lieu de la contenir. Deux variables qui référencent le même objet voient toutes les deux ses modifications.
+en: A pointer (or reference) is a value that designates the location in memory of another piece of data, instead of containing it. Two variables referencing the same object both see its changes.
+voir: mutabilite, liste-chainee, null, garbage-collector
+
+@ exception
+cat: langage
+nom: Exception
+alias: erreur, error, try catch, throw, lever une exception, throw new error, finally, gestion d'erreurs, error handling, stack trace
+fr: Événement qui interrompt le déroulement normal d'un programme quand une erreur survient. On « lève » (throw) une exception ; le code peut l'« attraper » (catch) pour réagir, faute de quoi le programme s'arrête.
+en: An event that interrupts a program's normal flow when an error occurs. An exception is “thrown”; the code can “catch” it to react, otherwise the program stops.
+ex: js
+| try {
+|   JSON.parse('{oups}');
+| } catch (erreur) {
+|   console.log('JSON invalide :', erreur.message);
+| } finally {
+|   console.log('toujours exécuté');
+| }
+ex-fr: try tente l'opération, catch gère l'échec, finally s'exécute dans tous les cas.
+ex-en: try attempts the operation, catch handles the failure, finally runs in every case.
+voir: debogage, promesse, code-de-sortie, async-await
+
+@ regex
+cat: langage
+nom: Regex
+dev: regular expression
+nom-fr: expression régulière
+alias: regexp, expression régulière, expression rationnelle, regular expression, motif, pattern, \d, [a-z], grep -E
+fr: Motif qui décrit un ensemble de textes : « \d{4} » désigne quatre chiffres, « ^[a-z]+$ » un mot en minuscules. On s'en sert pour chercher, valider ou remplacer du texte.
+en: A pattern that describes a set of texts: “\d{4}” means four digits, “^[a-z]+$” a word in lowercase. It is used to search, validate or replace text.
++fr: Symboles courants : . (un signe quelconque), * (zéro ou plus), + (un ou plus), ? (facultatif), [ ] (un signe parmi), ( ) (groupe), ^ et $ (début et fin), \d (chiffre), \w (lettre ou chiffre).
++en: Common symbols: . (any character), * (zero or more), + (one or more), ? (optional), [ ] (one character among), ( ) (group), ^ and $ (start and end), \d (digit), \w (letter or digit).
+ex: js
+| /^\d{5}$/.test('67000')
+| 'v1.2.3'.match(/(\d+)\.(\d+)\.(\d+)/)
+| 'a  b   c'.replace(/\s+/g, ' ')
+ex-fr: Valider un code postal (true) ; extraire les trois nombres d'un numéro de version ; réduire les espaces multiples à un seul.
+ex-en: Validate a postal code (true); extract the three numbers of a version number; collapse multiple spaces into one.
+attention-fr: Une regex n'est pas un glob : dans un glob, * signifie « n'importe quoi » ; en regex, il répète le signe précédent.
+attention-en: A regex is not a glob: in a glob, * means “anything”; in a regex, it repeats the previous character.
+voir: grep, glob, string, parsing
+
+@ syntaxe
+cat: langage
+nom: Syntaxe
+nom-en: syntax
+alias: syntax, erreur de syntaxe, syntax error, grammaire, sémantique, semantics, parse error, unexpected token
+fr: Ensemble des règles qui définissent comment s'écrit un programme valide dans un langage : où vont les parenthèses, les accolades, les points-virgules. Une erreur de syntaxe empêche tout le programme de démarrer.
+en: The set of rules defining how a valid program is written in a language: where parentheses, braces and semicolons go. A syntax error prevents the whole program from starting.
+attention-fr: La syntaxe est la forme ; la sémantique est le sens. Un programme peut être syntaxiquement correct et pourtant faire autre chose que ce qu'on voulait.
+attention-en: Syntax is form; semantics is meaning. A program can be syntactically correct and still do something other than what was intended.
+voir: parsing, token, compilation, debogage
+
+@ commentaire
+cat: langage
+nom: Commentaire
+nom-en: comment
+alias: comment, //, /* */, #, docstring, jsdoc, todo, fixme, commenter le code, commented out
+fr: Texte ignoré par l'ordinateur, écrit pour les humains qui liront le code : expliquer un choix, signaler un piège, laisser un TODO. Un bon commentaire dit pourquoi, pas quoi : le code dit déjà ce qu'il fait.
+en: Text ignored by the computer, written for the humans who will read the code: explaining a choice, flagging a pitfall, leaving a TODO. A good comment says why, not what: the code already says what it does.
+ex: js
+| // Les mots de moins de 3 lettres sont ignorés : trop de faux positifs.
+| /* Un commentaire
+|    sur plusieurs lignes */
+ex-fr: Le commentaire d'une ligne explique une raison ; celui sur plusieurs lignes en fait autant.
+ex-en: The one-line comment explains a reason; the multi-line one does likewise.
+voir: syntaxe, refactoring, code-review
+
+@ mot-cle
+cat: langage
+nom: Mot-clé
+nom-en: keyword
+alias: keyword, mot réservé, reserved word, if, else, for, while, class, function, return, const, let, var
+fr: Mot que le langage réserve pour sa propre syntaxe (if, for, return, class) et qu'on ne peut donc pas utiliser comme nom de variable. La liste change d'un langage à l'autre.
+en: A word that the language reserves for its own syntax (if, for, return, class) and which therefore cannot be used as a variable name. The list changes from one language to another.
+voir: syntaxe, variable, token
+
+@ lambda
+cat: langage
+nom: Lambda
+nom-fr: fonction anonyme
+alias: fonction anonyme, anonymous function, arrow function, fonction fléchée, =>, lambda python, expression lambda, closure
+fr: Fonction sans nom, écrite là où on en a besoin, souvent en une ligne, pour la passer à une autre fonction. En JavaScript, on l'écrit avec une flèche : (x) => x * 2. En Python : lambda x: x * 2.
+en: A function with no name, written where it is needed, often in one line, to pass to another function. In JavaScript it is written with an arrow: (x) => x * 2. In Python: lambda x: x * 2.
+ex: js
+| [1, 2, 3].map((x) => x * 2)
+| [1, 2, 3].filter((x) => x > 1)
+ex-fr: Doubler chaque élément (2, 4, 6), puis ne garder que ceux supérieurs à 1 (2, 3).
+ex-en: Double each element (2, 4, 6), then keep only those greater than 1 (2, 3).
+voir: fonction, callback, closure

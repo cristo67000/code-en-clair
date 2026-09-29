@@ -1,0 +1,368 @@
+# Réseau et HTTP.
+
+@ http
+cat: reseau
+nom: HTTP
+dev: HyperText Transfer Protocol
+alias: protocole http, requête http, http/1.1, http/2, http/3, hypertext transfer protocol, requête réponse, request response
+fr: Protocole de communication du web : un client (le navigateur) envoie une requête à un serveur, qui renvoie une réponse. Chaque échange est indépendant des précédents ; le serveur ne se souvient de rien entre deux requêtes.
+en: The web's communication protocol: a client (the browser) sends a request to a server, which sends back a response. Each exchange is independent of the previous ones; the server remembers nothing between two requests.
++fr: Une requête porte une méthode (GET, POST…), une adresse et des en-têtes ; la réponse porte un code de statut (200, 404…), des en-têtes et un corps (la page, un JSON, une image).
++en: A request carries a method (GET, POST…), an address and headers; the response carries a status code (200, 404…), headers and a body (the page, JSON, an image).
+ex: http
+| GET /termes.json HTTP/1.1
+| Host: exemple.org
+| Accept: application/json
+|
+| HTTP/1.1 200 OK
+| Content-Type: application/json
+| Content-Length: 27
+ex-fr: Une requête GET en haut, le début de la réponse en bas : statut 200 et type JSON.
+ex-en: A GET request at the top, the start of the response below: status 200 and JSON type.
+voir: https, methode-http, code-de-statut, header, url
+schema: reseau-requete-reponse
+
+@ https
+cat: reseau
+nom: HTTPS
+dev: HTTP Secure
+alias: http secure, http sécurisé, cadenas, tls, ssl, certificat https, connexion sécurisée
+fr: HTTP à l'intérieur d'un canal chiffré par TLS : personne, sur le chemin, ne peut lire ni modifier les échanges, et le navigateur vérifie que le serveur est bien celui qu'il prétend être, grâce à son certificat.
+en: HTTP inside a channel encrypted with TLS: nobody on the way can read or alter the exchanges, and the browser checks that the server really is who it claims to be, thanks to its certificate.
++fr: Il est devenu la norme : les navigateurs signalent les sites en simple HTTP comme « non sécurisés », et les fonctions puissantes (service worker, géolocalisation) exigent HTTPS.
++en: It has become the norm: browsers flag plain-HTTP sites as “not secure”, and powerful features (service worker, geolocation) require HTTPS.
+attention-fr: Le cadenas garantit une connexion chiffrée vers le bon domaine, pas que le site soit honnête.
+attention-en: The padlock guarantees an encrypted connection to the right domain, not that the site is honest.
+voir: http, tls, certificat, service-worker
+schema: reseau-tls
+
+@ tls
+cat: reseau
+nom: TLS
+dev: Transport Layer Security
+alias: ssl, transport layer security, chiffrement du transport, handshake tls, poignée de main
+fr: Protocole qui chiffre et authentifie une communication réseau. Au début, le client et le serveur négocient des algorithmes et échangent des clés (la « poignée de main ») ; ensuite, tout ce qu'ils s'envoient est chiffré.
+en: A protocol that encrypts and authenticates a network communication. At the start, the client and the server negotiate algorithms and exchange keys (the “handshake”); afterwards, everything they send each other is encrypted.
++fr: TLS a remplacé SSL, dont le nom reste en usage courant (« certificat SSL »). Les versions actuelles sont TLS 1.2 et 1.3.
++en: TLS replaced SSL, whose name remains in everyday use (“SSL certificate”). The current versions are TLS 1.2 and 1.3.
+voir: https, certificat, chiffrement, cle-publique-privee
+schema: reseau-tls
+
+@ ip
+cat: reseau
+nom: IP
+dev: Internet Protocol
+nom-fr: adresse IP
+alias: adresse ip, ipv4, ipv6, internet protocol, 127.0.0.1, adresse réseau
+fr: Numéro qui identifie une machine sur un réseau, comme une adresse postale. IPv4 en compte quatre entre 0 et 255 (192.168.1.10) ; IPv6, plus long, en hexadécimal (2001:db8::1), a été créé parce que les adresses IPv4 s'épuisent.
+en: A number that identifies a machine on a network, like a postal address. IPv4 has four between 0 and 255 (192.168.1.10); IPv6, longer, in hexadecimal (2001:db8::1), was created because IPv4 addresses are running out.
++fr: Certaines adresses sont privées, valables seulement dans un réseau local (192.168.x.x, 10.x.x.x). 127.0.0.1 désigne toujours la machine elle-même.
++en: Some addresses are private, valid only inside a local network (192.168.x.x, 10.x.x.x). 127.0.0.1 always means the machine itself.
+attention-fr: Un serveur web reçoit l'adresse IP de chaque visiteur : c'est une donnée personnelle au sens du droit européen.
+attention-en: A web server receives every visitor's IP address: it is personal data under European law.
+voir: dns, port, localhost, tcp, paquet
+
+@ dns
+cat: reseau
+nom: DNS
+dev: Domain Name System
+nom-fr: système de noms de domaine
+alias: domain name system, résolution de nom, nslookup, dig, enregistrement A, cname, serveur dns
+fr: L'annuaire d'Internet : il traduit un nom de domaine lisible (exemple.org) en adresse IP (93.184.216.34) que les machines utilisent réellement. Chaque navigateur y fait appel avant de contacter un site.
+en: The Internet's phone book: it translates a readable domain name (example.org) into the IP address (93.184.216.34) that machines actually use. Every browser consults it before contacting a site.
++fr: Les réponses sont gardées en mémoire un certain temps (TTL) : un changement d'adresse met parfois des heures à se propager partout.
++en: Answers are cached for a while (TTL): an address change sometimes takes hours to propagate everywhere.
+ex: bash
+| nslookup exemple.org
+| dig +short exemple.org
+ex-fr: Demander à un serveur DNS l'adresse d'un domaine, de deux façons.
+ex-en: Ask a DNS server for a domain's address, in two ways.
+voir: ip, domaine, url, cdn
+schema: reseau-dns
+
+@ url
+cat: reseau
+nom: URL
+dev: Uniform Resource Locator
+alias: uniform resource locator, uri, adresse web, lien, query string, paramètres d'url, ancre, fragment, hash d'url
+fr: Adresse complète d'une ressource sur le web : le protocole, le domaine, un éventuel port, le chemin, puis facultativement des paramètres (?a=1) et une ancre (#section).
+en: The full address of a resource on the web: the protocol, the domain, an optional port, the path, then optionally parameters (?a=1) and an anchor (#section).
++fr: L'ancre après # n'est jamais envoyée au serveur : elle reste dans le navigateur. Les caractères spéciaux d'une URL sont encodés en pourcentage (l'espace devient %20).
++en: The anchor after # is never sent to the server: it stays in the browser. Special characters in a URL are percent-encoded (a space becomes %20).
+ex: js
+| const url = new URL('https://exemple.org:8080/blog/post?lang=fr#commentaires');
+| console.log(url.hostname, url.pathname, url.searchParams.get('lang'));
+ex-fr: Découper une URL : le domaine, le chemin et la valeur du paramètre lang.
+ex-en: Split a URL: the domain, the path and the value of the lang parameter.
+attention-fr: Une URL est une adresse qui indique où trouver une ressource ; une URI est le terme plus général pour l'identifier, qu'on sache la localiser ou non.
+attention-en: A URL is an address that says where to find a resource; a URI is the more general term to identify it, whether or not it can be located.
+voir: domaine, http, dns, slash
+schema: reseau-url
+
+@ domaine
+cat: reseau
+nom: Nom de domaine
+nom-en: domain name
+alias: domain, sous-domaine, subdomain, tld, .com, .fr, fqdn, registrar, nom d'hôte
+fr: Nom lisible qui désigne un site ou un service sur Internet (exemple.org). Il se lit de droite à gauche : org est le domaine de premier niveau, exemple le nom acheté, et un sous-domaine (blog.exemple.org) s'ajoute à gauche.
+en: A readable name that designates a site or service on the Internet (example.org). It reads from right to left: org is the top-level domain, example the purchased name, and a subdomain (blog.example.org) is added on the left.
++fr: On loue un domaine chez un bureau d'enregistrement (registrar), pour une durée déterminée, puis on règle son DNS pour qu'il pointe vers son serveur.
++en: A domain is rented from a registrar for a set period, then its DNS is configured to point to your server.
+voir: dns, url, ip, https
+schema: reseau-url
+
+@ port
+cat: reseau
+nom: Port
+alias: numéro de port, 80, 443, 3000, 8080, socket, écouter sur un port
+fr: Numéro (de 0 à 65 535) qui, avec l'adresse IP, désigne un service précis sur une machine. Le port 80 est celui d'HTTP, 443 celui d'HTTPS ; en développement, on utilise souvent 3000 ou 8080.
+en: A number (from 0 to 65,535) that, together with the IP address, designates a specific service on a machine. Port 80 is HTTP's, 443 is HTTPS's; in development, 3000 or 8080 are often used.
+ex: bash
+| python -m http.server 8000
+| curl http://localhost:8000/
+ex-fr: Lancer un petit serveur web sur le port 8000, puis l'interroger.
+ex-en: Start a small web server on port 8000, then query it.
+attention-fr: Un port déjà pris par un autre programme provoque l'erreur « address already in use » : changez de port ou arrêtez l'autre processus.
+attention-en: A port already used by another program causes the “address already in use” error: change the port or stop the other process.
+voir: ip, localhost, url, firewall
+
+@ localhost
+cat: reseau
+nom: localhost
+alias: 127.0.0.1, ::1, boucle locale, loopback, serveur local, dev server
+fr: Nom qui désigne toujours votre propre machine (adresse 127.0.0.1). Pendant le développement, on y lance un serveur et on l'ouvre dans le navigateur sans quitter l'ordinateur ni passer par Internet.
+en: A name that always designates your own machine (address 127.0.0.1). During development you start a server there and open it in the browser without leaving the computer or going through the Internet.
++fr: Sur localhost, les navigateurs accordent les mêmes droits qu'en HTTPS (service worker, géolocalisation), ce qui facilite les essais.
++en: On localhost, browsers grant the same rights as over HTTPS (service worker, geolocation), which makes testing easier.
+attention-fr: Un serveur lancé sur localhost n'est pas joignable depuis un autre appareil : pour le montrer à un téléphone, il faut utiliser l'adresse IP de l'ordinateur sur le réseau local.
+attention-en: A server started on localhost cannot be reached from another device: to show it to a phone, use the computer's IP address on the local network.
+voir: ip, port, https, http
+
+@ methode-http
+cat: reseau
+nom: Méthode HTTP
+nom-en: HTTP method
+alias: get, post, put, patch, delete, head, options, verbe http, http verb, http methods
+fr: Mot qui, dans une requête HTTP, indique l'intention : GET lit une ressource, POST en crée une, PUT la remplace, PATCH la modifie en partie, DELETE la supprime, OPTIONS demande ce qui est permis.
+en: The word that, in an HTTP request, states the intent: GET reads a resource, POST creates one, PUT replaces it, PATCH partly modifies it, DELETE removes it, OPTIONS asks what is allowed.
++fr: GET ne doit jamais modifier de données : on peut le répéter sans risque, et les robots le font. Les données sensibles ne passent pas dans l'URL d'un GET mais dans le corps d'un POST.
++en: GET must never change data: it can be repeated safely, and robots do it. Sensitive data does not go in a GET's URL but in a POST's body.
+ex: js
+| await fetch('/api/notes', {
+|   method: 'POST',
+|   headers: { 'Content-Type': 'application/json' },
+|   body: JSON.stringify({ texte: 'à retenir' }),
+| });
+ex-fr: Créer une note en envoyant du JSON avec POST.
+ex-en: Create a note by sending JSON with POST.
+voir: http, rest, api, idempotence, crud
+
+@ code-de-statut
+cat: reseau
+nom: Code de statut HTTP
+nom-en: HTTP status code
+alias: status code, 200, 201, 301, 302, 304, 400, 401, 403, 404, 429, 500, 502, 503, erreur 404
+fr: Nombre à trois chiffres par lequel un serveur résume le sort d'une requête. 2xx : réussite (200 OK). 3xx : redirection (301). 4xx : erreur du client (404 introuvable). 5xx : erreur du serveur (500).
+en: A three-digit number by which a server sums up a request's outcome. 2xx: success (200 OK). 3xx: redirection (301). 4xx: client error (404 not found). 5xx: server error (500).
++fr: À retenir : 401 veut dire « non authentifié », 403 « authentifié mais interdit », 429 « trop de requêtes », 304 « rien de neuf, gardez votre copie ».
++en: Worth remembering: 401 means “not authenticated”, 403 “authenticated but forbidden”, 429 “too many requests”, 304 “nothing new, keep your copy”.
+ex: text
+| 200 OK
+| 301 Moved Permanently
+| 404 Not Found
+| 500 Internal Server Error
+ex-fr: Quatre codes parmi les plus fréquents, un par famille.
+ex-en: Four of the most common codes, one per family.
+voir: http, header, rest, cache-http
+schema: reseau-statuts
+
+@ header
+cat: reseau
+nom: En-tête HTTP
+nom-en: HTTP header
+alias: header, headers, en-têtes, content-type, authorization, user-agent, accept, cache-control, set-cookie
+fr: Ligne « Nom: valeur » qui accompagne une requête ou une réponse HTTP et la décrit : type du contenu (Content-Type), identité (Authorization), consignes de cache (Cache-Control), cookies.
+en: A “Name: value” line that accompanies an HTTP request or response and describes it: content type (Content-Type), identity (Authorization), caching instructions (Cache-Control), cookies.
+ex: http
+| Content-Type: application/json; charset=utf-8
+| Authorization: Bearer eyJhbGciOi...
+| Cache-Control: max-age=600
+ex-fr: Le format du corps, un jeton d'accès, et une durée de conservation de dix minutes.
+ex-en: The body's format, an access token, and a ten-minute retention time.
+voir: http, mime, cookie, cache-http, cors
+
+@ latence
+cat: reseau
+nom: Latence
+nom-en: latency
+alias: latency, ping time, temps de réponse, délai réseau, rtt
+fr: Temps que met un message pour aller d'un point à un autre et en revenir, mesuré en millisecondes. Une latence élevée rend chaque échange lent, même si le débit est excellent.
+en: The time a message takes to go from one point to another and back, measured in milliseconds. High latency makes every exchange slow, even when throughput is excellent.
+attention-fr: La latence n'est pas le débit : la première est le délai d'un aller-retour, le second la quantité de données par seconde.
+attention-en: Latency is not throughput: the first is the delay of a round trip, the second the amount of data per second.
+voir: bande-passante, ping, cdn, timeout
+
+@ bande-passante
+cat: reseau
+nom: Bande passante
+nom-en: bandwidth
+alias: bandwidth, débit, throughput, mbps, mégabits, data rate
+fr: Quantité maximale de données qu'une connexion peut transporter par seconde, en général en mégabits (Mb/s). Une page lourde ou une grosse image coûtent de la bande passante, surtout sur mobile.
+en: The maximum amount of data a connection can carry per second, usually in megabits (Mb/s). A heavy page or a big image costs bandwidth, especially on mobile.
+attention-fr: Un mégabit (Mb) vaut huit fois moins qu'un mégaoctet (Mo) : une connexion de 80 Mb/s télécharge au mieux 10 Mo par seconde.
+attention-en: A megabit (Mb) is eight times smaller than a megabyte (MB): an 80 Mb/s connection downloads at best 10 MB per second.
+voir: latence, cdn, webp, lazy-loading, byte
+
+@ proxy
+cat: reseau
+nom: Proxy
+nom-fr: mandataire
+alias: mandataire, reverse proxy, proxy inverse, nginx, serveur mandataire, forward proxy
+fr: Serveur intermédiaire entre un client et un serveur. Un proxy « direct » transmet les requêtes d'un réseau vers Internet ; un proxy inverse (reverse proxy) reçoit les requêtes destinées à un site et les répartit vers ses serveurs.
+en: An intermediary server between a client and a server. A “forward” proxy passes a network's requests on to the Internet; a reverse proxy receives requests meant for a site and distributes them to its servers.
+voir: cdn, firewall, vpn, load-balancer
+schema: reseau-proxy
+
+@ cdn
+cat: reseau
+nom: CDN
+dev: Content Delivery Network
+nom-fr: réseau de diffusion de contenu
+alias: content delivery network, réseau de distribution, edge, cloudflare, cache distribué, point de présence
+fr: Réseau de serveurs répartis dans le monde qui gardent des copies des fichiers d'un site (images, scripts) et répondent depuis le serveur le plus proche du visiteur. Le site charge plus vite et son serveur d'origine est déchargé.
+en: A network of servers spread around the world that keep copies of a site's files (images, scripts) and answer from the server closest to the visitor. The site loads faster and its origin server is relieved.
+voir: latence, cache-http, proxy, github-pages
+schema: reseau-cdn
+
+@ cache-http
+cat: reseau
+nom: Cache HTTP
+nom-en: HTTP cache
+alias: cache navigateur, browser cache, cache-control, max-age, no-cache, no-store, revalidation
+fr: Mémoire où le navigateur garde des copies de fichiers déjà téléchargés pour ne pas les redemander. L'en-tête Cache-Control du serveur règle combien de temps une copie reste valable (max-age).
+en: A memory where the browser keeps copies of already-downloaded files so as not to request them again. The server's Cache-Control header sets how long a copy stays valid (max-age).
++fr: Un fichier à l'adresse inchangée peut rester périmé pendant toute sa durée de validité : c'est pourquoi on change le nom des fichiers (empreinte dans le nom) ou on utilise une validation par ETag.
++en: A file at an unchanged address can stay stale for its whole validity period: this is why file names are changed (a hash in the name) or ETag validation is used.
+ex: http
+| Cache-Control: public, max-age=31536000, immutable
+| Cache-Control: no-cache
+ex-fr: Garder un an un fichier dont le nom ne change jamais ; ou obliger à revérifier auprès du serveur avant chaque usage.
+ex-en: Keep a file for a year when its name never changes; or force a recheck with the server before every use.
+voir: etag, header, cache-api, cdn
+schema: reseau-cache
+
+@ etag
+cat: reseau
+nom: ETag
+dev: Entity Tag
+alias: entity tag, if-none-match, 304, validation, revalidation, if-modified-since, last-modified
+fr: En-tête de réponse contenant une empreinte de la version d'un fichier. Le navigateur la renvoie à la requête suivante (If-None-Match) ; si le fichier n'a pas changé, le serveur répond 304 sans renvoyer le contenu.
+en: A response header containing a fingerprint of a file's version. The browser sends it back on the next request (If-None-Match); if the file has not changed, the server answers 304 without resending the content.
+voir: cache-http, header, code-de-statut, empreinte
+schema: reseau-cache
+
+@ tcp
+cat: reseau
+nom: TCP
+dev: Transmission Control Protocol
+alias: transmission control protocol, tcp/ip, connexion tcp, three-way handshake, syn ack
+fr: Protocole de transport qui garantit qu'une suite de données arrive complète, sans doublon et dans l'ordre, en numérotant les paquets, en accusant réception et en renvoyant ce qui s'est perdu. HTTP et SSH circulent sur TCP.
+en: A transport protocol that guarantees a stream of data arrives complete, with no duplicates and in order, by numbering packets, acknowledging receipt and resending what got lost. HTTP and SSH run over TCP.
+attention-fr: Cette fiabilité a un coût en délai : pour la voix ou le jeu en direct, on préfère souvent UDP.
+attention-en: This reliability costs delay: for voice or live gaming, UDP is often preferred.
+voir: udp, ip, paquet, osi
+
+@ udp
+cat: reseau
+nom: UDP
+dev: User Datagram Protocol
+alias: user datagram protocol, datagramme, protocole sans connexion
+fr: Protocole de transport rapide et léger qui envoie des paquets sans vérifier qu'ils arrivent, ni dans quel ordre. On le choisit quand la vitesse compte plus que l'exhaustivité : voix, vidéo en direct, jeux, DNS.
+en: A fast, lightweight transport protocol that sends packets without checking that they arrive, or in what order. It is chosen when speed matters more than completeness: voice, live video, games, DNS.
+voir: tcp, ip, paquet, dns
+
+@ paquet
+cat: reseau
+nom: Paquet
+nom-en: packet
+alias: packet, datagramme, trame, mtu, paquet réseau
+fr: Morceau de données, accompagné d'un en-tête (adresse d'origine, adresse de destination, numéro), dans lequel un message est découpé pour voyager sur un réseau. Chaque paquet peut emprunter un chemin différent ; le destinataire les remet en ordre.
+en: A chunk of data, with a header (source address, destination address, number), into which a message is cut to travel over a network. Each packet may take a different path; the recipient puts them back in order.
+voir: ip, tcp, chunk, latence
+
+@ osi
+cat: reseau
+nom: Modèle OSI
+nom-en: OSI model
+alias: osi, modèle en couches, tcp/ip model, couches réseau, network layers, couche application, couche transport
+fr: Schéma en sept couches (physique, liaison, réseau, transport, session, présentation, application) qui décrit comment une communication est organisée. En pratique, on utilise surtout le modèle TCP/IP à quatre couches.
+en: A seven-layer scheme (physical, data link, network, transport, session, presentation, application) that describes how a communication is organized. In practice, the four-layer TCP/IP model is mostly used.
++fr: Chaque couche ne parle qu'à celle du dessus et à celle du dessous : HTTP (application) ignore comment TCP (transport) découpe les données, et TCP ignore le câble.
++en: Each layer only talks to the one above and the one below: HTTP (application) does not know how TCP (transport) cuts up the data, and TCP does not know about the cable.
+voir: tcp, ip, http, paquet
+schema: reseau-osi
+
+@ firewall
+cat: reseau
+nom: Pare-feu
+nom-en: firewall
+alias: firewall, pare feu, filtrage, iptables, ufw, règle de pare-feu
+fr: Logiciel ou équipement qui filtre le trafic réseau selon des règles : il autorise ou bloque les connexions selon l'adresse, le port ou le protocole. Il protège une machine ou un réseau des accès non désirés.
+en: Software or equipment that filters network traffic according to rules: it allows or blocks connections based on address, port or protocol. It protects a machine or network from unwanted access.
+voir: port, proxy, vpn, ip
+
+@ vpn
+cat: reseau
+nom: VPN
+dev: Virtual Private Network
+nom-fr: réseau privé virtuel
+alias: virtual private network, réseau privé virtuel, tunnel chiffré, wireguard, openvpn
+fr: Tunnel chiffré entre votre appareil et un autre réseau : votre trafic y passe comme s'il en faisait partie. On l'emploie pour accéder au réseau d'une entreprise à distance, ou pour masquer son trafic à un réseau local peu sûr.
+en: An encrypted tunnel between your device and another network: your traffic goes through it as if it belonged there. It is used to reach a company network remotely, or to hide your traffic from an untrusted local network.
+voir: tls, proxy, firewall, ip
+
+@ ping
+cat: reseau
+nom: ping
+alias: traceroute, icmp, test de connexion, joignable, répond au ping
+fr: Commande qui envoie un petit message à une adresse et mesure le temps de la réponse. Elle sert à vérifier qu'une machine est joignable et à estimer la latence.
+en: A command that sends a small message to an address and measures the time of the reply. It is used to check that a machine is reachable and to estimate latency.
+ex: bash
+| ping -c 4 exemple.org
+ex-fr: Envoyer quatre messages et afficher le temps de chaque aller-retour.
+ex-en: Send four messages and show the time of each round trip.
+voir: latence, ip, dns, timeout
+
+@ timeout
+cat: reseau
+nom: Timeout
+nom-fr: délai d'attente dépassé
+alias: délai d'expiration, time out, expiration, délai dépassé, 504
+fr: Durée maximale qu'un programme accepte d'attendre une réponse. Au-delà, il abandonne et signale une erreur plutôt que de rester bloqué indéfiniment.
+en: The maximum time a program agrees to wait for a response. Beyond it, it gives up and reports an error rather than staying stuck forever.
+ex: js
+| const controle = new AbortController();
+| setTimeout(() => controle.abort(), 5000);
+| const reponse = await fetch(url, { signal: controle.signal });
+ex-fr: Abandonner la requête si elle n'a pas abouti au bout de cinq secondes.
+ex-en: Abandon the request if it has not completed after five seconds.
+voir: latence, fetch, http, rate-limit
+
+@ rate-limit
+cat: reseau
+nom: Rate limiting
+nom-fr: limitation de débit
+alias: rate limit, quota, limite de requêtes, throttling, 429, too many requests
+fr: Limite fixée par un service au nombre de requêtes qu'un client peut faire sur une période donnée. Au-delà, il répond 429 (trop de requêtes) ; le client doit ralentir et réessayer plus tard.
+en: A limit set by a service on the number of requests a client can make over a given period. Beyond it, it answers 429 (too many requests); the client must slow down and try again later.
+voir: code-de-statut, api, scraping, timeout
+
+@ github-pages
+cat: reseau
+nom: GitHub Pages
+alias: pages, hébergement statique, static hosting, netlify, vercel, site statique, gh-pages, github.io
+fr: Service gratuit de GitHub qui publie comme site web les fichiers d'un dépôt, en HTTPS. Il ne sert que des fichiers statiques (HTML, CSS, JavaScript, images) : pas de code exécuté côté serveur.
+en: A free GitHub service that publishes a repository's files as a website, over HTTPS. It only serves static files (HTML, CSS, JavaScript, images): no code runs on the server side.
++fr: L'adresse est de la forme compte.github.io/dépôt/. Les fichiers sont gardés en cache dix minutes : une mise à jour peut mettre quelques minutes à apparaître.
++en: The address has the form account.github.io/repository/. Files are cached for ten minutes: an update may take a few minutes to appear.
+voir: github, cdn, https, cache-http, pwa

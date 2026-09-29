@@ -1,0 +1,18 @@
+Glossaire construit le 2026-09-29
+399 termes, 409 sens, 227 avec exemple, 207 avec schéma (165 schémas utilisés / 165 définis)
+410829 octets de JSON
+
+  git       50
+  shell     28
+  web       32
+  reseau    28
+  data      33
+  secu      23
+  langage   47
+  outils    25
+  image     23
+  bdd       19
+  mobile    24
+  ia        19
+  qualite   19
+  archi     29
