@@ -11,7 +11,7 @@
   <meta name="theme-color" content="#16213e">
   <!-- La version de la coquille, la même que dans sw.js : à l'installation,
        le service worker refuse une page d'une autre version. -->
-  <meta name="application-version" content="v1.1.0">
+  <meta name="application-version" content="v1.1.1">
   <title>Lexicode — glossaire du codage FR · EN</title>
   <meta name="mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -66,6 +66,7 @@
       <div id="filtres" class="filtres" role="group" data-t-aria="filtre.aria" aria-label="Filtrer par catégorie"></div>
 
       <div id="accueil">
+        <section id="carte-installation" class="carte-installation" data-t-aria="reg.installer" aria-label="Installer l’application" hidden></section>
         <section id="du-jour" hidden></section>
         <div id="recents"></div>
       </div>
