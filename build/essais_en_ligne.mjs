@@ -22,6 +22,7 @@ import { fileURLToPath } from 'node:url';
 import { lancerChrome, fermerChrome, ouvrirOnglet } from './pilote_chrome.mjs';
 
 const RACINE = path.dirname(path.dirname(fileURLToPath(import.meta.url)));
+const N_TERMES = JSON.parse(fs.readFileSync(path.join(RACINE, 'data', 'glossaire.json'), 'utf-8')).termes.length;
 const SITE = (process.argv[2] || 'https://cristo67000.github.io/code-en-clair/').replace(/\/?$/, '/');
 const DOMAINE = new URL(SITE).hostname;
 const pause = (ms) => new Promise((r) => setTimeout(r, ms));
@@ -69,7 +70,7 @@ try {
   const erreurs1 = await session([], async (o) => {
     await o.naviguer(SITE);
     ok(await attendre(o, "document.getElementById('demarrage').hidden === true"), 'en ligne : l’application démarre');
-    ok(await o.evaluer('return Glossaire.termes.length') === 399, 'en ligne : 399 termes');
+    ok(await o.evaluer('return Glossaire.termes.length') === N_TERMES, 'en ligne : ' + N_TERMES + ' termes');
     const sonde = await o.evaluer("try { const c = await caches.open('sonde'); await c.put('/sonde', new Response('x')); await caches.delete('sonde'); return 'ok'; } catch (e) { return String(e); }");
     ok(sonde === 'ok', 'en ligne : l’API Cache fonctionne dans ce Chrome (' + sonde + ')');
     ok(await attendre(o, "navigator.serviceWorker.getRegistration().then((r) => !!(r && r.active))", 30000), 'en ligne : le service worker est actif');
@@ -86,7 +87,7 @@ try {
     await o.naviguer(SITE);
     ok(await attendre(o, "document.getElementById('demarrage').hidden === true"), 'hors ligne : l’application démarre sans le domaine');
     ok(await o.evaluer('return !!navigator.serviceWorker.controller'), 'hors ligne : c’est bien le service worker qui répond');
-    ok(await o.evaluer('return Glossaire.termes.length') === 399, 'hors ligne : 399 termes');
+    ok(await o.evaluer('return Glossaire.termes.length') === N_TERMES, 'hors ligne : ' + N_TERMES + ' termes');
     await o.evaluer("Fiche.ouvrir('hash'); return 1");
     ok(await attendre(o, "document.querySelector('#fiche figure.schema svg') && document.querySelector('#fiche .exemple pre.code') && document.querySelector('#fiche .note-carte')"), 'hors ligne : fiche complète (schéma, exemple, note écrite en ligne)');
     // un fichier que le service worker n'a pas : il doit aller au réseau, et échouer
