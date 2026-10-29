@@ -7,6 +7,8 @@ nom-en: unit test
 alias: unit test, tests unitaires, jest, vitest, pytest, junit, mocha, assert, tests automatisés, test automatique
 fr: Petit programme qui vérifie automatiquement qu'un morceau de code isolé (une fonction, une classe) donne le résultat attendu pour des entrées connues. Rapides à lancer, ils signalent tout de suite qu'une modification a cassé quelque chose.
 en: A small program that automatically checks that an isolated piece of code (a function, a class) gives the expected result for known inputs. Quick to run, they immediately signal that a change has broken something.
++fr: Un bon test unitaire est rapide (des millisecondes), isolé (ni réseau ni base), lisible et déterministe. Son nom décrit le comportement attendu : « renvoie une liste vide quand la requête est vide ».
++en: A good unit test is fast (milliseconds), isolated (no network, no database), readable and deterministic. Its name describes the expected behavior: “returns an empty list when the query is empty”.
 ex: js
 | import { test, expect } from 'vitest';
 | import { carre } from './maths.js';
@@ -64,6 +66,7 @@ ex: js
 ex-fr: Exiger une valeur exacte, la présence d'un élément, puis la levée d'une erreur.
 ex-en: Require an exact value, the presence of an element, then a thrown error.
 voir: test-unitaire, tdd, exception
+schema: qualite-assertion
 
 @ mock
 cat: qualite
@@ -91,6 +94,7 @@ en: The proportion of code (lines, branches) run at least once by the tests, exp
 attention-fr: Une couverture de 100 % ne prouve pas que le code est correct : une ligne exécutée n'est pas une ligne bien vérifiée. C'est un indicateur de trous, pas un gage de qualité.
 attention-en: 100% coverage does not prove the code is correct: a line that ran is not a line that was well checked. It is an indicator of gaps, not a guarantee of quality.
 voir: test-unitaire, ci-cd, assertion
+schema: qualite-couverture
 
 @ regression
 cat: qualite
@@ -100,6 +104,7 @@ alias: regression, bug de régression, test de non-régression, non-régression,
 fr: Défaut qui apparaît dans une fonction qui marchait auparavant, à la suite d'une modification ailleurs dans le code. Les tests de non-régression, relancés à chaque changement, servent à les repérer aussitôt.
 en: A defect that appears in a feature that used to work, following a change elsewhere in the code. Regression tests, rerun on each change, are meant to spot them right away.
 voir: test-unitaire, bisect, ci-cd, bug
+schema: qualite-regression
 
 @ bug
 cat: qualite
@@ -111,6 +116,7 @@ en: A defect in a program that makes it behave other than intended: wrong result
 +fr: L'anecdote du papillon de nuit trouvé dans un relais du Harvard Mark II, en 1947, popularise le mot, mais il était déjà employé en ingénierie bien avant.
 +en: The anecdote of the moth found in a relay of the Harvard Mark II in 1947 popularized the word, but it was already used in engineering long before.
 voir: debogage, regression, exception, debugger
+schema: qualite-debogage
 
 @ debogage
 cat: qualite
@@ -122,6 +128,7 @@ en: The process of finding a bug's cause, then fixing it: reproduce the problem,
 +fr: Expliquer le problème à voix haute, à un collègue ou à un canard en plastique, aide étonnamment souvent à voir l'erreur.
 +en: Explaining the problem out loud, to a colleague or a rubber duck, surprisingly often helps to see the mistake.
 voir: bug, debugger, console-log, exception, log-journal
+schema: qualite-debogage
 
 @ refactoring
 cat: qualite
@@ -130,7 +137,10 @@ nom-fr: remaniement de code
 alias: refactorisation, refactoriser, remaniement, réusinage, clean code, code propre, code smell, duplication, dry
 fr: Amélioration de la structure interne d'un code sans changer ce qu'il fait : rendre les noms plus clairs, découper une longue fonction, supprimer les duplications. Les tests permettent de vérifier que le comportement n'a pas bougé.
 en: Improving a code's internal structure without changing what it does: making names clearer, splitting a long function, removing duplication. The tests make it possible to verify that the behavior has not moved.
++fr: Les outils d'un IDE font les refactorings courants sans risque : renommer partout, extraire une fonction, déplacer un fichier. Sans tests, refactorer, c'est espérer.
++en: An IDE's tools do the common refactorings safely: rename everywhere, extract a function, move a file. Without tests, refactoring is hoping.
 voir: tdd, test-unitaire, dette-technique, code-review, lint
+schema: qualite-tdd
 
 @ dette-technique
 cat: qualite
@@ -139,6 +149,8 @@ nom-en: technical debt
 alias: technical debt, code legacy, raccourcis, quick fix, hack, spaghetti code, code spaghetti, code hérité
 fr: Coût futur d'un raccourci pris aujourd'hui : un code écrit vite, sans tests ni clarté, fait avancer tout de suite mais ralentit chaque évolution ensuite, comme des intérêts. On la « rembourse » par du refactoring.
 en: The future cost of a shortcut taken today: code written quickly, with no tests or clarity, moves things forward right now but slows every later change, like interest. It is “repaid” through refactoring.
++fr: Une dette n'est pas une faute : on l'emprunte pour livrer à temps, à condition de la noter (un ticket, un TODO daté) et de la rembourser avant que les intérêts — chaque modification plus lente — ne dépassent le gain.
++en: Debt is not a sin: you borrow it to deliver on time, provided you note it (a ticket, a dated TODO) and pay it back before the interest — every change slower — exceeds the gain.
 voir: refactoring, legacy, test-unitaire
 
 @ code-review
@@ -149,6 +161,7 @@ alias: code review, relecture de code, review, relecteur, reviewer, approve, lgt
 fr: Relecture du code d'une personne par une autre avant sa fusion : on cherche des erreurs, des failles, des manques de clarté, et on partage la connaissance du projet. Sur GitHub, elle a lieu dans la pull request.
 en: A person's code being read by another before it is merged: looking for errors, flaws, lack of clarity, and sharing knowledge of the project. On GitHub, it takes place in the pull request.
 voir: pull-request, refactoring, lint, hallucination
+schema: git-pull-request
 
 @ benchmark
 cat: qualite
@@ -164,6 +177,7 @@ ex: js
 ex-fr: Chronométrer un tri en millisecondes.
 ex-en: Time a sort in milliseconds.
 voir: profiling, complexite, latence
+schema: qualite-benchmark
 
 @ profiling
 cat: qualite
@@ -173,6 +187,7 @@ alias: profiler, profilage, flame graph, flamegraph, goulot d'étranglement, bot
 fr: Analyse d'un programme en cours d'exécution pour savoir où il passe son temps et sa mémoire. Il désigne les goulots d'étranglement : souvent, une petite partie du code explique l'essentiel de la lenteur.
 en: Analysis of a running program to learn where it spends its time and memory. It points out the bottlenecks: often, a small part of the code explains most of the slowness.
 voir: benchmark, devtools, complexite
+schema: qualite-profiling
 
 @ log-journal
 cat: qualite
@@ -184,6 +199,7 @@ en: A trace written by a program to say what it is doing: startup, requests rece
 attention-fr: Ne jamais écrire de mot de passe, de jeton ni de donnée personnelle dans les journaux : ils sont copiés, conservés et lus par beaucoup de monde.
 attention-en: Never write a password, token or personal data in logs: they are copied, kept and read by many people.
 voir: console-log, debogage, exception, secret
+schema: qualite-log
 
 @ idempotence
 cat: qualite
@@ -195,6 +211,7 @@ en: A property of an operation that can be executed repeatedly without changing 
 +fr: C'est précieux pour le réseau : si la réponse se perd, le client peut réessayer sans risque de doublon. En HTTP, GET, PUT et DELETE sont censés être idempotents, pas POST.
 +en: This is valuable for networks: if the response is lost, the client can retry without any risk of duplicates. In HTTP, GET, PUT and DELETE are meant to be idempotent, POST is not.
 voir: methode-http, rest, api, timeout
+schema: qualite-idempotence
 
 @ smoke-test
 cat: qualite
@@ -204,6 +221,7 @@ alias: test de fumée, sanity check, test rapide, vérification de base, build v
 fr: Test très rapide qui vérifie l'essentiel : l'application démarre-t-elle, sa page d'accueil s'affiche-t-elle, la connexion marche-t-elle ? S'il échoue, inutile de lancer des tests plus longs. Le nom vient de l'électronique : on allume, et l'on regarde s'il y a de la fumée.
 en: A very quick test that checks the essentials: does the app start, does its home page show, does login work? If it fails, there is no point running longer tests. The name comes from electronics: you power on and see whether there is smoke.
 voir: test-e2e, ci-cd, deploiement, recette
+schema: qualite-smoke
 
 @ recette
 cat: qualite
@@ -213,3 +231,56 @@ alias: acceptance test, test d'acceptation, uat, user acceptance testing, valida
 fr: Étape où l'on vérifie que le logiciel livré répond bien à ce que le client ou les utilisateurs attendaient. On déroule des scénarios réels et on la déclare acceptée, ou on demande des corrections.
 en: The stage where you check that the delivered software really does what the client or the users expected. Real scenarios are run through, and it is declared accepted, or corrections are requested.
 voir: test-e2e, smoke-test, release, bug
+schema: outils-environnements
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ fixture
+cat: qualite
+nom: Fixture
+nom-fr: données de test
+alias: fixtures, jeu de données de test, données d'essai, seed, beforeeach, setup, mise en place
+fr: Données ou état préparés avant un test pour qu'il parte d'une situation connue : une base avec trois utilisateurs, un fichier d'exemple, un faux serveur. Créées dans un beforeEach, nettoyées après, pour que chaque test soit indépendant des autres et puisse tourner seul ou dans n'importe quel ordre.
+en: Data or state prepared before a test so that it starts from a known situation: a database with three users, a sample file, a fake server. Created in a beforeEach, cleaned up afterwards, so that each test is independent of the others and can run alone or in any order.
+ex: js
+| beforeEach(async () => {
+|   await base.vider();
+|   await base.inserer(troisTermes);
+| });
+ex-fr: Avant chaque test : une base vide, puis trois termes connus.
+ex-en: Before each test: an empty database, then three known terms.
+voir: test-unitaire, mock, test-integration, base-de-donnees
+schema: qualite-mock
+
+@ flaky-test
+cat: qualite
+nom: Test instable
+nom-en: flaky test
+alias: flaky, test aléatoire, test intermittent, échoue parfois, relancer les tests, test non déterministe
+fr: Test qui passe ou échoue sans que le code change : il dépend de l'heure, de l'ordre des tests, d'un délai réseau, d'un état laissé par le test précédent. Le plus coûteux des tests : on prend l'habitude de le relancer, puis d'ignorer ses échecs — et les vrais échecs avec lui.
+en: A test that passes or fails with no change in the code: it depends on the time, the order of tests, a network delay, a state left by the previous test. The most expensive kind of test: people get used to rerunning it, then to ignoring its failures — and the real failures along with it.
++fr: Les causes habituelles : un délai en dur (« attendre 500 ms ») au lieu d'attendre l'événement, deux tests qui partagent une donnée, une date qui dépend du jour. On le répare ou on le supprime ; on ne le laisse pas clignoter.
++en: The usual causes: a hard-coded delay (“wait 500 ms”) instead of waiting for the event, two tests sharing data, a date that depends on the day. You fix it or delete it; you do not leave it flickering.
+voir: test-e2e, ci-cd, fixture, timeout, idempotence
+
+@ snapshot-test
+cat: qualite
+nom: Test par instantané
+nom-en: snapshot test
+alias: snapshot, snapshot testing, tomatchsnapshot, test de rendu, golden file, fichier de référence
+fr: Test qui enregistre la sortie d'un code (un HTML rendu, un JSON, une image) la première fois, puis la compare aux exécutions suivantes : au moindre changement, il échoue et montre la différence. Rapide à écrire ; mais il faut relire chaque mise à jour au lieu de l'accepter en bloc, sinon il ne teste plus rien.
+en: A test that records a piece of code's output (rendered HTML, a JSON, an image) the first time, then compares it with the following runs: at the slightest change, it fails and shows the difference. Quick to write; but every update must be reviewed instead of accepted wholesale, otherwise it no longer tests anything.
+ex: js
+| expect(dessiner(fiche)).toMatchSnapshot();
+ex-fr: La première fois, le rendu est enregistré ; ensuite, toute différence fait échouer le test.
+ex-en: The first time, the rendering is recorded; afterwards, any difference fails the test.
+voir: test-unitaire, regression, diff, assertion
+
+@ pair-programming
+cat: qualite
+nom: Programmation en binôme
+nom-en: pair programming
+alias: pair programming, binôme, mob programming, revue en direct, programmation à deux
+fr: Deux personnes, un écran : l'une tape, l'autre relit et réfléchit à voix haute, et on alterne. Moins de bugs, le savoir circule, la relecture est faite au fil de l'eau. Avec un assistant d'IA, on retrouve un peu de ce dialogue — sans le regard de l'autre, ni son expérience du projet.
+en: Two people, one screen: one types, the other reads along and thinks out loud, and you swap. Fewer bugs, knowledge spreads, review happens as you go. With an AI assistant, you get some of that dialogue back — without the other person's eye, nor their experience of the project.
+voir: code-review, assistant-de-code, refactoring

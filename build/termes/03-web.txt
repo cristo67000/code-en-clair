@@ -28,6 +28,8 @@ dev: HyperText Markup Language
 alias: balise, tag html, .html, markup, langage de balisage, hypertexte
 fr: Langage de balisage qui décrit la structure d'une page web : titres, paragraphes, liens, images, formulaires. Le navigateur le lit et en construit la page.
 en: The markup language that describes a web page's structure: headings, paragraphs, links, images, forms. The browser reads it and builds the page from it.
++fr: Une balise sémantique (nav, main, article, button) dit ce qu'est un élément, pas seulement à quoi il ressemble : les lecteurs d'écran, les moteurs de recherche et le navigateur s'en servent.
++en: A semantic tag (nav, main, article, button) says what an element is, not just what it looks like: screen readers, search engines and the browser rely on it.
 ex: html
 | <h1>Lexicode</h1>
 | <p>Un glossaire du <a href="/codage">codage</a>.</p>
@@ -47,6 +49,8 @@ nom-fr: feuilles de style en cascade
 alias: feuille de style, stylesheet, .css, style, mise en page
 fr: Langage qui décrit l'apparence d'une page web : couleurs, polices, marges, position des éléments, adaptation à la taille de l'écran. Il se sépare du contenu (HTML) pour pouvoir changer l'un sans toucher l'autre.
 en: The language that describes a web page's appearance: colors, fonts, margins, element positioning, adaptation to screen size. It is kept apart from the content (HTML) so that either can change without touching the other.
++fr: La cascade donne son nom au CSS : quand plusieurs règles visent le même élément, la plus spécifique l'emporte, puis la dernière écrite. Les variables (--couleur) et les media queries font le thème et le responsive.
++en: The cascade gives CSS its name: when several rules target the same element, the most specific wins, then the last written. Variables (--color) and media queries do the theming and the responsive layout.
 ex: css
 | .bouton {
 |   background: #2457d6;
@@ -86,6 +90,7 @@ en: Software that downloads web pages, interprets them (HTML, CSS, JavaScript) a
 +fr: Le même code peut se comporter un peu différemment d'un navigateur à l'autre : on vérifie la compatibilité de chaque fonctionnalité avant de s'y fier.
 +en: The same code can behave slightly differently from one browser to another: check each feature's compatibility before relying on it.
 voir: html, css, js, devtools, headless
+schema: web-navigateur
 
 @ headless
 cat: web
@@ -166,6 +171,7 @@ ex-en: Open a cache, put three files in it, then read one of them back.
 attention-fr: Ne pas confondre avec le cache HTTP du navigateur, géré automatiquement selon les en-têtes des réponses.
 attention-en: Not to be confused with the browser's HTTP cache, managed automatically according to the responses' headers.
 voir: service-worker, cache-http, localstorage, indexeddb
+schema: web-cache-api
 
 @ pwa
 cat: web
@@ -231,6 +237,7 @@ ex-en: Start a computation in a worker and receive the answer by message.
 attention-fr: Un service worker est un type particulier de worker, mais il ne sert pas au calcul : il sert d'intermédiaire réseau.
 attention-en: A service worker is a special kind of worker, but it is not for computing: it acts as a network intermediary.
 voir: service-worker, thread, async-await
+schema: web-worker
 
 @ localstorage
 cat: web
@@ -247,6 +254,7 @@ ex-en: Write, read then delete a value.
 attention-fr: Tout script de la page peut lire localStorage : n'y rangez jamais de mot de passe ni de jeton sensible. sessionStorage, lui, s'efface à la fermeture de l'onglet.
 attention-en: Any script on the page can read localStorage: never store a password or a sensitive token there. sessionStorage, for its part, is erased when the tab closes.
 voir: indexeddb, cookie, cache-api, json
+schema: web-localstorage
 
 @ cookie
 cat: web
@@ -261,6 +269,7 @@ ex: http
 ex-fr: Un serveur crée un cookie de session valable une heure et protégé.
 ex-en: A server creates a protected session cookie valid for one hour.
 voir: session, csrf, localstorage, header, https
+schema: web-cookie
 
 @ csp
 cat: web
@@ -312,6 +321,7 @@ ex: html
 ex-fr: La ligne indispensable de toute page adaptée au mobile.
 ex-en: The essential line of every mobile-friendly page.
 voir: responsive, css, html
+schema: web-responsive
 
 @ responsive
 cat: web
@@ -328,6 +338,7 @@ ex: css
 ex-fr: Les colonnes s'empilent sur téléphone et se mettent côte à côte dès que l'écran fait au moins 48 rem de large.
 ex-en: The columns stack on phones and sit side by side as soon as the screen is at least 48 rem wide.
 voir: viewport, css, flexbox
+schema: web-responsive
 
 @ flexbox
 cat: web
@@ -360,6 +371,7 @@ en: A web application in which the browser loads only one HTML page: afterwards,
 +fr: En contrepartie, le premier affichage est plus lent (il faut télécharger le JavaScript) et le référencement demande des précautions.
 +en: In return, the first display is slower (the JavaScript must be downloaded) and search-engine indexing needs care.
 voir: js, dom, seo, framework
+schema: web-spa
 
 @ websocket
 cat: web
@@ -374,6 +386,7 @@ ex: js
 ex-fr: Ouvrir la connexion, afficher chaque message reçu et saluer le serveur dès qu'elle est établie.
 ex-en: Open the connection, print each message received and greet the server as soon as it is established.
 voir: http, api, webhook
+schema: web-websocket
 
 @ webassembly
 cat: web
@@ -415,6 +428,7 @@ ex: js
 ex-fr: Réagir à la touche Échap.
 ex-en: React to the Escape key.
 voir: callback, dom, js, event-loop
+schema: web-evenement
 
 @ devtools
 cat: web
@@ -425,6 +439,7 @@ alias: outils de développement, developer tools, console, inspecteur, F12, insp
 fr: Panneau intégré aux navigateurs (touche F12) pour examiner et déboguer une page : inspecter le DOM et le CSS, lire la console, suivre les requêtes réseau, mesurer les performances, arrêter le code pas à pas.
 en: A panel built into browsers (F12 key) for examining and debugging a page: inspecting the DOM and CSS, reading the console, following network requests, measuring performance, stepping through code.
 voir: dom, debugger, navigateur, console-log
+schema: outils-debugger
 
 @ polyfill
 cat: web
@@ -446,6 +461,7 @@ ex: html
 ex-fr: L'image ne sera téléchargée que lorsqu'elle approchera de l'écran.
 ex-en: The image is only downloaded when it gets close to the screen.
 voir: webp, cdn, bande-passante
+schema: web-lazy
 
 @ seo
 cat: web
@@ -467,6 +483,7 @@ en: Automatic extraction of data from web pages, by a program that downloads the
 +fr: Avant de collecter, on consulte le fichier robots.txt du site et ses conditions d'utilisation, et on ménage le serveur en espaçant les requêtes.
 +en: Before collecting, check the site's robots.txt file and terms of use, and spare the server by spacing out requests.
 voir: clone-web, headless, api, curl
+schema: web-clone
 
 @ open-graph
 cat: web
@@ -496,3 +513,144 @@ ex: html
 ex-fr: Un bouton sans texte reçoit un nom lisible par un lecteur d'écran ; une image reçoit sa description.
 ex-en: A textless button gets a name a screen reader can read; an image gets its description.
 voir: html, contraste-wcag, seo, responsive
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ fetch-api
+cat: web
+nom: fetch()
+nom-fr: requête fetch
+alias: fetch api, appel réseau, xmlhttprequest, ajax, requête depuis javascript
+fr: Fonction JavaScript du navigateur (et de Node) qui envoie une requête HTTP et renvoie une promesse de la réponse. Elle remplace XMLHttpRequest et ce qu'on appelait « Ajax » : quelques lignes pour lire une API ou envoyer un formulaire sans recharger la page.
+en: A JavaScript function of the browser (and of Node) that sends an HTTP request and returns a promise of the response. It replaces XMLHttpRequest and what used to be called “Ajax”: a few lines to read an API or send a form without reloading the page.
+ex: js
+| const reponse = await fetch('/api/notes');
+| if (!reponse.ok) throw new Error(reponse.status);
+| const notes = await reponse.json();
+ex-fr: Demander des notes, vérifier le code de statut, lire le JSON de la réponse.
+ex-en: Request notes, check the status code, read the response's JSON.
+attention-fr: fetch() ne rejette pas sa promesse sur un 404 ou un 500 : la réponse arrive, avec ok à false. Seule une panne réseau provoque une erreur. Et git fetch n'a rien à voir.
+attention-en: fetch() does not reject its promise on a 404 or a 500: the response arrives, with ok set to false. Only a network failure throws. And git fetch is unrelated.
+voir: promesse, async-await, api, json, cors, fetch
+
+@ iframe
+cat: web
+nom: iframe
+alias: cadre intégré, frame, embed, page dans une page, intégration
+fr: Balise HTML qui affiche une autre page web à l'intérieur de la page courante : une vidéo, une carte, un formulaire de paiement. La page incluse reste isolée : elle ne peut pas lire celle qui l'accueille, ni l'inverse, sauf si elles viennent de la même origine.
+en: An HTML tag that displays another web page inside the current page: a video, a map, a payment form. The included page stays isolated: it cannot read the host page, nor the other way round, unless they come from the same origin.
+ex: html
+| <iframe src="https://www.openstreetmap.org/export/embed.html?bbox=4.83,45.75,4.86,45.77"
+|         title="Carte de Lyon" loading="lazy" sandbox="allow-scripts"></iframe>
+ex-fr: Une carte intégrée, chargée seulement quand on y arrive, avec des droits réduits.
+ex-en: An embedded map, loaded only when scrolled to, with reduced rights.
+voir: html, sandbox, same-origin, lazy-loading, csp
+
+@ web-components
+cat: web
+nom: Web Components
+nom-fr: composants web
+alias: custom elements, shadow dom, éléments personnalisés, template, customelements.define
+fr: Ensemble de standards du navigateur pour définir ses propres balises HTML (<mon-bouton>), avec leur comportement en JavaScript et leur style isolé du reste de la page (Shadow DOM), sans framework. Un composant écrit ainsi s'utilise dans n'importe quelle page.
+en: A set of browser standards for defining your own HTML tags (<mon-bouton>), with their behavior in JavaScript and their style isolated from the rest of the page (Shadow DOM), with no framework. A component written this way can be used in any page.
+ex: js
+| class MonBouton extends HTMLElement {
+|   connectedCallback() { this.textContent = 'Appuyer'; }
+| }
+| customElements.define('mon-bouton', MonBouton);
+ex-fr: Une classe pour le comportement, un appel pour enregistrer la balise : <mon-bouton></mon-bouton> fonctionne ensuite partout.
+ex-en: A class for the behavior, one call to register the tag: <mon-bouton></mon-bouton> then works everywhere.
+voir: dom, html, framework, classe
+
+@ ssr
+cat: web
+nom: SSR
+dev: Server-Side Rendering
+nom-fr: rendu côté serveur
+alias: server side rendering, rendu serveur, hydratation, hydration, ssg, pré-rendu, génération statique
+fr: Le serveur produit le HTML complet d'une page avant de l'envoyer, au lieu de laisser JavaScript le construire dans le navigateur : la page s'affiche plus vite et les moteurs de recherche la lisent. JavaScript « hydrate » ensuite ce HTML pour le rendre interactif. La génération statique (SSG) fait ce travail une fois pour toutes, au build.
+en: The server produces a page's complete HTML before sending it, instead of letting JavaScript build it in the browser: the page shows faster and search engines can read it. JavaScript then “hydrates” that HTML to make it interactive. Static generation (SSG) does that work once and for all, at build time.
++fr: Next.js, Nuxt, SvelteKit, Astro mêlent les trois : du HTML rendu au serveur ou au build, et du JavaScript seulement là où il faut. Lexicode, elle, est entièrement rendue dans le navigateur : ses données sont locales.
++en: Next.js, Nuxt, SvelteKit, Astro mix all three: HTML rendered on the server or at build time, and JavaScript only where needed. Lexicode, for its part, is rendered entirely in the browser: its data is local.
+voir: spa, seo, back-end, front-end, html
+
+@ same-origin
+cat: web
+nom: Same-origin policy
+nom-fr: politique de même origine
+alias: origine, same origin, même origine, origin, politique d'origine
+fr: Règle de sécurité du navigateur : une page ne peut lire les données (réponses, cookies, stockage) que d'une origine identique à la sienne — même protocole, même domaine, même port. Sans elle, n'importe quel site lirait votre messagerie ouverte dans un autre onglet. CORS permet de l'assouplir, site par site.
+en: The browser's security rule: a page may only read data (responses, cookies, storage) from an origin identical to its own — same protocol, same domain, same port. Without it, any site could read your email open in another tab. CORS allows relaxing it, site by site.
+ex: text
+| https://exemple.org  et  https://exemple.org:443   → même origine
+| https://api.exemple.org                           → autre origine (sous-domaine)
+| http://exemple.org                                → autre origine (protocole)
+ex-fr: Trois adresses qui se ressemblent : deux origines différentes sur trois.
+ex-en: Three look-alike addresses: two different origins out of three.
+voir: cors, cookie, localstorage, url, csp
+schema: web-cors
+
+@ formulaire
+cat: web
+nom: Formulaire
+nom-en: form
+alias: form, <form>, input, submit, champ de saisie, bouton envoyer, validation
+fr: Élément HTML <form> qui rassemble des champs (input, select, textarea) et les envoie au serveur quand on valide : en GET dans l'adresse, ou en POST dans le corps de la requête. Le navigateur vérifie d'abord les règles déclarées (required, type="email"). JavaScript peut intercepter l'envoi pour le faire sans recharger la page.
+en: An HTML <form> element that gathers fields (input, select, textarea) and sends them to the server on submit: as GET in the address, or as POST in the request body. The browser first checks the declared rules (required, type="email"). JavaScript can intercept the submission to do it without reloading the page.
+ex: html
+| <form method="post" action="/connexion">
+|   <input name="email" type="email" required>
+|   <button>Se connecter</button>
+| </form>
+ex-fr: Un champ obligatoire, qui doit ressembler à une adresse, et un bouton qui envoie en POST.
+ex-en: A required field, which must look like an address, and a button that submits as POST.
+voir: html, methode-http, evenement, fetch-api, csrf
+
+@ grid-css
+cat: web
+nom: CSS Grid
+nom-fr: grille CSS
+alias: grid, display grid, grille, grid-template-columns, mise en page en grille
+fr: Système de mise en page CSS en deux dimensions : on déclare des colonnes et des lignes, puis on place les éléments dans les cases, ou on les laisse se ranger. Flexbox aligne des éléments sur une ligne ; Grid dessine une grille entière, lignes et colonnes à la fois.
+en: A two-dimensional CSS layout system: you declare columns and rows, then place elements in the cells, or let them flow in. Flexbox aligns elements along one line; Grid draws a whole grid, rows and columns at once.
+ex: css
+| .galerie {
+|   display: grid;
+|   grid-template-columns: repeat(3, 1fr);
+|   gap: 1rem;
+| }
+ex-fr: Trois colonnes de même largeur, avec un espace entre les cases.
+ex-en: Three equal-width columns, with a gap between the cells.
+voir: flexbox, css, responsive, media-query
+schema: web-responsive
+
+@ media-query
+cat: web
+nom: Media query
+nom-fr: requête média
+alias: @media, media queries, point de rupture, breakpoint, prefers-color-scheme, prefers-reduced-motion
+fr: Règle CSS qui ne s'applique que si une condition sur l'appareil est vraie : largeur d'écran, orientation, thème sombre préféré, mouvement réduit demandé. C'est l'outil du responsive : les mêmes blocs, rangés autrement selon l'écran.
+en: A CSS rule that applies only if a condition about the device is true: screen width, orientation, dark theme preferred, reduced motion requested. It is the tool of responsive design: the same blocks, arranged differently depending on the screen.
+ex: css
+| @media (min-width: 48rem) { .colonnes { display: flex; } }
+| @media (prefers-reduced-motion: reduce) { * { animation: none !important; } }
+ex-fr: Passer en colonnes à partir d'une certaine largeur ; couper les animations pour qui l'a demandé dans son système.
+ex-en: Switch to columns from a certain width; turn off animations for whoever asked for it in their system.
+voir: responsive, css, viewport, accessibilite, dark-mode
+schema: web-responsive
+
+@ dark-mode
+cat: web
+nom: Mode sombre
+nom-en: dark mode
+alias: thème sombre, dark theme, prefers-color-scheme, thème clair, light mode
+fr: Variante de l'interface aux fonds sombres et au texte clair, choisie par la personne ou suivie depuis le réglage du système (prefers-color-scheme). Se fait proprement avec des variables CSS pour les couleurs, redéfinies dans une media query : aucune règle à dupliquer.
+en: A variant of the interface with dark backgrounds and light text, chosen by the person or followed from the system setting (prefers-color-scheme). Done cleanly with CSS variables for the colors, redefined inside a media query: no rule to duplicate.
+ex: css
+| :root { --fond: #f4f6fb; --encre: #182033; }
+| @media (prefers-color-scheme: dark) {
+|   :root { --fond: #0d1220; --encre: #e8edf7; }
+| }
+ex-fr: Deux variables, deux jeux de valeurs : tout ce qui utilise var(--fond) change de thème d'un coup. C'est ainsi que Lexicode fait.
+ex-en: Two variables, two sets of values: everything that uses var(--fond) switches theme at once. That is how Lexicode does it.
+voir: media-query, css, contraste-wcag, accessibilite

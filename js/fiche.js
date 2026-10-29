@@ -87,6 +87,7 @@
     etat.ouverte = false;
     if (conteneur) conteneur.hidden = true;
     if (guetteur) { guetteur.disconnect(); guetteur = null; }
+    if (racine.Animation) Animation.arreterTout();
     if (racine.speechSynthesis) racine.speechSynthesis.cancel();
     document.body.classList.remove('fiche-ouverte');
     document.dispatchEvent(new CustomEvent('fiche-fermee'));
@@ -263,10 +264,14 @@
     if (sens.sc && racine.Schemas && racine.Schemas[sens.sc]) {
       const spec = racine.Schemas[sens.sc];
       const fig = element('figure', 'schema');
-      const etiquette = element('div', 'bloc-etiquette', t('fiche.schema'));
+      const animee = Schema.animee(spec) && racine.Animation;
+      const etiquette = element('div', 'bloc-etiquette', t(animee ? 'fiche.schema-anime' : 'fiche.schema'));
       fig.appendChild(etiquette);
       try {
-        fig.appendChild(Schema.dessiner(spec, I18n.langue));
+        const dessin = Schema.dessiner(spec, I18n.langue);
+        fig.appendChild(dessin);
+        // le lecteur d'étapes vient sous la figure ; la légende, en dernier
+        if (animee) Animation.monter(fig, dessin, spec, I18n.langue);
         const leg = Schema.legende(spec, I18n.langue);
         if (leg) fig.appendChild(element('figcaption', null, leg));
       } catch (erreur) {
@@ -341,6 +346,7 @@
   async function dessiner(defiler, anime) {
     const ref = etat.pile[etat.pile.length - 1];
     const terme = Glossaire.parId(ref);
+    if (racine.Animation) Animation.arreterTout();   // une lecture en cours ne survit pas à la fiche
     corps.textContent = '';
     if (!terme) {
       corps.appendChild(element('p', 'vide', t('fiche.introuvable')));

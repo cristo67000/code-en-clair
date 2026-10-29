@@ -1,10 +1,12 @@
 # Lexicode — le glossaire du codage (FR · EN)
 
 Une application web progressive (PWA), hors ligne, qui définit clairement en
-**français et en anglais** près de 400 termes du codage — Git, terminal, web,
+**français et en anglais** près de 480 termes du codage — Git, terminal, web,
 réseau, données, sécurité, langages, outils, images, bases de données, Android,
-IA, tests, architecture — avec **165 schémas**, des **exemples de code** colorés,
-des mises en garde « à ne pas confondre », et, pour la personne qui s'en sert :
+IA, tests, architecture — avec **295 schémas, dont 250 animés** (une figure qui
+se joue par étapes, avec une phrase pour chacune et un point qui circule sur les
+flèches), des **exemples de code** colorés, des mises en garde « à ne pas
+confondre », et, pour la personne qui s'en sert :
 **ses propres notes, ses propres exemples, ses propres termes**, des favoris, un
 quiz à quatre choix, des cartes à retourner et une sauvegarde dans un fichier.
 La recherche surligne ce qu'elle trouve et pardonne les fautes de frappe ; une
@@ -33,7 +35,8 @@ domaine.
 index.html  manifest.webmanifest  sw.js  confidentialite.html
 css/        theme.css (couleurs, polices) · schema.css · app.css · page.css
 js/         un module par écran ou par rôle — voir l'en-tête de chacun
-js/schemas/ les 165 figures, une description courte chacune (voir js/schema.js)
+js/schemas/ les 295 figures, une description courte chacune (voir js/schema.js)
+js/animation.js  le lecteur des figures animées (étapes, points qui circulent)
 data/       glossaire.json, manifeste.json — produits par build/construire.mjs
 icons/      icônes de l'application, image d'aperçu
 build/      les sources du glossaire (termes/*.txt) et les outils de recette
@@ -67,14 +70,38 @@ schema: git-amend
 
 Un schéma est une petite description dans `js/schemas/*.js` (sept genres : graphe,
 commits, cases, pile, arbre, séquence, dessin). `build/galerie.html` les montre
-tous, à la largeur d'un téléphone (`?l=en` pour l'anglais, `?theme=sombre`).
+tous, à la largeur d'un téléphone (`?l=en` pour l'anglais, `?theme=sombre`,
+`?anim` pour les seules figures animées, `?etape=2` pour les ouvrir toutes à
+la même étape).
+
+## Animer un schéma
+
+Une figure devient animée en lui ajoutant un champ `anim` : la liste de ses
+étapes. Chaque étape dit ce qu'elle allume (`on`), ce qui circule (`flux`) et ce
+qu'elle raconte (`t`), en français et en anglais :
+
+```js
+anim: [
+  { t: ['Vous modifiez un fichier.', 'You change a file.'], on: ['w'] },
+  { t: ['git add le copie dans l’index.', 'git add copies it to the index.'], on: ['w', 'i'], flux: [0] },
+]
+```
+
+Les adresses sont celles que pose `js/schema.js` (voir son en-tête) : l'id d'un
+nœud, ou un nombre, qui désigne la flèche (graphe), le message (séquence), la
+rangée (cases), la couche (pile), le nœud (arbre) ou la forme (dessin) de ce
+rang. Ce qu'une étape n'allume pas s'estompe ; sur un trait en flux, un point
+circule — une animation SVG (SMIL), sans minuterie. Le lecteur sous la figure
+(`js/animation.js`) feuillette les étapes, les lit en automatique, et respecte
+le réglage « réduire les animations » du système : rien ne bouge, les étapes
+restent lisibles.
 
 ## Épreuves
 
 ```
 node build/construire.mjs        # compile le glossaire, échoue à la moindre incohérence
-node build/essais_statiques.mjs  # 160 contrôles sans navigateur (données, traductions, listes de fichiers)
-node build/essais.mjs            # 117 contrôles dans un vrai Chrome, hors ligne réel compris
+node build/essais_statiques.mjs  # 165 contrôles sans navigateur (données, traductions, listes de fichiers)
+node build/essais.mjs            # 130 contrôles dans un vrai Chrome, hors ligne réel compris
 node build/captures.mjs          # les captures d'écran de la fiche Play Store
 node build/essais_en_ligne.mjs   # le site PUBLIÉ : contenu identique au dépôt, démarrage, hors ligne réel (domaine coupé)
 ```
@@ -82,9 +109,10 @@ node build/essais_en_ligne.mjs   # le site PUBLIÉ : contenu identique au dépô
 `essais.mjs` ouvre l'application à la taille d'un téléphone, cherche les 33 termes
 attendus, écrit des notes et des exemples, joue au quiz (au doigt et au
 clavier), retourne et fait glisser des cartes, change de langue et de thème,
-dessine les 165 schémas (français et anglais) en vérifiant qu'aucun texte ne
-sort du cadre, puis **arrête le serveur** et vérifie que l'application se relance
-hors ligne. Il échoue à la moindre erreur de page ou violation de la politique de
+dessine les 295 schémas (français et anglais) en vérifiant qu'aucun texte ne
+sort du cadre et que chaque étape d'animation trouve ses adresses, joue une
+animation dans la fiche, puis **arrête le serveur** et vérifie que l'application
+se relance hors ligne. Il échoue à la moindre erreur de page ou violation de la politique de
 sécurité.
 
 ## Publier

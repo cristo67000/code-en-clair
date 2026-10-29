@@ -83,6 +83,7 @@ ex: html
 ex-fr: Une ressource externe protégée par une somme de contrôle : le navigateur refuse le script s'il ne correspond pas.
 ex-en: An external resource protected by a checksum: the browser refuses the script if it does not match.
 voir: hash, sha, cdn, empreinte
+schema: secu-checksum
 
 @ chiffrement
 cat: secu
@@ -212,6 +213,7 @@ en: A secret string that identifies an application (or a developer) to an API, t
 attention-fr: Une clé placée dans du code exécuté chez l'utilisateur (page web, application mobile) est visible de tous : elle n'est pas secrète. Les clés vraiment privées restent sur un serveur.
 attention-en: A key placed in code that runs on the user's side (web page, mobile app) is visible to everyone: it is not secret. Truly private keys stay on a server.
 voir: secret, token, oauth, variable-denvironnement, rate-limit
+schema: secu-api-key
 
 @ secret
 cat: secu
@@ -227,6 +229,7 @@ ex: bash
 ex-fr: Faire ignorer le fichier .env par Git, puis le retirer de l'index s'il y avait déjà été ajouté.
 ex-en: Make Git ignore the .env file, then remove it from the index if it had already been added.
 voir: variable-denvironnement, gitignore, api-key, token, cle-publique-privee
+schema: secu-secret
 
 @ salage
 cat: secu
@@ -238,6 +241,7 @@ en: Random data added to a password before hashing it, unique to each user. Two 
 +fr: On ne stocke jamais un mot de passe : on stocke le résultat d'une fonction volontairement lente (bcrypt, scrypt, Argon2) qui inclut son sel. À la connexion, on refait le calcul et on compare.
 +en: A password is never stored: what is stored is the result of a deliberately slow function (bcrypt, scrypt, Argon2) that includes its salt. At login, the computation is redone and compared.
 voir: hash, sha, authentification, secret
+schema: secu-salage
 
 @ 2fa
 cat: secu
@@ -262,6 +266,7 @@ en: Authentication checks who you are (username and password, token); authorizat
 attention-fr: Les codes de statut HTTP suivent cette distinction : 401 veut dire « je ne sais pas qui vous êtes », 403 « je sais, mais vous n'avez pas le droit ».
 attention-en: HTTP status codes follow this distinction: 401 means “I don't know who you are”, 403 “I know, but you are not allowed”.
 voir: token, oauth, 2fa, session, moindre-privilege, code-de-statut
+schema: secu-authentification
 
 @ session
 cat: secu
@@ -324,6 +329,8 @@ nom-fr: bac à sable
 alias: bac à sable, isolation, iframe sandbox, conteneur isolé, environnement isolé
 fr: Environnement clos où un programme s'exécute avec des droits très limités : il ne peut ni lire vos fichiers, ni toucher au reste du système. Un navigateur enferme chaque onglet, et Android chaque application, dans une sandbox.
 en: A closed environment where a program runs with very limited rights: it can neither read your files nor touch the rest of the system. A browser confines each tab, and Android each app, in a sandbox.
++fr: Un navigateur met chaque onglet dans une sandbox ; Android, chaque application ; Docker, chaque conteneur. L'attribut sandbox d'une iframe applique l'idée à une page incluse.
++en: A browser puts each tab in a sandbox; Android, each app; Docker, each container. An iframe's sandbox attribute applies the idea to an embedded page.
 voir: moindre-privilege, permission-android, docker, navigateur
 schema: secu-sandbox
 
@@ -337,6 +344,7 @@ en: A principle stating that a person, program or key should only have the right
 +fr: Exemples : une application Android qui ne demande aucune permission, un jeton GitHub limité à un seul dépôt en lecture, un service qui tourne sous un compte sans droits d'administrateur.
 +en: Examples: an Android app that asks for no permission, a GitHub token limited to a single repository in read-only mode, a service that runs under an account with no administrator rights.
 voir: sudo, permission-android, chmod, sandbox, authentification
+schema: secu-moindre-privilege
 
 @ vulnerabilite
 cat: secu
@@ -348,3 +356,58 @@ en: A flaw in software that an attacker can exploit to gain access or rights the
 +fr: Une faille « zero-day » est exploitée avant que l'éditeur ne publie un correctif. Garder ses dépendances à jour est la protection la plus efficace.
 +en: A “zero-day” flaw is exploited before the vendor publishes a fix. Keeping dependencies up to date is the most effective protection.
 voir: dependance, npm, xss, injection-sql, ci-cd
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ mot-de-passe
+cat: secu
+nom: Mot de passe
+nom-en: password
+alias: password, gestionnaire de mots de passe, phrase de passe, passphrase, bcrypt, argon2, mot de passe fort
+fr: Secret que l'on connaît, pour prouver son identité. Côté serveur, on ne le stocke jamais en clair mais haché avec un sel (bcrypt, Argon2) ; côté personne, long, unique par site, et confié à un gestionnaire de mots de passe plutôt qu'à la mémoire ou à un carnet.
+en: A secret you know, to prove your identity. Server-side, it is never stored in the clear but hashed with a salt (bcrypt, Argon2); on the person's side, long, unique per site, and entrusted to a password manager rather than to memory or a notebook.
++fr: Une phrase de quatre mots tirés au hasard résiste mieux qu'un mot court truffé de symboles, et se retient. Les clés d'accès (passkeys) remplacent peu à peu le mot de passe par une clé privée gardée par l'appareil.
++en: A phrase of four random words resists better than a short word stuffed with symbols, and can be remembered. Passkeys are gradually replacing the password with a private key kept by the device.
+attention-fr: Un mot de passe haché ne se « déchiffre » pas : un site qui peut vous renvoyer votre mot de passe le stocke en clair, ce qui est un très mauvais signe.
+attention-en: A hashed password cannot be “decrypted”: a site that can send you your password back stores it in the clear, which is a very bad sign.
+voir: hash, salage, 2fa, authentification, brute-force
+schema: secu-salage
+
+@ brute-force
+cat: secu
+nom: Force brute
+nom-en: brute force
+alias: brute force, attaque par dictionnaire, essayer tous les mots de passe, bourrage d'identifiants, credential stuffing
+fr: Attaque qui essaie des mots de passe les uns après les autres, par millions, jusqu'à trouver le bon : d'abord les plus courants (dictionnaire), puis des mots de passe volés ailleurs (bourrage d'identifiants), puis toutes les combinaisons. Parades : limiter les essais, hacher lentement, exiger un second facteur.
+en: An attack that tries passwords one after another, by the millions, until it finds the right one: first the most common ones (dictionary), then passwords stolen elsewhere (credential stuffing), then every combination. Defenses: limit attempts, hash slowly, require a second factor.
++fr: bcrypt et Argon2 sont lents exprès : un dixième de seconde par essai ne gêne pas une connexion, mais rend un milliard d'essais impraticable.
++en: bcrypt and Argon2 are slow on purpose: a tenth of a second per attempt does not bother a login, but makes a billion attempts impractical.
+voir: mot-de-passe, rate-limit, hash, 2fa, salage
+schema: reseau-rate-limit
+
+@ mitm
+cat: secu
+nom: Attaque de l'homme du milieu
+nom-en: man-in-the-middle attack
+dev: Man-in-the-Middle
+alias: man in the middle, mitm, interception, écoute du réseau, wifi public, sniffing
+fr: Attaque où un tiers s'intercale entre vous et un serveur et lit ou modifie ce qui passe — typiquement sur un Wi-Fi public, ou par un faux point d'accès. HTTPS la rend inopérante : le certificat prouve l'identité du serveur et tout est chiffré de bout en bout ; l'attaquant ne voit qu'un flux illisible.
+en: An attack where a third party sits between you and a server and reads or alters what goes through — typically on a public Wi-Fi, or through a fake access point. HTTPS defeats it: the certificate proves the server's identity and everything is encrypted end to end; the attacker only sees an unreadable stream.
+attention-fr: Un avertissement de certificat dans le navigateur peut être exactement cela : quelqu'un qui se fait passer pour le site. On ne clique pas « continuer quand même » sur un réseau qu'on ne connaît pas.
+attention-en: A certificate warning in the browser may be exactly that: someone impersonating the site. You do not click “proceed anyway” on a network you do not know.
+voir: https, tls, certificat, vpn, chiffrement
+schema: reseau-tls
+
+@ cve
+cat: secu
+nom: CVE
+dev: Common Vulnerabilities and Exposures
+alias: cve-2024, faille référencée, vulnérabilité connue, npm audit, dependabot, advisory, bulletin de sécurité
+fr: Identifiant public d'une faille de sécurité connue, de la forme CVE-2024-12345, avec sa description et sa gravité. Les outils (npm audit, Dependabot, pip-audit) comparent vos dépendances à cette base et vous préviennent quand l'une d'elles est touchée : le plus souvent, mettre à jour suffit.
+en: The public identifier of a known security flaw, of the form CVE-2024-12345, with its description and severity. Tools (npm audit, Dependabot, pip-audit) compare your dependencies with that database and warn you when one is affected: most of the time, updating is enough.
+ex: bash
+| npm audit
+| npm audit fix
+ex-fr: Lister les failles connues dans les dépendances installées, puis mettre à jour celles qui ont un correctif compatible.
+ex-en: List the known flaws in the installed dependencies, then update those with a compatible fix.
+voir: vulnerabilite, dependance, lockfile, semver

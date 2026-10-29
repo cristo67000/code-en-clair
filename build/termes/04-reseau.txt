@@ -61,6 +61,7 @@ en: A number that identifies a machine on a network, like a postal address. IPv4
 attention-fr: Un serveur web reçoit l'adresse IP de chaque visiteur : c'est une donnée personnelle au sens du droit européen.
 attention-en: A web server receives every visitor's IP address: it is personal data under European law.
 voir: dns, port, localhost, tcp, paquet
+schema: reseau-ip-port
 
 @ dns
 cat: reseau
@@ -117,6 +118,8 @@ nom: Port
 alias: numéro de port, 80, 443, 3000, 8080, socket, écouter sur un port
 fr: Numéro (de 0 à 65 535) qui, avec l'adresse IP, désigne un service précis sur une machine. Le port 80 est celui d'HTTP, 443 celui d'HTTPS ; en développement, on utilise souvent 3000 ou 8080.
 en: A number (from 0 to 65,535) that, together with the IP address, designates a specific service on a machine. Port 80 is HTTP's, 443 is HTTPS's; in development, 3000 or 8080 are often used.
++fr: Les ports en dessous de 1024 sont réservés à l'administrateur ; un serveur de développement prend 3000, 5173, 8080… Un port « déjà utilisé » (EADDRINUSE) signifie qu'un autre programme écoute dessus.
++en: Ports below 1024 are reserved for the administrator; a dev server takes 3000, 5173, 8080… A port “already in use” (EADDRINUSE) means another program is listening on it.
 ex: bash
 | python -m http.server 8000
 | curl http://localhost:8000/
@@ -125,6 +128,7 @@ ex-en: Start a small web server on port 8000, then query it.
 attention-fr: Un port déjà pris par un autre programme provoque l'erreur « address already in use » : changez de port ou arrêtez l'autre processus.
 attention-en: A port already used by another program causes the “address already in use” error: change the port or stop the other process.
 voir: ip, localhost, url, firewall
+schema: reseau-ip-port
 
 @ localhost
 cat: reseau
@@ -137,6 +141,7 @@ en: A name that always designates your own machine (address 127.0.0.1). During d
 attention-fr: Un serveur lancé sur localhost n'est pas joignable depuis un autre appareil : pour le montrer à un téléphone, il faut utiliser l'adresse IP de l'ordinateur sur le réseau local.
 attention-en: A server started on localhost cannot be reached from another device: to show it to a phone, use the computer's IP address on the local network.
 voir: ip, port, https, http
+schema: reseau-localhost
 
 @ methode-http
 cat: reseau
@@ -156,6 +161,7 @@ ex: js
 ex-fr: Créer une note en envoyant du JSON avec POST.
 ex-en: Create a note by sending JSON with POST.
 voir: http, rest, api, idempotence, crud
+schema: reseau-methodes
 
 @ code-de-statut
 cat: reseau
@@ -183,6 +189,8 @@ nom-en: HTTP header
 alias: header, headers, en-têtes, content-type, authorization, user-agent, accept, cache-control, set-cookie
 fr: Ligne « Nom: valeur » qui accompagne une requête ou une réponse HTTP et la décrit : type du contenu (Content-Type), identité (Authorization), consignes de cache (Cache-Control), cookies.
 en: A “Name: value” line that accompanies an HTTP request or response and describes it: content type (Content-Type), identity (Authorization), caching instructions (Cache-Control), cookies.
++fr: Les en-têtes sont insensibles à la casse (content-type et Content-Type sont le même) ; ceux qui commencent par X- étaient autrefois des extensions non standard.
++en: Headers are case-insensitive (content-type and Content-Type are the same); those starting with X- used to be non-standard extensions.
 ex: http
 | Content-Type: application/json; charset=utf-8
 | Authorization: Bearer eyJhbGciOi...
@@ -190,6 +198,7 @@ ex: http
 ex-fr: Le format du corps, un jeton d'accès, et une durée de conservation de dix minutes.
 ex-en: The body's format, an access token, and a ten-minute retention time.
 voir: http, mime, cookie, cache-http, cors
+schema: reseau-header
 
 @ latence
 cat: reseau
@@ -198,9 +207,12 @@ nom-en: latency
 alias: latency, ping time, temps de réponse, délai réseau, rtt
 fr: Temps que met un message pour aller d'un point à un autre et en revenir, mesuré en millisecondes. Une latence élevée rend chaque échange lent, même si le débit est excellent.
 en: The time a message takes to go from one point to another and back, measured in milliseconds. High latency makes every exchange slow, even when throughput is excellent.
++fr: Un aller-retour transatlantique prend environ 80 ms, incompressible : c'est la lumière dans la fibre. C'est pourquoi un CDN rapproche les fichiers, et pourquoi on groupe les requêtes.
++en: A transatlantic round trip takes about 80 ms, incompressible: that is light in the fiber. That is why a CDN brings files closer, and why requests are batched.
 attention-fr: La latence n'est pas le débit : la première est le délai d'un aller-retour, le second la quantité de données par seconde.
 attention-en: Latency is not throughput: the first is the delay of a round trip, the second the amount of data per second.
 voir: bande-passante, ping, cdn, timeout
+schema: reseau-latence-debit
 
 @ bande-passante
 cat: reseau
@@ -212,6 +224,7 @@ en: The maximum amount of data a connection can carry per second, usually in meg
 attention-fr: Un mégabit (Mb) vaut huit fois moins qu'un mégaoctet (Mo) : une connexion de 80 Mb/s télécharge au mieux 10 Mo par seconde.
 attention-en: A megabit (Mb) is eight times smaller than a megabyte (MB): an 80 Mb/s connection downloads at best 10 MB per second.
 voir: latence, cdn, webp, lazy-loading, byte
+schema: reseau-latence-debit
 
 @ proxy
 cat: reseau
@@ -231,6 +244,8 @@ nom-fr: réseau de diffusion de contenu
 alias: content delivery network, réseau de distribution, edge, cloudflare, cache distribué, point de présence
 fr: Réseau de serveurs répartis dans le monde qui gardent des copies des fichiers d'un site (images, scripts) et répondent depuis le serveur le plus proche du visiteur. Le site charge plus vite et son serveur d'origine est déchargé.
 en: A network of servers spread around the world that keep copies of a site's files (images, scripts) and answer from the server closest to the visitor. The site loads faster and its origin server is relieved.
++fr: Un CDN sert aussi de bouclier : il absorbe les pics de trafic et une partie des attaques par déni de service. jsDelivr, unpkg et cdnjs distribuent gratuitement les bibliothèques JavaScript.
++en: A CDN also acts as a shield: it absorbs traffic spikes and part of denial-of-service attacks. jsDelivr, unpkg and cdnjs distribute JavaScript libraries for free.
 voir: latence, cache-http, proxy, github-pages
 schema: reseau-cdn
 
@@ -271,6 +286,7 @@ en: A transport protocol that guarantees a stream of data arrives complete, with
 attention-fr: Cette fiabilité a un coût en délai : pour la voix ou le jeu en direct, on préfère souvent UDP.
 attention-en: This reliability costs delay: for voice or live gaming, UDP is often preferred.
 voir: udp, ip, paquet, osi
+schema: reseau-tcp-udp
 
 @ udp
 cat: reseau
@@ -280,6 +296,7 @@ alias: user datagram protocol, datagramme, protocole sans connexion
 fr: Protocole de transport rapide et léger qui envoie des paquets sans vérifier qu'ils arrivent, ni dans quel ordre. On le choisit quand la vitesse compte plus que l'exhaustivité : voix, vidéo en direct, jeux, DNS.
 en: A fast, lightweight transport protocol that sends packets without checking that they arrive, or in what order. It is chosen when speed matters more than completeness: voice, live video, games, DNS.
 voir: tcp, ip, paquet, dns
+schema: reseau-tcp-udp
 
 @ paquet
 cat: reseau
@@ -289,6 +306,7 @@ alias: packet, datagramme, trame, mtu, paquet réseau
 fr: Morceau de données, accompagné d'un en-tête (adresse d'origine, adresse de destination, numéro), dans lequel un message est découpé pour voyager sur un réseau. Chaque paquet peut emprunter un chemin différent ; le destinataire les remet en ordre.
 en: A chunk of data, with a header (source address, destination address, number), into which a message is cut to travel over a network. Each packet may take a different path; the recipient puts them back in order.
 voir: ip, tcp, chunk, latence
+schema: reseau-paquet
 
 @ osi
 cat: reseau
@@ -310,6 +328,7 @@ alias: firewall, pare feu, filtrage, iptables, ufw, règle de pare-feu
 fr: Logiciel ou équipement qui filtre le trafic réseau selon des règles : il autorise ou bloque les connexions selon l'adresse, le port ou le protocole. Il protège une machine ou un réseau des accès non désirés.
 en: Software or equipment that filters network traffic according to rules: it allows or blocks connections based on address, port or protocol. It protects a machine or network from unwanted access.
 voir: port, proxy, vpn, ip
+schema: reseau-firewall
 
 @ vpn
 cat: reseau
@@ -320,6 +339,7 @@ alias: virtual private network, réseau privé virtuel, tunnel chiffré, wiregua
 fr: Tunnel chiffré entre votre appareil et un autre réseau : votre trafic y passe comme s'il en faisait partie. On l'emploie pour accéder au réseau d'une entreprise à distance, ou pour masquer son trafic à un réseau local peu sûr.
 en: An encrypted tunnel between your device and another network: your traffic goes through it as if it belonged there. It is used to reach a company network remotely, or to hide your traffic from an untrusted local network.
 voir: tls, proxy, firewall, ip
+schema: reseau-vpn
 
 @ ping
 cat: reseau
@@ -332,6 +352,7 @@ ex: bash
 ex-fr: Envoyer quatre messages et afficher le temps de chaque aller-retour.
 ex-en: Send four messages and show the time of each round trip.
 voir: latence, ip, dns, timeout
+schema: reseau-ping
 
 @ timeout
 cat: reseau
@@ -346,7 +367,10 @@ ex: js
 | const reponse = await fetch(url, { signal: controle.signal });
 ex-fr: Abandonner la requête si elle n'a pas abouti au bout de cinq secondes.
 ex-en: Abandon the request if it has not completed after five seconds.
+attention-fr: Un timeout côté client n'arrête pas le serveur : la requête peut aboutir après que le client a renoncé. Une action non idempotente (un paiement) ne se réessaie pas aveuglément.
+attention-en: A client-side timeout does not stop the server: the request may complete after the client gave up. A non-idempotent action (a payment) is not retried blindly.
 voir: latence, fetch, http, rate-limit
+schema: reseau-timeout
 
 @ rate-limit
 cat: reseau
@@ -356,6 +380,7 @@ alias: rate limit, quota, limite de requêtes, throttling, 429, too many request
 fr: Limite fixée par un service au nombre de requêtes qu'un client peut faire sur une période donnée. Au-delà, il répond 429 (trop de requêtes) ; le client doit ralentir et réessayer plus tard.
 en: A limit set by a service on the number of requests a client can make over a given period. Beyond it, it answers 429 (too many requests); the client must slow down and try again later.
 voir: code-de-statut, api, scraping, timeout
+schema: reseau-rate-limit
 
 @ github-pages
 cat: reseau
@@ -366,3 +391,55 @@ en: A free GitHub service that publishes a repository's files as a website, over
 +fr: L'adresse est de la forme compte.github.io/dépôt/. Les fichiers sont gardés en cache dix minutes : une mise à jour peut mettre quelques minutes à apparaître.
 +en: The address has the form account.github.io/repository/. Files are cached for ten minutes: an update may take a few minutes to appear.
 voir: github, cdn, https, cache-http, pwa
+schema: reseau-github-pages
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ nat
+cat: reseau
+nom: NAT
+dev: Network Address Translation
+nom-fr: traduction d'adresses réseau
+alias: adresse privée, adresse publique, box, routeur, 192.168, redirection de port, port forwarding
+fr: Mécanisme du routeur (la box) qui partage une seule adresse IP publique entre tous les appareils du réseau local, chacun ayant une adresse privée (192.168.x.x ou 10.x.x.x). De l'extérieur, on ne voit que la box : c'est pourquoi un serveur lancé chez vous n'est pas joignable d'Internet sans une redirection de port.
+en: The router's (the box's) mechanism that shares a single public IP address among all the devices of the local network, each having a private address (192.168.x.x or 10.x.x.x). From outside, only the box is visible: that is why a server started at home cannot be reached from the Internet without port forwarding.
++fr: IPv6 donne une adresse publique à chaque appareil et rend le NAT inutile ; la transition dure depuis vingt ans. Pour montrer un serveur local à quelqu'un, un tunnel (ngrok, Cloudflare Tunnel) évite de toucher à la box.
++en: IPv6 gives every device a public address and makes NAT unnecessary; the transition has been going on for twenty years. To show a local server to someone, a tunnel (ngrok, Cloudflare Tunnel) avoids touching the box.
+voir: ip, localhost, port, firewall
+
+@ http2-3
+cat: reseau
+nom: HTTP/2 et HTTP/3
+alias: http2, http3, http/2, http/3, quic, multiplexage, versions de http
+fr: Versions récentes de HTTP. HTTP/2 (2015) fait passer plusieurs requêtes en même temps sur une seule connexion et compresse les en-têtes ; HTTP/3 (2022) remplace TCP par QUIC, bâti sur UDP, pour se connecter plus vite et mieux supporter les réseaux mobiles. Les pages n'ont rien à changer : navigateur et serveur négocient la version.
+en: Recent versions of HTTP. HTTP/2 (2015) sends several requests at the same time over a single connection and compresses headers; HTTP/3 (2022) replaces TCP with QUIC, built on UDP, to connect faster and cope better with mobile networks. Pages need no change: browser and server negotiate the version.
++fr: Avec HTTP/1.1, le navigateur ouvrait six connexions par site et les requêtes faisaient la queue ; c'est de là que venaient les sprites et les bundles géants. Avec HTTP/2, beaucoup de petits fichiers ne coûtent presque plus rien.
++en: With HTTP/1.1, the browser opened six connections per site and requests queued up; that is where sprites and giant bundles came from. With HTTP/2, many small files cost almost nothing anymore.
+voir: http, tcp, udp, tls, https
+
+@ graphql
+cat: reseau
+nom: GraphQL
+alias: graph ql, langage de requête d'api, apollo, schéma graphql
+fr: Langage de requête pour les API, alternative à REST : le client décrit exactement les champs qu'il veut, imbrications comprises, en une seule requête, et reçoit un JSON de la même forme. Un seul endpoint, ni trop ni trop peu de données, et un schéma typé que les outils connaissent.
+en: A query language for APIs, an alternative to REST: the client describes exactly the fields it wants, nesting included, in a single request, and receives a JSON of the same shape. One endpoint, neither too much nor too little data, and a typed schema the tools know.
+ex: text
+| { terme(id: "amend") { nom definition voisins { nom } } }
+ex-fr: Une seule requête pour un terme, sa définition et le nom de ses voisins ; en REST, il en faudrait plusieurs.
+ex-en: A single request for a term, its definition and its neighbors' names; in REST, it would take several.
+voir: rest, api, endpoint, json
+
+@ sse
+cat: reseau
+nom: SSE
+dev: Server-Sent Events
+nom-fr: événements envoyés par le serveur
+alias: server sent events, eventsource, flux d'événements, push serveur, streaming http
+fr: Connexion HTTP que le serveur garde ouverte pour pousser des messages texte au navigateur au fil de l'eau : notifications, barre de progression, réponse d'un modèle d'IA mot à mot. Plus simple que WebSocket et se reconnecte tout seul, mais dans un seul sens, du serveur vers la page.
+en: An HTTP connection the server keeps open to push text messages to the browser as they come: notifications, progress bars, an AI model's answer word by word. Simpler than WebSocket and reconnects by itself, but one way only, from the server to the page.
+ex: js
+| const flux = new EventSource('/evenements');
+| flux.onmessage = (e) => console.log(e.data);
+ex-fr: S'abonner à un flux ; chaque message reçu arrive dans e.data.
+ex-en: Subscribe to a stream; each message received comes in e.data.
+voir: websocket, http, stream, llm

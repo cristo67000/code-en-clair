@@ -16,7 +16,7 @@
  * `build/essais.mjs` compare les deux et échoue à la moindre différence.
  */
 
-const VERSION = 'v1.1.1';
+const VERSION = 'v1.2.0';
 const COQUILLE = 'code-en-clair-coquille-' + VERSION;
 
 const FICHIERS = [
@@ -34,6 +34,7 @@ const FICHIERS = [
   'js/glossaire.js',
   'js/surlignage.js',
   'js/schema.js',
+  'js/animation.js',
   'js/schemas/git.js',
   'js/schemas/shell.js',
   'js/schemas/web.js',

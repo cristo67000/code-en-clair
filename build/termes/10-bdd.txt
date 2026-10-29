@@ -19,6 +19,8 @@ dev: Structured Query Language
 alias: structured query language, requête sql, select, insert, update, delete, where, langage de requête, sequel
 fr: Langage standard pour interroger et modifier une base de données relationnelle : on décrit ce qu'on veut obtenir (SELECT … FROM … WHERE …), et c'est le système qui décide comment le calculer.
 en: The standard language for querying and modifying a relational database: you describe what you want to get (SELECT … FROM … WHERE …), and the system decides how to compute it.
++fr: Le SQL de base est commun à toutes les bases ; chaque moteur ajoute son dialecte (fonctions de date, JSON, types). Majuscules ou minuscules, SQL s'en moque ; la convention met les mots-clés en majuscules.
++en: Basic SQL is common to all databases; each engine adds its dialect (date functions, JSON, types). Uppercase or lowercase, SQL does not care; the convention puts keywords in uppercase.
 ex: sql
 | SELECT nom, categorie
 | FROM termes
@@ -28,6 +30,7 @@ ex: sql
 ex-fr: Les dix premiers termes de la catégorie git, par ordre alphabétique.
 ex-en: The first ten terms of the git category, in alphabetical order.
 voir: requete-sql, table, jointure, injection-sql, crud
+schema: bdd-sql
 
 @ requete-sql
 cat: bdd
@@ -46,6 +49,7 @@ ex-en: Add a row, change one, delete one, then count the terms per category.
 attention-fr: Un UPDATE ou un DELETE sans WHERE s'applique à toutes les lignes de la table : relisez, ou entourez-le d'une transaction.
 attention-en: An UPDATE or DELETE with no WHERE applies to every row in the table: review it, or wrap it in a transaction.
 voir: sql, jointure, transaction, injection-sql
+schema: bdd-sql
 
 @ nosql
 cat: bdd
@@ -57,6 +61,7 @@ en: A family of databases that do not use the linked-tables model: JSON document
 attention-fr: « NoSQL » ne veut pas dire « sans SQL » ni « meilleur » : c'est un autre compromis, souvent au prix de jointures et de garanties plus faibles.
 attention-en: “NoSQL” does not mean “without SQL” nor “better”: it is another trade-off, often at the cost of joins and weaker guarantees.
 voir: base-de-donnees, cle-valeur, json, sql
+schema: bdd-nosql
 
 @ table
 cat: bdd
@@ -131,6 +136,8 @@ nom-en: database index
 alias: index, create index, index sql, b-tree, index unique, unique, index composite, explain, plan d'exécution
 fr: Structure annexe qui accélère les recherches sur une colonne, comme l'index alphabétique à la fin d'un livre : au lieu de lire toute la table, la base trouve la ligne directement. En contrepartie, il ralentit un peu les écritures et occupe de la place.
 en: An auxiliary structure that speeds up searches on a column, like the alphabetical index at the end of a book: instead of reading the whole table, the database finds the row directly. In return, it slows writes slightly and takes up space.
++fr: Un index accélère les lectures et ralentit un peu les écritures, puisqu'il faut le tenir à jour : on indexe les colonnes qu'on filtre et qu'on trie souvent, pas toutes.
++en: An index speeds up reads and slows writes a little, since it must be kept up to date: you index the columns you often filter and sort on, not all of them.
 ex: sql
 | CREATE INDEX idx_termes_nom ON termes (nom);
 | EXPLAIN QUERY PLAN SELECT * FROM termes WHERE nom = 'git';
@@ -167,6 +174,7 @@ alias: atomicité, cohérence, isolation, durabilité, atomicity, consistency, d
 fr: Les quatre garanties d'une transaction fiable : Atomicité (tout ou rien), Cohérence (les règles de la base restent vraies), Isolation (les transactions simultanées ne se gênent pas) et Durabilité (ce qui est validé survit à une panne).
 en: The four guarantees of a reliable transaction: Atomicity (all or nothing), Consistency (the database's rules stay true), Isolation (simultaneous transactions do not interfere) and Durability (what is committed survives a crash).
 voir: transaction, base-de-donnees, nosql
+schema: bdd-acid
 
 @ schema-bdd
 cat: bdd
@@ -176,6 +184,7 @@ alias: database schema, modèle de données, data model, structure de la base, d
 fr: Description de la structure d'une base : quelles tables existent, quelles colonnes et de quels types, quelles clés et quelles relations. Les données changent tout le temps, le schéma rarement.
 en: A description of a database's structure: which tables exist, which columns and of what types, which keys and which relationships. The data changes all the time, the schema seldom.
 voir: table, migration, cle-etrangere, normalisation
+schema: bdd-table
 
 @ migration
 cat: bdd
@@ -198,6 +207,7 @@ alias: normalization, formes normales, normal forms, 3nf, redondance, denormaliz
 fr: Organisation des tables pour que chaque information ne soit écrite qu'à un seul endroit : au lieu de répéter le nom de l'auteur dans chaque article, on le range dans une table à part et on y renvoie par une clé. Cela évite les incohérences.
 en: Organizing tables so that each piece of information is written in only one place: instead of repeating the author's name in each article, it is kept in a separate table and referred to by a key. This avoids inconsistencies.
 voir: cle-etrangere, jointure, table, schema-bdd
+schema: bdd-normalisation
 
 @ orm
 cat: bdd
@@ -209,6 +219,7 @@ en: A library that maps a relational database's tables to objects of the program
 attention-fr: Un ORM cache le SQL, pas ses coûts : une mauvaise utilisation peut envoyer des centaines de requêtes là où une jointure suffirait.
 attention-en: An ORM hides SQL, not its costs: misuse can send hundreds of queries where a single join would do.
 voir: sql, classe, requete-sql, injection-sql
+schema: bdd-orm
 
 @ crud
 cat: bdd
@@ -228,6 +239,7 @@ alias: key-value, kv, redis, clé valeur, key value store, memcached, localstora
 fr: Base de données la plus simple : elle range une valeur sous un nom (la clé) et la retrouve par ce nom, rien de plus. Très rapide, elle sert de cache, de session ou de petit stockage (Redis, localStorage).
 en: The simplest kind of database: it stores a value under a name (the key) and finds it by that name, nothing more. Very fast, it serves as a cache, a session store or a small storage (Redis, localStorage).
 voir: dictionnaire, nosql, localstorage, table-de-hachage, cache
+schema: bdd-cle-valeur
 
 @ indexeddb
 cat: bdd
@@ -245,6 +257,7 @@ ex-en: Open (or create) a database, and give it a “notes” store identified b
 attention-fr: Contrairement à localStorage, elle n'est pas limitée à 5 Mo et ne bloque pas la page ; en revanche son interface est verbeuse, d'où les bibliothèques qui la simplifient.
 attention-en: Unlike localStorage, it is not limited to 5 MB and does not block the page; on the other hand its interface is verbose, hence the libraries that simplify it.
 voir: localstorage, cache-api, blob, base-de-donnees, pwa
+schema: bdd-indexeddb
 
 @ sqlite
 cat: bdd
@@ -257,3 +270,47 @@ ex: bash
 ex-fr: Interroger un fichier de base de données depuis la ligne de commande.
 ex-en: Query a database file from the command line.
 voir: base-de-donnees, sql, table, android
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ vue-sql
+cat: bdd
+nom: Vue
+nom-en: view
+alias: view, create view, vue sql, table virtuelle, vue matérialisée
+fr: Requête enregistrée sous un nom, qu'on interroge ensuite comme une table : CREATE VIEW clients_actifs AS SELECT … Elle ne stocke rien (sauf une vue matérialisée, recalculée à la demande), mais elle simplifie les requêtes et cache la complexité des jointures.
+en: A query saved under a name, which is then queried like a table: CREATE VIEW clients_actifs AS SELECT … It stores nothing (except a materialized view, recomputed on demand), but it simplifies queries and hides the complexity of joins.
+ex: sql
+| CREATE VIEW notes_recentes AS
+| SELECT * FROM notes WHERE modifie > date('now', '-7 days');
+| SELECT * FROM notes_recentes;
+ex-fr: Une vue des notes de la semaine ; on l'interroge ensuite comme une table.
+ex-en: A view of this week's notes; it is then queried like a table.
+voir: requete-sql, table, jointure, sql
+
+@ replication
+cat: bdd
+nom: Réplication
+nom-en: replication
+alias: replica, réplique, primaire, secondaire, master slave, failover, bascule, haute disponibilité
+fr: Copie en continu d'une base de données vers une ou plusieurs autres machines, les répliques : pour répartir les lectures entre elles, et pour qu'une réplique prenne le relais (bascule) si la base principale tombe. Les écritures, elles, vont toujours à la principale.
+en: Continuous copying of a database to one or more other machines, the replicas: to spread reads among them, and so that a replica takes over (failover) if the primary goes down. Writes, however, always go to the primary.
++fr: Une réplique a toujours un petit retard : lire juste après avoir écrit peut ne pas montrer l'écriture. Ce n'est pas une sauvegarde non plus : une suppression par erreur est répliquée aussitôt.
++en: A replica always lags a little: reading right after writing may not show the write. Nor is it a backup: a deletion by mistake is replicated at once.
+voir: base-de-donnees, spof, scalabilite, sauvegarde-backup
+schema: archi-spof
+
+@ n-plus-1
+cat: bdd
+nom: Problème N+1
+nom-en: N+1 problem
+alias: n+1, requêtes n+1, n + 1, select n+1, eager loading, chargement anticipé
+fr: Piège classique avec un ORM : une requête pour lister N éléments, puis une requête par élément pour un détail — N+1 requêtes au lieu d'une jointure. Invisible avec dix lignes en développement, catastrophique avec dix mille en production. Parade : charger la relation d'un coup (eager loading), ou écrire la jointure.
+en: A classic trap with an ORM: one query to list N items, then one query per item for a detail — N+1 queries instead of one join. Invisible with ten rows in development, catastrophic with ten thousand in production. Remedy: load the relation at once (eager loading), or write the join.
+ex: sql
+| -- au lieu de 1 + N requêtes :
+| SELECT notes.*, termes.nom FROM notes JOIN termes ON termes.id = notes.terme_id;
+ex-fr: Une seule requête qui rapporte les notes et le nom de leur terme.
+ex-en: A single query that brings back the notes and their term's name.
+voir: orm, jointure, requete-sql, profiling
+schema: bdd-orm

@@ -142,6 +142,8 @@ dev: American Standard Code for Information Interchange
 alias: american standard code, table ascii, code ascii, caractère de contrôle
 fr: Table historique de 128 caractères (lettres sans accents, chiffres, ponctuation, caractères de contrôle) numérotés de 0 à 127. « A » vaut 65, « a » 97, « 0 » 48. Elle est incluse telle quelle dans UTF-8.
 en: A historic table of 128 characters (unaccented letters, digits, punctuation, control characters) numbered from 0 to 127. “A” is 65, “a” is 97, “0” is 48. It is included unchanged in UTF-8.
++fr: Les 32 premiers codes sont des caractères de contrôle invisibles : 9 la tabulation, 10 le saut de ligne, 13 le retour chariot, 27 l'échappement des séquences de couleur du terminal.
++en: The first 32 codes are invisible control characters: 9 the tab, 10 the line feed, 13 the carriage return, 27 the escape of the terminal's color sequences.
 ex: js
 | 'A'.charCodeAt(0)
 | String.fromCharCode(97)
@@ -198,6 +200,7 @@ en: A convention that maps characters to sequences of bytes, to store or transmi
 attention-fr: Encoder n'est ni chiffrer ni hacher : un encodage se défait sans clé, il n'apporte aucune protection.
 attention-en: Encoding is neither encrypting nor hashing: an encoding can be undone without a key, it provides no protection.
 voir: utf-8, ascii, base64, chiffrement, hash
+schema: data-encodage
 
 @ base64
 cat: data
@@ -224,6 +227,8 @@ nom-en: hexadecimal
 alias: hex, base 16, 0x, #ff0000, hexa, notation hexadécimale
 fr: Système de numération en base 16 : il utilise les chiffres 0 à 9 et les lettres A à F (10 à 15). Un octet s'écrit sur exactement deux chiffres hexadécimaux, ce qui en fait la notation courante des octets, des empreintes et des couleurs.
 en: A base-16 numeral system: it uses the digits 0 to 9 and the letters A to F (10 to 15). A byte is written on exactly two hexadecimal digits, which makes it the usual notation for bytes, hashes and colors.
++fr: En code, un nombre hexadécimal se préfixe 0x : 0xFF vaut 255. On le rencontre dans les couleurs CSS, les empreintes Git, les adresses mémoire et le contenu brut d'un fichier (hexdump).
++en: In code, a hexadecimal number is prefixed with 0x: 0xFF is 255. You meet it in CSS colors, Git hashes, memory addresses and a file's raw contents (hexdump).
 ex: js
 | 255..toString(16)
 | parseInt('ff', 16)
@@ -240,6 +245,8 @@ nom-en: binary
 alias: base 2, système binaire, 0b, fichier binaire, binary file, notation binaire
 fr: Système de numération en base 2, n'utilisant que 0 et 1 : la langue des ordinateurs. Un fichier « binaire » est un fichier qui n'est pas du texte lisible (image, programme, archive), par opposition à un fichier texte.
 en: A base-2 numeral system using only 0 and 1: the language of computers. A “binary” file is one that is not readable text (image, program, archive), as opposed to a text file.
++fr: Un nombre binaire se lit de droite à gauche en puissances de deux : 1011 = 8 + 2 + 1 = 11. En JavaScript, (11).toString(2) donne '1011' et 0b1011 vaut 11.
++en: A binary number reads from right to left in powers of two: 1011 = 8 + 2 + 1 = 11. In JavaScript, (11).toString(2) gives '1011' and 0b1011 is 11.
 ex: js
 | (65).toString(2)
 | parseInt('01000001', 2)
@@ -294,6 +301,8 @@ dev: eXtensible Markup Language
 alias: extensible markup language, balise xml, xsd, xslt, rss, svg xml, html vs xml
 fr: Langage de balisage qui décrit des données par des balises imbriquées et libres (<livre><titre>…</titre></livre>). Plus verbeux que JSON, il est encore courant dans les flux RSS, les fichiers de configuration Android, le SVG et les documents Office.
 en: A markup language that describes data with nested, freely named tags (<book><title>…</title></book>). More verbose than JSON, it is still common in RSS feeds, Android configuration files, SVG and Office documents.
++fr: SVG est du XML : un fichier .svg s'ouvre dans un éditeur de texte. Les flux RSS, les fichiers de ressources Android et les documents Office (.docx, une fois dézippés) sont en XML.
++en: SVG is XML: a .svg file opens in a text editor. RSS feeds, Android resource files and Office documents (.docx, once unzipped) are XML.
 ex: xml
 | <glossaire>
 |   <terme id="commit">
@@ -303,6 +312,7 @@ ex: xml
 ex-fr: Un petit document XML : un élément racine, un terme avec un attribut id et un sous-élément nom.
 ex-en: A small XML document: a root element, a term with an id attribute and a name child element.
 voir: json, html, yaml, parsing
+schema: data-xml
 
 @ yaml
 cat: data
@@ -311,6 +321,8 @@ dev: YAML Ain't Markup Language
 alias: yml, .yml, .yaml, yaml ain't markup language, configuration yaml, indentation
 fr: Format de données lisible par les humains, fondé sur l'indentation plutôt que sur des accolades. Il sert beaucoup à écrire des fichiers de configuration (GitHub Actions, Docker Compose).
 en: A human-readable data format based on indentation rather than braces. It is widely used to write configuration files (GitHub Actions, Docker Compose).
++fr: YAML est un sur-ensemble de JSON : tout JSON valide est du YAML valide. Ses pièges : non et off deviennent faux, 3.10 devient 3.1 — entourez de guillemets ce qui doit rester du texte.
++en: YAML is a superset of JSON: any valid JSON is valid YAML. Its traps: no and off become false, 3.10 becomes 3.1 — quote whatever must stay text.
 ex: yaml
 | nom: Test
 | on: [push]
@@ -324,6 +336,7 @@ ex-en: A GitHub Actions workflow: on every push, run the tests.
 attention-fr: L'indentation fait partie de la syntaxe : deux espaces de trop, ou une tabulation, et le fichier change de sens ou devient invalide.
 attention-en: Indentation is part of the syntax: two spaces too many, or a tab, and the file changes meaning or becomes invalid.
 voir: json, ci-cd, docker, parsing
+schema: data-yaml
 
 @ csv
 cat: data
@@ -332,6 +345,8 @@ dev: Comma-Separated Values
 alias: comma separated values, tsv, valeurs séparées par des virgules, tableur, .csv, séparateur
 fr: Format texte pour des tableaux : une ligne par enregistrement, des valeurs séparées par des virgules (ou des points-virgules). Tout tableur l'ouvre ; il ne porte ni types ni mise en forme.
 en: A text format for tables: one line per record, values separated by commas (or semicolons). Any spreadsheet opens it; it carries neither types nor formatting.
++fr: Pas de norme stricte : séparateur virgule ou point-virgule, encodage UTF-8 ou Latin-1, avec ou sans ligne d'en-tête. Ouvrir un CSV dans un tableur peut casser les numéros de téléphone (zéro initial) et les dates.
++en: No strict standard: comma or semicolon separator, UTF-8 or Latin-1 encoding, with or without a header line. Opening a CSV in a spreadsheet can break phone numbers (leading zero) and dates.
 ex: text
 | nom,categorie,octets
 | commit,git,120
@@ -341,6 +356,7 @@ ex-en: Three lines; the quotes protect the comma contained in a value.
 attention-fr: Les CSV français utilisent souvent le point-virgule (la virgule y est la décimale) : un fichier « CSV » s'ouvre alors en une seule colonne dans un outil anglophone.
 attention-en: French CSVs often use a semicolon (the comma being the decimal mark): such a file then opens as a single column in an English-language tool.
 voir: json, encodage, parsing, saut-de-ligne
+schema: data-csv
 
 @ serialisation
 cat: data
@@ -378,6 +394,8 @@ nom-fr: chaîne de caractères
 alias: chaîne, chaîne de caractères, texte, str, littéral de chaîne, concaténation, template string
 fr: Type de donnée qui représente du texte : une suite de caractères, écrite entre guillemets ("bonjour"). Une chaîne se concatène, se découpe, se compare et se recherche.
 en: A data type that represents text: a sequence of characters, written between quotes ("hello"). A string can be concatenated, sliced, compared and searched.
++fr: En JavaScript, une chaîne est immuable : chaque méthode (toUpperCase, slice, replace) renvoie une nouvelle chaîne. Les gabarits entre accents graves insèrent des valeurs avec ${x}, sans concaténation.
++en: In JavaScript, a string is immutable: every method (toUpperCase, slice, replace) returns a new string. Template literals in backticks insert values with ${x}, with no concatenation.
 ex: js
 | const nom = 'Zoé';
 | const message = `Bonjour ${nom} !`;
@@ -388,6 +406,7 @@ ex-en: A string with a variable inserted (between backticks), its length, then i
 attention-fr: Dans la plupart des langages, une chaîne est immuable : « modifier » une chaîne en crée une nouvelle.
 attention-en: In most languages a string is immutable: “modifying” a string creates a new one.
 voir: unicode, echappement, tableau, type, regex
+schema: data-string
 
 @ tableau
 cat: data
@@ -396,6 +415,8 @@ nom-en: array
 alias: array, liste, list, vecteur, indice, index de tableau, matrice, array.map
 fr: Suite ordonnée de valeurs rangées à la suite et repérées par leur position (leur indice), qui commence à 0 dans la plupart des langages. On y accède, on le parcourt, on l'agrandit ou on le trie.
 en: An ordered sequence of values stored one after another and identified by their position (their index), which starts at 0 in most languages. You access it, loop over it, grow it or sort it.
++fr: map transforme chaque élément, filter en garde certains, reduce les combine en une valeur, find en cherche un : ces méthodes remplacent la plupart des boucles sur un tableau.
++en: map transforms each element, filter keeps some, reduce combines them into one value, find looks for one: these methods replace most loops over an array.
 ex: js
 | const langages = ['bash', 'js', 'sql'];
 | langages[0]
@@ -406,6 +427,7 @@ ex-en: The first element (“bash”), adding an element, then a new array in up
 attention-fr: Le premier indice est 0, pas 1 : un tableau de 3 éléments a pour dernier indice 2. C'est la source d'erreurs « décalées d'un » (off-by-one).
 attention-en: The first index is 0, not 1: a 3-element array has 2 as its last index. It is the source of “off-by-one” errors.
 voir: string, dictionnaire, boucle, liste-chainee
+schema: data-tableau
 
 @ dictionnaire
 cat: data
@@ -422,6 +444,7 @@ ex: js
 ex-fr: Lire une valeur par sa clé, l'incrémenter, puis lister les clés.
 ex-en: Read a value by its key, increment it, then list the keys.
 voir: tableau, table-de-hachage, json, cle-valeur
+schema: data-dictionnaire
 
 @ null
 cat: data
@@ -441,6 +464,7 @@ ex-en: A variable never assigned is undefined; the ?. operator reads a property 
 attention-fr: null n'est pas 0 ni la chaîne vide : c'est l'absence de valeur.
 attention-en: null is not 0 nor the empty string: it is the absence of a value.
 voir: type, exception, dictionnaire
+schema: data-null
 
 @ nombre-flottant
 cat: data
@@ -479,6 +503,7 @@ ex: js
 ex-fr: L'instant présent en millisecondes ; le timestamp 1700000000000 en ISO (2023-11-14T22:13:20.000Z) ; l'origine des temps (1970-01-01T00:00:00.000Z).
 ex-en: The present moment in milliseconds; timestamp 1700000000000 in ISO (2023-11-14T22:13:20.000Z); the time origin (1970-01-01T00:00:00.000Z).
 voir: uuid, byte, id
+schema: data-timestamp
 
 @ id
 cat: data
@@ -528,6 +553,7 @@ ex: bash
 ex-fr: Compresser un fichier en gardant l'original (-k), puis archiver et compresser un dossier entier.
 ex-en: Compress a file keeping the original (-k), then archive and compress a whole folder.
 voir: webp, png, bande-passante, byte
+schema: data-compression
 
 @ mime
 cat: data
@@ -542,6 +568,7 @@ ex: http
 ex-fr: Deux en-têtes de réponse : un fichier WebP, puis une page HTML en UTF-8.
 ex-en: Two response headers: a WebP file, then an HTML page in UTF-8.
 voir: header, blob, encodage, http
+schema: data-mime
 
 @ bom
 cat: data
@@ -555,3 +582,93 @@ ex: bash
 ex-fr: Regarder les trois premiers octets : ef bb bf trahit un BOM UTF-8.
 ex-en: Look at the first three bytes: ef bb bf reveals a UTF-8 BOM.
 voir: utf-8, unicode, encodage, saut-de-ligne
+schema: data-bom
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ booleen
+cat: data
+nom: Booléen
+nom-en: boolean
+alias: boolean, bool, vrai ou faux, true, false, booléenne, valeur logique
+fr: Type qui n'a que deux valeurs : vrai (true) ou faux (false). C'est le résultat d'une comparaison ou d'un test, et ce qu'attend une condition. Nommé d'après George Boole, qui a formalisé au XIXe siècle la logique du vrai et du faux avec et, ou, non.
+en: A type with only two values: true or false. It is the result of a comparison or a test, and what a condition expects. Named after George Boole, who formalized in the 19th century the logic of true and false with and, or, not.
+ex: js
+| const majeur = age >= 18;        // true ou false
+| if (majeur && !banni) { … }
+ex-fr: Une comparaison donne un booléen ; && et ! le combinent.
+ex-en: A comparison yields a boolean; && and ! combine it.
+voir: condition, operateur, type, truthy-falsy
+schema: langage-type
+
+@ entier
+cat: data
+nom: Entier
+nom-en: integer
+alias: integer, int, nombre entier, bigint, int32, int64, overflow, dépassement d'entier
+fr: Nombre sans partie décimale : -3, 0, 42. Dans la plupart des langages, un type à part, stocké sur 32 ou 64 bits, avec un maximum au-delà duquel on « déborde » et repart de l'autre côté. JavaScript n'a qu'un type nombre, à virgule flottante, exact pour les entiers jusqu'à 2⁵³ ; BigInt prend le relais au-delà.
+en: A number with no decimal part: -3, 0, 42. In most languages, a separate type, stored on 32 or 64 bits, with a maximum beyond which it “overflows” and wraps around. JavaScript has only one number type, floating-point, exact for integers up to 2⁵³; BigInt takes over beyond that.
+ex: js
+| Number.MAX_SAFE_INTEGER   // 9007199254740991
+| 2n ** 64n                 // 18446744073709551616n (BigInt)
+ex-fr: Le plus grand entier sûr d'un nombre JavaScript ; au-delà, le suffixe n demande un BigInt.
+ex-en: The largest safe integer of a JavaScript number; beyond it, the n suffix asks for a BigInt.
+voir: nombre-flottant, type, binaire, bit
+
+@ enum
+cat: data
+nom: Enum
+nom-fr: énumération
+alias: enumeration, énumération, valeurs possibles, constantes nommées, type énuméré
+fr: Type qui ne peut prendre qu'une valeur parmi une liste fixe et nommée : Etat.PAYEE, Etat.EXPEDIEE. Plus sûr qu'une chaîne libre, où une faute de frappe (« payee ») passe inaperçue jusqu'en production. TypeScript, Java, Kotlin, Rust en ont ; en JavaScript, on l'imite avec un objet figé.
+en: A type that can only take one value from a fixed, named list: Etat.PAYEE, Etat.EXPEDIEE. Safer than a free string, where a typo (“payee”) goes unnoticed until production. TypeScript, Java, Kotlin, Rust have them; in JavaScript, a frozen object imitates one.
+ex: ts
+| enum Etat { Creee, Payee, Expediee, Livree }
+| let e: Etat = Etat.Payee;
+ex-fr: Quatre états possibles, et pas un de plus : le compilateur refuse Etat.Perdue.
+ex-en: Four possible states, and not one more: the compiler refuses Etat.Perdue.
+voir: type, constante, machine-a-etats, typescript
+
+@ markdown
+cat: data
+nom: Markdown
+alias: md, .md, commonmark, gfm, markdown github
+fr: Format texte léger pour écrire des documents : # pour un titre, **gras**, - pour une liste, [texte](url) pour un lien, trois accents graves pour du code. Lisible tel quel dans un éditeur, converti en HTML par GitHub, les wikis, les générateurs de sites et les assistants d'IA. Les README sont en Markdown.
+en: A lightweight text format for writing documents: # for a heading, **bold**, - for a list, [text](url) for a link, three backticks for code. Readable as is in an editor, converted to HTML by GitHub, wikis, site generators and AI assistants. READMEs are written in Markdown.
+ex: text
+| # Lexicode
+| Un glossaire **bilingue** du codage.
+| - hors ligne
+| - [le site](https://cristo67000.github.io/code-en-clair/)
+ex-fr: Un titre, du gras, une liste, un lien : lisibles avant même d'être convertis.
+ex-en: A heading, bold text, a list, a link: readable before they are even converted.
+voir: readme, html, yaml
+
+@ toml
+cat: data
+nom: TOML
+alias: pyproject.toml, cargo.toml, fichier de configuration toml
+fr: Format de configuration texte, à sections entre crochets et paires clé = valeur, sans ambiguïté d'indentation ni de type (une chaîne est toujours entre guillemets). Utilisé par Python (pyproject.toml), Rust (Cargo.toml) et bien d'autres outils.
+en: A text configuration format, with sections in brackets and key = value pairs, with no ambiguity of indentation or type (a string is always quoted). Used by Python (pyproject.toml), Rust (Cargo.toml) and many other tools.
+ex: ini
+| [package]
+| name = "lexicode"
+| version = "1.2.0"
+ex-fr: Une section, deux clés : la forme d'un Cargo.toml ou d'un pyproject.toml.
+ex-en: One section, two keys: the shape of a Cargo.toml or a pyproject.toml.
+voir: yaml, json, dotfile
+
+@ date-iso
+cat: data
+nom: ISO 8601
+nom-fr: date ISO
+alias: iso 8601, format de date, yyyy-mm-dd, date iso, fuseau horaire, utc, timezone
+fr: Norme d'écriture des dates et des heures : 2024-03-02T14:03:00Z, de l'année à la seconde, du plus grand au plus petit, le Z marquant l'heure universelle (UTC). Se trie comme du texte, se lit dans toutes les langues, et ne se confond jamais avec 02/03 ou 03/02.
+en: The standard for writing dates and times: 2024-03-02T14:03:00Z, from year to second, largest unit first, the Z marking universal time (UTC). Sorts as text, reads in every language, and is never confused with 02/03 or 03/02.
+ex: js
+| new Date().toISOString()   // "2024-03-02T14:03:00.000Z"
+| new Date('2024-03-02')     // minuit UTC, pas minuit chez vous
+ex-fr: La date courante en ISO ; et un piège : une date sans heure est lue en UTC.
+ex-en: The current date in ISO; and a trap: a date without a time is read as UTC.
+voir: timestamp, string, json
+schema: data-timestamp

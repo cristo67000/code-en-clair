@@ -21,6 +21,7 @@ alias: apprentissage automatique, ml, deep learning, apprentissage profond, rés
 fr: Approche où l'on n'écrit pas les règles à la main : on montre au programme de nombreux exemples, et il ajuste lui-même ses paramètres pour reproduire ce qu'on attend. Le résultat de cet apprentissage s'appelle un modèle.
 en: An approach where the rules are not written by hand: the program is shown many examples and adjusts its own parameters to reproduce what is expected. The result of this learning is called a model.
 voir: ia, modele, entrainement, inference
+schema: ia-machine-learning
 
 @ llm
 cat: ia
@@ -43,6 +44,7 @@ alias: model, poids, weights, paramètres, parameters, checkpoint, modèle d'ia,
 fr: Résultat d'un entraînement : un très grand ensemble de nombres (les paramètres ou « poids ») qui encode ce que l'IA a appris. Le programme qui l'utilise le lit pour transformer une entrée en sortie, sans plus rien apprendre.
 en: The outcome of training: a very large set of numbers (the parameters or “weights”) that encodes what the AI has learned. The program that uses it reads it to turn an input into an output, learning nothing more.
 voir: entrainement, inference, llm, fine-tuning
+schema: ia-llm
 
 @ entrainement
 cat: ia
@@ -52,6 +54,7 @@ alias: training, apprentissage, pré-entraînement, pretraining, jeu de données
 fr: Phase, longue et coûteuse, pendant laquelle un modèle ajuste ses paramètres en s'exerçant sur un immense jeu de données, jusqu'à devenir bon à la tâche visée. Il précède l'utilisation du modèle, qu'on appelle l'inférence.
 en: The long, costly phase during which a model adjusts its parameters by practicing on an immense dataset, until it becomes good at the target task. It comes before the model is used, which is called inference.
 voir: modele, inference, fine-tuning, machine-learning
+schema: ia-entrainement
 
 @ inference
 cat: ia
@@ -61,6 +64,7 @@ alias: inference, utiliser un modèle, génération, generation, latence d'infé
 fr: Utilisation d'un modèle déjà entraîné pour produire une réponse à partir d'une entrée. Chaque appel d'un assistant à un LLM est une inférence : elle consomme des tokens et un peu de temps de calcul.
 en: Using an already trained model to produce an answer from an input. Each call of an assistant to an LLM is an inference: it consumes tokens and some computing time.
 voir: entrainement, modele, token, latence
+schema: ia-inference
 
 @ prompt
 cat: ia
@@ -78,6 +82,7 @@ ex: text
 ex-fr: Un prompt clair : un rôle, une tâche découpée en trois points et un format de réponse.
 ex-en: A clear prompt: a role, a task split into three points and an answer format.
 voir: llm, context-window, token, assistant-de-code, slash-command
+schema: ia-prompt
 
 @ context-window
 cat: ia
@@ -101,6 +106,7 @@ en: An AI model's answer that seems credible and confident but is false or made 
 attention-fr: En programmation, exécutez le code proposé et lisez la documentation officielle : un appel de fonction inventé a l'air parfaitement normal.
 attention-en: In programming, run the proposed code and read the official documentation: a made-up function call looks perfectly normal.
 voir: llm, rag, test-unitaire, code-review
+schema: ia-hallucination
 
 @ temperature
 cat: ia
@@ -119,6 +125,8 @@ nom-fr: plongement, représentation vectorielle
 alias: plongement, vecteur, vector, représentation vectorielle, vector database, base vectorielle, recherche sémantique, semantic search, similarité cosinus
 fr: Suite de nombres (un vecteur) qui représente le sens d'un texte, d'une image ou d'un code : deux contenus de sens proche ont des vecteurs proches. Elle permet la recherche par sens plutôt que par mots exacts.
 en: A sequence of numbers (a vector) that represents the meaning of a text, image or piece of code: two contents of similar meaning have nearby vectors. It enables search by meaning rather than by exact words.
++fr: Deux embeddings se comparent par leur angle (similarité cosinus) : proche de 1, les sens sont voisins. C'est ce qui fait marcher la recherche sémantique et le RAG — et une base de vecteurs les stocke par millions.
++en: Two embeddings are compared by their angle (cosine similarity): close to 1, the meanings are neighbors. That is what makes semantic search and RAG work — and a vector database stores them by the millions.
 voir: rag, llm, table-de-hachage
 schema: ia-embedding
 
@@ -141,6 +149,7 @@ alias: ajustement fin, finetuning, spécialisation, affinage, lora, adaptation d
 fr: Poursuite de l'entraînement d'un modèle existant sur un petit jeu de données spécialisé, pour l'adapter à un domaine ou à un style. C'est bien moins coûteux qu'un entraînement complet, mais moins souple que de simplement bien rédiger le prompt.
 en: Continuing the training of an existing model on a small specialized dataset, to adapt it to a domain or a style. It is much cheaper than full training, but less flexible than simply writing a good prompt.
 voir: entrainement, modele, prompt, rag
+schema: ia-fine-tuning
 
 @ agent
 cat: ia
@@ -189,6 +198,7 @@ alias: subagent, sub-agent, agent secondaire, multi-agent, multi-agents, orchest
 fr: Agent lancé par un autre agent pour accomplir une sous-tâche précise (explorer un dépôt, relire du code) avec son propre contexte. Il rend un résumé à l'agent principal, qui garde ainsi sa fenêtre de contexte propre.
 en: An agent launched by another agent to accomplish a specific subtask (explore a repository, review code) with its own context. It hands a summary back to the main agent, which thus keeps its own context window clean.
 voir: agent, context-window, assistant-de-code
+schema: ia-sous-agent
 
 @ vibe-coding
 cat: ia
@@ -199,6 +209,7 @@ en: A way of programming where you describe what you want in everyday language t
 attention-fr: Ce qu'on ne comprend pas, on ne peut ni le déboguer, ni le sécuriser : relire, tester et versionner le code produit reste indispensable.
 attention-en: What you do not understand, you can neither debug nor secure: reviewing, testing and versioning the produced code remains essential.
 voir: assistant-de-code, code-review, test-unitaire, hallucination
+schema: ia-agent
 
 @ assistant-de-code
 cat: ia
@@ -208,3 +219,55 @@ alias: coding assistant, copilot, code assistant, assistant de programmation, ai
 fr: Outil d'IA qui aide à programmer : il complète le code, explique une erreur, écrit des tests, corrige un bug, ou, sous forme d'agent, lit un projet, modifie plusieurs fichiers et lance des commandes à la demande.
 en: An AI tool that helps with programming: it completes code, explains an error, writes tests, fixes a bug, or, as an agent, reads a project, edits several files and runs commands on request.
 voir: agent, prompt, vibe-coding, slash-command, ide
+schema: ia-agent
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ token-ia
+cat: ia
+nom: Token
+nom-fr: jeton (IA)
+alias: tokens, jeton, tokenisation, tokenizer, découpage en tokens, compter les tokens, prix par token
+fr: Unité de texte que manipule un modèle de langage : un mot courant, un morceau de mot rare, un signe de ponctuation. Le modèle lit et produit des tokens, pas des lettres ; la fenêtre de contexte, la facturation et la vitesse se comptent en tokens — environ 750 mots pour 1 000 tokens en anglais, un peu moins en français.
+en: The unit of text a language model works with: a common word, a piece of a rare word, a punctuation mark. The model reads and produces tokens, not letters; the context window, billing and speed are counted in tokens — about 750 words per 1,000 tokens in English, a bit fewer in French.
+attention-fr: Ne pas confondre avec le token de sécurité (jeton d'accès), ni avec les tokens d'un compilateur, qui découpe le code source en mots-clés, noms et symboles.
+attention-en: Not to be confused with the security token (access token), nor with a compiler's tokens, which cut source code into keywords, names and symbols.
+voir: llm, context-window, token, temperature
+schema: ia-token
+
+@ prompt-systeme
+cat: ia
+nom: Prompt système
+nom-en: system prompt
+alias: system prompt, instructions système, consignes, préambule, instructions personnalisées, custom instructions
+fr: Texte placé avant la conversation, par l'éditeur de l'outil ou par vous, qui fixe le rôle, le ton et les règles du modèle pour toute la session : « Tu es un relecteur de code ; réponds en français ; ne devine jamais une API, dis que tu ne sais pas ». Le modèle le relit à chaque réponse ; il occupe donc de la fenêtre de contexte.
+en: Text placed before the conversation, by the tool's maker or by you, that sets the model's role, tone and rules for the whole session: “You are a code reviewer; answer in French; never guess an API, say you do not know”. The model rereads it with every answer; it therefore takes up context window.
+voir: prompt, context-window, agent, llm
+schema: ia-prompt
+
+@ reseau-de-neurones
+cat: ia
+nom: Réseau de neurones
+nom-en: neural network
+alias: neural network, deep learning, apprentissage profond, couches, poids, neurone artificiel
+fr: Modèle de calcul fait de couches de « neurones » : chacun combine ses entrées par des poids, applique une petite fonction, et passe le résultat à la couche suivante. L'entraînement règle les poids, par milliards. Avec beaucoup de couches, c'est l'apprentissage profond ; les grands modèles de langage en sont une forme géante.
+en: A computing model made of layers of “neurons”: each combines its inputs through weights, applies a small function, and passes the result to the next layer. Training tunes the weights, by the billions. With many layers, it is deep learning; large language models are a giant form of it.
+voir: machine-learning, entrainement, modele, llm, transformer
+schema: ia-entrainement
+
+@ transformer
+cat: ia
+nom: Transformer
+alias: transformeur, attention, self-attention, architecture transformer, gpt
+fr: Architecture de réseau de neurones (2017) derrière tous les grands modèles de langage : son mécanisme d'attention permet à chaque token de « regarder » tous les autres pour saisir le contexte, et se calcule en parallèle, ce qui autorise l'entraînement sur des textes immenses. C'est le T de GPT.
+en: The neural network architecture (2017) behind every large language model: its attention mechanism lets each token “look at” all the others to grasp the context, and computes in parallel, which allows training on immense texts. It is the T in GPT.
+voir: llm, reseau-de-neurones, embedding, token-ia
+schema: ia-llm
+
+@ multimodal
+cat: ia
+nom: Multimodal
+alias: multimodalité, vision, image en entrée, audio, modèle multimodal, comprendre une image
+fr: Se dit d'un modèle qui accepte, ou produit, plusieurs sortes de contenus : du texte, mais aussi des images, de l'audio, de la vidéo. On lui montre une capture d'écran d'un bug ou la photo d'un schéma au tableau, et il en parle comme d'un texte.
+en: Said of a model that accepts, or produces, several kinds of content: text, but also images, audio, video. You show it a screenshot of a bug or a photo of a diagram on a whiteboard, and it talks about it as it would about text.
+voir: llm, modele, prompt, assistant-de-code

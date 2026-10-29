@@ -81,6 +81,8 @@ nom: Pull
 alias: git pull, tirer, git pull --rebase
 fr: Commande qui met à jour la branche courante avec le dépôt distant : elle fait un fetch, puis fusionne (ou rebase) les nouveaux commits dans votre branche et votre dossier de travail.
 en: A command that updates the current branch from the remote repository: it runs a fetch, then merges (or rebases) the new commits into your branch and your working tree.
++fr: git pull --rebase évite les commits de fusion inutiles quand vous avez des commits locaux ; beaucoup en font le réglage par défaut (git config pull.rebase true).
++en: git pull --rebase avoids useless merge commits when you have local commits; many make it the default (git config pull.rebase true).
 ex: bash
 | git pull
 | git pull --rebase
@@ -97,6 +99,8 @@ nom: Push
 alias: git push, pousser, envoyer
 fr: Commande qui envoie vers le dépôt distant les commits que vous avez faits en local. Elle est refusée si le distant contient des commits que vous n'avez pas : il faut d'abord les récupérer.
 en: A command that sends the commits you made locally to the remote repository. It is refused if the remote holds commits you do not have: you must fetch them first.
++fr: git push -u origin ma-branche, la première fois, relie la branche locale à sa jumelle distante : ensuite, git push suffit. git push --tags envoie aussi les étiquettes.
++en: git push -u origin my-branch, the first time, links the local branch to its remote twin: afterwards, git push is enough. git push --tags also sends the tags.
 ex: bash
 | git push
 | git push -u origin ma-fonction
@@ -119,6 +123,7 @@ ex: bash
 ex-fr: Écraser le distant, mais seulement s'il est toujours tel que vous l'avez vu.
 ex-en: Overwrite the remote, but only if it is still as you last saw it.
 voir: push, amend, rebase, reflog
+schema: git-force-push
 
 @ diff
 cat: git
@@ -152,6 +157,7 @@ ex: bash
 ex-fr: Écrire le dernier commit dans un fichier .patch, puis appliquer un patch reçu.
 ex-en: Write the last commit into a .patch file, then apply a patch you received.
 voir: diff, commit, cherry-pick
+schema: git-patch
 
 @ blame
 cat: git
@@ -164,6 +170,7 @@ ex: bash
 ex-fr: Voir qui a modifié en dernier les lignes 10 à 20 de app.js, et dans quel commit.
 ex-en: See who last changed lines 10 to 20 of app.js, and in which commit.
 voir: log, diff, commit
+schema: git-blame
 
 @ log
 cat: git
@@ -171,12 +178,15 @@ nom: git log
 alias: log, historique, git log --oneline, --graph
 fr: Commande qui affiche l'historique des commits de la branche courante, du plus récent au plus ancien : empreinte, auteur, date et message.
 en: A command that displays the commit history of the current branch, from newest to oldest: hash, author, date and message.
++fr: git log --oneline --graph --all dessine toutes les branches en texte ; git log -p montre le diff de chaque commit ; git log -- fichier ne garde que les commits qui touchent ce fichier.
++en: git log --oneline --graph --all draws every branch in text; git log -p shows each commit's diff; git log -- file keeps only the commits that touch that file.
 ex: bash
 | git log --oneline --graph --all
 | git log --author="Claire" --since="2 weeks ago"
 ex-fr: Une ligne par commit avec un petit dessin des branches, puis un filtre par auteur et par date.
 ex-en: One line per commit with a small branch drawing, then a filter by author and date.
 voir: commit, reflog, blame, diff
+schema: git-log
 
 @ reflog
 cat: git
@@ -192,6 +202,7 @@ ex: bash
 ex-fr: Lister les anciennes positions de HEAD, puis revenir à celle d'il y a deux étapes.
 ex-en: List HEAD's past positions, then go back to the one from two steps ago.
 voir: reset, amend, rebase, head
+schema: git-reflog
 
 @ reset
 cat: git
@@ -217,6 +228,8 @@ nom: Revert
 alias: git revert, annuler un commit, défaire
 fr: Commande qui annule l'effet d'un commit en créant un nouveau commit qui fait exactement l'inverse. L'historique n'est pas réécrit : c'est la méthode sûre pour annuler quelque chose déjà partagé.
 en: A command that undoes a commit's effect by creating a new commit that does exactly the opposite. History is not rewritten: it is the safe way to undo something already shared.
++fr: On peut annuler un commit de fusion (git revert -m 1 M), ou plusieurs commits d'un coup (git revert A..C), chacun donnant son propre commit d'annulation.
++en: You can undo a merge commit (git revert -m 1 M), or several commits at once (git revert A..C), each yielding its own undo commit.
 ex: bash
 | git revert 3f2a9c1
 ex-fr: Créer un commit qui annule les changements du commit 3f2a9c1.
@@ -258,6 +271,7 @@ ex: ini
 ex-fr: Normaliser tous les textes en fins de ligne LF, et déclarer les images comme binaires.
 ex-en: Normalize all text to LF line endings, and declare images as binary.
 voir: gitignore, diff, saut-de-ligne
+schema: git-gitattributes
 
 @ fork
 cat: git
@@ -266,6 +280,8 @@ nom-fr: bifurcation, copie personnelle
 alias: forker, fourche, git fork
 fr: Copie personnelle, sur GitHub, du dépôt d'un autre projet. Elle vous appartient, vous pouvez y pousser des commits, puis proposer vos changements à l'auteur d'origine par une pull request.
 en: Your own copy, on GitHub, of another project's repository. It belongs to you, you can push commits to it, then propose your changes to the original author with a pull request.
++fr: Pour garder un fork à jour, on ajoute le dépôt d'origine comme second remote (upstream), on fetch, et on fusionne ou rebase sa branche dessus.
++en: To keep a fork up to date, you add the original repository as a second remote (upstream), fetch, and merge or rebase your branch on top.
 ex: bash
 | git clone https://github.com/moi/projet.git
 | git remote add upstream https://github.com/auteur/projet.git
@@ -402,6 +418,8 @@ nom-fr: écraser, regrouper
 alias: git squash, fixup, rebase -i, squash and merge, regrouper des commits
 fr: Regrouper plusieurs commits en un seul, pour présenter un historique propre : trois commits d'essais deviennent un commit qui dit clairement ce qui a été fait.
 en: Combining several commits into one, to present a clean history: three trial commits become a single commit that clearly says what was done.
++fr: Sur GitHub, le bouton « Squash and merge » le fait à la fusion d'une pull request : la branche garde ses petits commits, main ne reçoit qu'un commit propre.
++en: On GitHub, the “Squash and merge” button does it when merging a pull request: the branch keeps its small commits, main receives a single clean one.
 ex: bash
 | git rebase -i HEAD~3
 | git merge --squash ma-fonction
@@ -441,3 +459,110 @@ ex-fr: Créer un tag annoté sur le commit courant, puis l'envoyer au dépôt di
 ex-en: Create an annotated tag on the current commit, then send it to the remote repository.
 voir: commit, branch, release, semver
 schema: git-tag
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ switch
+cat: git
+nom: Switch
+alias: git switch, git restore, restore, changer de branche, switch -c
+fr: Commande qui change de branche (git switch feature) ou en crée une (git switch -c). Introduite en 2019 avec git restore, qui remet un fichier dans l'état d'un commit, pour remplacer les deux emplois de checkout par deux commandes claires.
+en: A command that switches branches (git switch feature) or creates one (git switch -c). Introduced in 2019 together with git restore, which puts a file back to the state of a commit, to replace the two uses of checkout with two clear commands.
+ex: bash
+| git switch -c correction
+| git restore app.js
+| git restore --staged app.js
+ex-fr: Créer et rejoindre une branche ; annuler les modifications d'un fichier ; le retirer de l'index sans toucher au fichier.
+ex-en: Create and move to a branch; discard a file's changes; take it out of the index without touching the file.
+voir: checkout, branch, working-tree, index-git
+schema: git-checkout
+
+@ worktree
+cat: git
+nom: Worktree
+nom-fr: dossier de travail parallèle
+alias: git worktree, worktrees, second dossier de travail, arbre de travail
+fr: Second dossier de travail rattaché au même dépôt, sur une autre branche : on travaille sur deux branches côte à côte, chacune dans son dossier, sans stash ni second clone. Les commits sont partagés, puisque le .git est commun.
+en: A second working folder attached to the same repository, on another branch: you work on two branches side by side, each in its own folder, with no stash and no second clone. Commits are shared, since the .git is common.
+ex: bash
+| git worktree add ../correctif fix-bug
+| git worktree list
+| git worktree remove ../correctif
+ex-fr: Ouvrir la branche fix-bug dans un dossier voisin, lister les dossiers de travail, retirer celui-ci quand c'est fini.
+ex-en: Open the fix-bug branch in a neighboring folder, list the working folders, remove that one when done.
+voir: working-tree, branch, stash, clone
+
+@ conventional-commits
+cat: git
+nom: Conventional Commits
+nom-fr: commits conventionnels
+alias: feat, fix, chore, message conventionnel, commit sémantique, semantic commit
+fr: Convention d'écriture des messages de commit : un type (feat, fix, docs, refactor, test, chore), une portée facultative entre parenthèses, deux-points, puis un résumé. Lisible par les humains et par les outils, qui en déduisent le changelog et le prochain numéro de version.
+en: A convention for writing commit messages: a type (feat, fix, docs, refactor, test, chore), an optional scope in parentheses, a colon, then a summary. Readable by humans and by tools, which derive the changelog and the next version number from it.
+ex: text
+| feat(quiz): ajouter les cartes à retourner
+| fix: corriger la recherche avec accents
+| docs: préciser l'installation sur iOS
+| feat!: nouveau format de sauvegarde
+ex-fr: Une nouveauté, une correction, de la documentation ; le point d'exclamation signale un changement incompatible (version majeure).
+ex-en: A feature, a fix, documentation; the exclamation mark flags a breaking change (major version).
+voir: message-de-commit, changelog, semver
+
+@ lfs
+cat: git
+nom: Git LFS
+dev: Large File Storage
+alias: git-lfs, gros fichiers, large file storage, fichiers volumineux
+fr: Extension de Git qui range les gros fichiers (images, vidéos, modèles, binaires) hors du dépôt, sur un serveur dédié, et ne garde dans l'historique qu'un petit pointeur. Le clone reste léger ; le fichier n'est téléchargé que quand on en a besoin.
+en: A Git extension that stores large files (images, videos, models, binaries) outside the repository, on a dedicated server, and keeps only a small pointer in the history. The clone stays light; the file is downloaded only when needed.
+ex: bash
+| git lfs install
+| git lfs track "*.psd"
+| git add .gitattributes
+ex-fr: Activer LFS, suivre les fichiers Photoshop par LFS, et versionner la règle qui le dit.
+ex-en: Enable LFS, track Photoshop files through LFS, and version the rule that says so.
+attention-fr: Un gros fichier déjà commité sans LFS reste dans l'historique pour toujours, même supprimé ensuite : LFS se met en place avant le premier commit du fichier.
+attention-en: A large file already committed without LFS stays in the history forever, even if deleted afterwards: LFS is set up before the file's first commit.
+voir: gitattributes, blob, repository
+
+@ issue
+cat: git
+nom: Issue
+nom-fr: ticket
+alias: ticket, issues, bug report, rapport de bogue, demande de fonctionnalité, feature request
+fr: Fiche ouverte sur GitHub (ou GitLab) pour signaler un bug, proposer une amélioration ou poser une question sur un projet. Numérotée, discutée, étiquetée, assignée, puis fermée quand c'est réglé, souvent par un commit ou une pull request qui la cite.
+en: A ticket opened on GitHub (or GitLab) to report a bug, propose an improvement or ask a question about a project. Numbered, discussed, labelled, assigned, then closed when it is settled, often by a commit or a pull request that mentions it.
+ex: text
+| Fixes #42
+ex-fr: Dans un message de commit ou une pull request : à la fusion dans main, GitHub ferme l'issue 42 tout seul.
+ex-en: In a commit message or a pull request: on merge into main, GitHub closes issue 42 by itself.
+voir: github, pull-request, bug, message-de-commit
+
+@ github-actions
+cat: git
+nom: GitHub Actions
+alias: actions, workflow github, .github/workflows, ci github, workflow
+fr: Service d'automatisation de GitHub : un fichier YAML dans .github/workflows décrit ce qu'il faut lancer (tests, build, déploiement) et quand (à chaque push, chaque pull request, chaque nuit). GitHub fournit les machines ; c'est la CI/CD la plus courante pour un projet hébergé chez lui.
+en: GitHub's automation service: a YAML file in .github/workflows describes what to run (tests, build, deployment) and when (on each push, each pull request, every night). GitHub provides the machines; it is the most common CI/CD for a project hosted there.
+ex: yaml
+| on: [push, pull_request]
+| jobs:
+|   test:
+|     runs-on: ubuntu-latest
+|     steps:
+|       - uses: actions/checkout@v4
+|       - run: npm test
+ex-fr: À chaque push et chaque pull request : une machine Ubuntu récupère le code et lance les tests.
+ex-en: On each push and each pull request: an Ubuntu machine fetches the code and runs the tests.
+voir: ci-cd, github, yaml, github-pages
+schema: outils-ci-cd
+
+@ readme
+cat: git
+nom: README
+alias: readme.md, lisez-moi, fichier readme
+fr: Fichier texte à la racine d'un projet, en général README.md, que GitHub affiche sur la page du dépôt : ce que fait le projet, comment l'installer, comment s'en servir, comment contribuer. La première chose qu'on lit, et souvent la seule.
+en: A text file at the root of a project, usually README.md, which GitHub displays on the repository page: what the project does, how to install it, how to use it, how to contribute. The first thing people read, and often the only one.
++fr: Un bon README tient en une page : une phrase sur le projet, une capture d'écran, les trois commandes pour démarrer, un lien vers le reste.
++en: A good README fits on one page: a sentence about the project, a screenshot, the three commands to get started, a link to the rest.
+voir: markdown, repository, licence, changelog

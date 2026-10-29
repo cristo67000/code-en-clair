@@ -16,6 +16,12 @@
         { id: 'o', t: ['Texte allongé', 'Longer text'], sub: '"Le ciel est bleu"', c: 1, r: 1, s: 'ok', w: 120, h: 50, sz: 10.5 },
       ],
       e: [['a', 'l', '', 'a'], ['l', 'p', '', 'v'], ['p', 'o', '', 'warn'], ['o', 'l', ['on recommence', 'repeat'], 'ok dash']],
+      anim: [
+        { t: ['Le texte entre, découpé en tokens.', 'The text goes in, cut into tokens.'], on: ['a', 'l'], flux: [0] },
+        { t: ['Le modèle calcule, pour chaque token possible, la probabilité qu’il vienne ensuite.', 'The model computes, for every possible token, the probability that it comes next.'], on: ['l', 'p'], flux: [1] },
+        { t: ['Il en tire un : « bleu ». Le texte s’allonge d’un token.', 'It draws one: “bleu”. The text grows by one token.'], on: ['p', 'o'], flux: [2] },
+        { t: ['Et on recommence avec le nouveau texte, token après token, jusqu’à la fin de la réponse.', 'And it starts again with the new text, token after token, until the end of the answer.'], on: ['o', 'l'], flux: [3] },
+      ],
     },
 
     'ia-contexte': {
@@ -95,6 +101,12 @@
         { id: 'r', t: ['Réponse\n+ sources', 'Answer\n+ sources'], c: 0, r: 1, s: 'ok', w: 88, sz: 10.5 },
       ],
       e: [['q', 's', '', 'a'], ['s', 'd', '', 'v'], ['d', 'p', '', 'info'], ['p', 'l', '', 'warn'], ['l', 'r', '', 'v']],
+      anim: [
+        { t: ['La question est transformée en vecteur et comparée aux documents.', 'The question is turned into a vector and compared with the documents.'], on: ['q', 's'], flux: [0] },
+        { t: ['Les plus proches par le sens sont retenus.', 'The closest in meaning are kept.'], on: ['s', 'd'], flux: [1] },
+        { t: ['Ils sont collés dans le prompt, avec la question.', 'They are pasted into the prompt, with the question.'], on: ['d', 'p'], flux: [2] },
+        { t: ['Le modèle répond à partir de ces documents, et peut les citer. Moins d’hallucinations, des sources.', 'The model answers from those documents, and can cite them. Fewer hallucinations, and sources.'], on: ['p', 'l', 'r'], flux: [3, 4] },
+      ],
     },
 
     'ia-agent': {
@@ -109,6 +121,13 @@
         { id: 'f', t: ['Réponse\nfinale', 'Final\nanswer'], c: 0, r: 1, s: 'ok', w: 88, sz: 10.5 },
       ],
       e: [['g', 'm', '', 'a'], ['m', 't', ['agit', 'acts'], 'v'], ['t', 'o', '', 'warn'], ['o', 'm', ['observe', 'observes'], 'info dash'], ['m', 'f', ['a fini', 'is done'], 'ok']],
+      anim: [
+        { t: ['L’agent reçoit un objectif : « corrige le test qui échoue ».', 'The agent gets a goal: “fix the failing test”.'], on: ['g', 'm'], flux: [0] },
+        { t: ['Le modèle décide d’une action : lire un fichier, lancer une commande.', 'The model decides on an action: read a file, run a command.'], on: ['m', 't'], flux: [1] },
+        { t: ['L’outil l’exécute et renvoie un résultat.', 'The tool runs it and returns a result.'], on: ['t', 'o'], flux: [2] },
+        { t: ['Le modèle l’observe et décide de la suite. Boucle…', 'The model observes it and decides what comes next. Loop…'], on: ['o', 'm'], flux: [3] },
+        { t: ['…jusqu’à ce qu’il juge l’objectif atteint : réponse finale.', '…until it judges the goal reached: final answer.'], on: ['m', 'f'], flux: [4] },
+      ],
     },
 
     'ia-mcp': {
@@ -123,6 +142,139 @@
         { id: 'w', t: ['Service web', 'Web service'], c: 2, r: 2, s: 'ok', w: 92, sz: 11 },
       ],
       e: [['c', 's', 'MCP', 'a double'], ['s', 'f', '', 'v'], ['s', 'b', '', 'v'], ['s', 'w', '', 'v']],
+      anim: [
+        { t: ['L’assistant demande au serveur MCP : « quels outils proposes-tu ? »', 'The assistant asks the MCP server: “which tools do you offer?”'], on: ['c', 's'], flux: [0] },
+        { t: ['Le serveur expose des outils : lire des fichiers, interroger une base, appeler un service.', 'The server exposes tools: read files, query a database, call a service.'], on: ['s', 'f', 'b', 'w'], flux: [1, 2, 3] },
+        { t: ['L’assistant les appelle par un protocole commun : un serveur écrit une fois sert à tous les assistants.', 'The assistant calls them through a common protocol: a server written once serves every assistant.'], on: ['c', 's'], flux: [0] },
+      ],
+    },
+
+    'ia-entrainement': {
+      k: 'graphe',
+      alt: ['L’entraînement : des données entrent, le modèle ajuste ses poids pendant des semaines, un modèle en sort', 'Training: data goes in, the model adjusts its weights for weeks, a model comes out'],
+      n: [
+        { id: 'd', t: ['Données\n(textes, code)', 'Data\n(text, code)'], c: 0, r: 0.5, f: 'db', s: 'a', w: 100, h: 60 },
+        { id: 'e', t: ['Entraînement', 'Training'], sub: ['des semaines, des milliers de GPU', 'weeks, thousands of GPUs'], c: 1, r: 0.5, s: 'v', w: 126, h: 56, sz: 11 },
+        { id: 'm', t: ['Modèle\n(poids)', 'Model\n(weights)'], c: 2, r: 0.5, s: 'ok', w: 86 },
+      ],
+      e: [['d', 'e', '', 'a'], ['e', 'm', '', 'v'], ['e', 'e', ['répéter', 'repeat'], 'warn dash']],
+      anim: [
+        { t: ['Des milliards de phrases, dont on cache le mot suivant.', 'Billions of sentences, with the next word hidden.'], on: ['d', 'e'], flux: [0] },
+        { t: ['Le modèle le devine, on compare à la vérité, on corrige un peu ses poids. Des milliards de fois.', 'The model guesses it, the guess is compared with the truth, its weights are nudged. Billions of times.'], on: ['e'], flux: [2] },
+        { t: ['Au bout : un fichier de poids figés. L’entraînement coûte des millions ; l’utiliser (l’inférence) coûte des centimes.', 'At the end: a file of frozen weights. Training costs millions; using it (inference) costs cents.'], on: ['e', 'm'], flux: [1] },
+      ],
+    },
+
+    'ia-inference': {
+      k: 'graphe',
+      alt: ['L’inférence : un prompt entre dans le modèle figé, une réponse en sort ; le modèle n’apprend rien', 'Inference: a prompt goes into the frozen model, an answer comes out; the model learns nothing'],
+      n: [
+        { id: 'p', t: 'Prompt', c: 0, r: 0.5, s: 'a', w: 80 },
+        { id: 'm', t: ['Modèle entraîné\n(figé)', 'Trained model\n(frozen)'], c: 1, r: 0.5, s: 'v', w: 120 },
+        { id: 'r', t: ['Réponse', 'Answer'], c: 2, r: 0.5, s: 'ok', w: 80 },
+      ],
+      e: [['p', 'm', '', 'a'], ['m', 'r', ['quelques secondes', 'a few seconds'], 'ok']],
+      l: ['Le modèle est le même avant et après : il ne retient pas votre conversation. Chaque token produit coûte du calcul.', 'The model is the same before and after: it does not remember your conversation. Each token produced costs compute.'],
+      anim: [
+        { t: ['Votre question est découpée en tokens et entre dans le modèle.', 'Your question is cut into tokens and enters the model.'], on: ['p', 'm'], flux: [0] },
+        { t: ['Le modèle calcule la réponse token par token, avec ses poids figés. Rien n’est appris : demain, il ne saura pas que vous avez parlé.', 'The model computes the answer token by token, with its frozen weights. Nothing is learned: tomorrow it will not know you talked.'], on: ['m', 'r'], flux: [1] },
+      ],
+    },
+
+    'ia-fine-tuning': {
+      k: 'graphe',
+      gy: 70,
+      alt: ['Le fine-tuning poursuit l’entraînement d’un modèle de base sur un petit jeu de données spécialisé', 'Fine-tuning continues the training of a base model on a small specialized dataset'],
+      n: [
+        { id: 'b', t: ['Modèle\nde base', 'Base\nmodel'], c: 0, r: 0.5, s: 'v', w: 86 },
+        { id: 'd', t: ['Petit jeu de données\nspécialisé', 'Small specialized\ndataset'], c: 1, r: 0, f: 'db', s: 'a', w: 130, h: 60, sz: 11 },
+        { id: 'f', t: 'Fine-tuning', c: 1, r: 1, s: 'warn', w: 100 },
+        { id: 's', t: ['Modèle\nspécialisé', 'Specialized\nmodel'], c: 2, r: 0.5, s: 'ok', w: 96 },
+      ],
+      e: [['b', 'f', '', 'v'], ['d', 'f', '', 'a'], ['f', 's', '', 'ok']],
+      anim: [
+        { t: ['On part d’un modèle déjà entraîné sur tout le web : il sait parler, il ne connaît pas votre métier.', 'You start from a model already trained on the whole web: it can talk, it does not know your trade.'], on: ['b'] },
+        { t: ['On lui montre quelques milliers d’exemples de ce qu’on veut : vos tickets de support, vos contrats, votre style.', 'You show it a few thousand examples of what you want: your support tickets, your contracts, your style.'], on: ['b', 'd', 'f'], flux: [0, 1] },
+        { t: ['Quelques heures de calcul : un modèle qui a votre ton et votre vocabulaire. Pour des faits à jour, un RAG suffit souvent.', 'A few hours of compute: a model with your tone and vocabulary. For up-to-date facts, a RAG is often enough.'], on: ['f', 's'], flux: [2] },
+      ],
+    },
+
+    'ia-hallucination': {
+      k: 'sequence',
+      lh: 48,
+      alt: ['Une hallucination : le modèle répond avec aplomb une fonction qui n’existe pas', 'A hallucination: the model confidently answers with a function that does not exist'],
+      a: [['Vous', 'You'], ['Modèle', 'Model']],
+      s: ['a', 'v'],
+      m: [
+        [0, 1, ['« Quelle méthode JS trie sans modifier le tableau ? »', '“Which JS method sorts without changing the array?”']],
+        [1, 0, ['« Array.prototype.sortBy() »', '“Array.prototype.sortBy()”'], 'bad dash'],
+        [0, 0, ['vérification : elle n’existe pas', 'check: it does not exist'], 'warn'],
+        ['note', 0, 1, ['Plausible, assuré, faux : le modèle prédit du texte probable, pas du texte vrai. Vérifiez, testez, demandez les sources. (La bonne réponse : toSorted().)', 'Plausible, confident, wrong: the model predicts likely text, not true text. Verify, test, ask for sources. (The right answer: toSorted().)']],
+      ],
+      anim: [
+        { t: ['Une question précise, à laquelle il existe une bonne réponse.', 'A precise question, which has a correct answer.'], flux: [0] },
+        { t: ['Le modèle répond avec aplomb un nom qui ressemble à ce qui devrait exister. Le ton ne dit rien de la vérité.', 'The model confidently answers a name that looks like what should exist. The tone says nothing about the truth.'], flux: [1] },
+        { t: ['La console tranche : « sortBy is not a function ». Pour du code, le test vaut toute confiance.', 'The console settles it: “sortBy is not a function”. For code, a test beats any trust.'], on: [2, 3] },
+      ],
+    },
+
+    'ia-prompt': {
+      k: 'pile',
+      alt: ['Un prompt utile se lit de haut en bas : rôle, contexte, tâche, format attendu', 'A useful prompt reads top to bottom: role, context, task, expected format'],
+      piles: [{
+        t: ['Un prompt utile, de haut en bas', 'A useful prompt, top to bottom'],
+        layers: [
+          { t: ['Rôle', 'Role'], d: ['« Tu es un relecteur de code expérimenté. »', '“You are an experienced code reviewer.”'], s: 'v' },
+          { t: ['Contexte', 'Context'], d: ['le fichier, l’erreur, ce qui a déjà été essayé', 'the file, the error, what was already tried'], s: 'a' },
+          { t: ['Tâche', 'Task'], d: ['« Trouve pourquoi le test échoue. »', '“Find why the test fails.”'], s: 'ok' },
+          { t: ['Format attendu', 'Expected format'], d: ['« Trois points, puis le code corrigé. »', '“Three points, then the fixed code.”'], s: 'warn' },
+        ],
+      }],
+      anim: [
+        { t: ['Le rôle oriente le ton et le niveau : relecteur, professeur, traducteur.', 'The role sets the tone and the level: reviewer, teacher, translator.'], on: [0] },
+        { t: ['Le contexte est ce qui manque le plus souvent : sans le code et l’erreur, le modèle devine.', 'Context is what is most often missing: without the code and the error, the model guesses.'], on: [1] },
+        { t: ['La tâche, précise et unique. Une question, pas trois.', 'The task, precise and single. One question, not three.'], on: [2] },
+        { t: ['Le format : ce que vous voulez recevoir, pour ne pas avoir à le redemander.', 'The format: what you want to receive, so you do not have to ask again.'], on: [3] },
+      ],
+    },
+
+    'ia-machine-learning': {
+      k: 'graphe',
+      gy: 80,
+      alt: ['Programmation classique : des règles écrites à la main produisent des réponses ; apprentissage automatique : des données et des réponses connues produisent des règles', 'Classic programming: hand-written rules produce answers; machine learning: data and known answers produce rules'],
+      n: [
+        { id: 'r', t: ['Règles\nà la main', 'Hand-written\nrules'], c: 0, r: 0, s: 'a', w: 90, sz: 11 },
+        { id: 'd', t: ['Données', 'Data'], c: 1, r: 0, s: 'mute', w: 80 },
+        { id: 'o', t: ['Réponses', 'Answers'], c: 2, r: 0, s: 'ok', w: 80 },
+        { id: 'd2', t: ['Données', 'Data'], c: 0, r: 1, s: 'mute', w: 80 },
+        { id: 'a', t: ['Réponses\nconnues', 'Known\nanswers'], c: 1, r: 1, s: 'ok', w: 90, sz: 11 },
+        { id: 'r2', t: ['Règles\napprises', 'Learned\nrules'], c: 2, r: 1, s: 'v', w: 90, sz: 11 },
+      ],
+      e: [['r', 'd', '', 'a sans'], ['d', 'o', ['programme', 'program'], 'ok'], ['d2', 'a', '', 'mute sans'], ['a', 'r2', ['apprentissage', 'learning'], 'v']],
+      g: [{ t: ['Programmation classique', 'Classic programming'], ids: ['r', 'd', 'o'] }, { t: ['Apprentissage automatique', 'Machine learning'], ids: ['d2', 'a', 'r2'] }],
+      anim: [
+        { t: ['Classique : vous écrivez les règles (« si le mail contient “gratuit”, c’est du spam »), le programme les applique aux données.', 'Classic: you write the rules (“if the email contains ‘free’, it is spam”), the program applies them to the data.'], on: ['r', 'd', 'o'], flux: [1] },
+        { t: ['Apprentissage : vous donnez des milliers de mails déjà classés ; l’algorithme en déduit les règles, que personne n’a écrites.', 'Learning: you give thousands of already-labelled emails; the algorithm derives the rules, which nobody wrote.'], on: ['d2', 'a', 'r2'], flux: [3] },
+      ],
+    },
+
+    'ia-sous-agent': {
+      k: 'arbre',
+      w: 104,
+      alt: ['Un agent principal délègue des sous-tâches à des sous-agents, qui ne rapportent que leur conclusion', 'A main agent delegates subtasks to sub-agents, which only report their conclusion'],
+      mono: false,
+      racine: {
+        t: ['Agent principal', 'Main agent'], s: 'a', k: [
+          { t: ['explore\nle dépôt', 'explores\nthe repo'], s: 'ok' },
+          { t: ['lance\nles tests', 'runs\nthe tests'], s: 'ok' },
+          { t: ['relit\nle code', 'reviews\nthe code'], s: 'ok' },
+        ],
+      },
+      l: ['Chaque sous-agent a son propre contexte, vide au départ, et ne renvoie que sa conclusion.', 'Each sub-agent has its own context, empty at the start, and returns only its conclusion.'],
+      anim: [
+        { t: ['L’agent principal garde la vue d’ensemble et le fil de la conversation.', 'The main agent keeps the big picture and the thread of the conversation.'], on: ['n0'] },
+        { t: ['Il confie des sous-tâches à des sous-agents, en parallèle. Chacun lit des dizaines de fichiers sans encombrer le contexte du principal, et rapporte en quelques lignes.', 'It hands subtasks to sub-agents, in parallel. Each reads dozens of files without cluttering the main one’s context, and reports back in a few lines.'], on: ['n0', 'n1', 'n2', 'n3'], flux: ['n1', 'n2', 'n3'] },
+      ],
     },
 
   });

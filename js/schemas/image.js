@@ -190,5 +190,97 @@
       ],
     },
 
+    'image-hex': {
+      k: 'cases',
+      alt: ['Une couleur hexadécimale découpée en rouge, vert, bleu, et sa forme rgb()', 'A hexadecimal color split into red, green, blue, and its rgb() form'],
+      rows: [
+        { t: '#2457d6', cells: ['24', '57', 'd6'], s: ['bad', 'ok', 'a'], cap: [['rouge : 36', 'red: 36'], ['vert : 87', 'green: 87'], ['bleu : 214', 'blue: 214']], w: 70, sz: 16 },
+        { sep: '= rgb(36, 87, 214)', s: 'a' },
+        { cells: ['#fff', '#ffffff'], s: ['mute', 'mute'], w: 90, sz: 13, cap: [['forme courte', 'short form'], ['= blanc', '= white']] },
+      ],
+      anim: [
+        { t: ['Six chiffres hexadécimaux : deux par composante, de 00 (rien) à ff (255, le maximum).', 'Six hexadecimal digits: two per component, from 00 (none) to ff (255, the maximum).'], on: [0] },
+        { t: ['24 = 36 de rouge, 57 = 87 de vert, d6 = 214 de bleu : un bleu franc. #fff abrège #ffffff, le blanc.', '24 = 36 red, 57 = 87 green, d6 = 214 blue: a strong blue. #fff abbreviates #ffffff, white.'], on: [1, 2] },
+      ],
+    },
+
+    'image-exif': {
+      k: 'arbre',
+      mode: 'liste',
+      alt: ['Les métadonnées EXIF d’une photo : date, appareil, orientation, position GPS', 'A photo’s EXIF metadata: date, camera, orientation, GPS position'],
+      racine: {
+        t: 'photo.jpg', d: true, k: [
+          { t: 'Date', c: '2024-06-12 14:03' },
+          { t: ['Appareil', 'Camera'], c: 'Pixel 8' },
+          { t: 'Orientation', c: ['6 : à tourner de 90°', '6: rotate by 90°'] },
+          { t: 'GPS', c: ['45.76, 4.83 — à retirer avant de publier', '45.76, 4.83 — strip before publishing'], cs: 'bad' },
+        ],
+      },
+      anim: [
+        { t: ['L’appareil écrit dans le fichier ce qu’il sait : quand, avec quoi, dans quel sens tenir l’image.', 'The camera writes into the file what it knows: when, with what, which way up the picture goes.'], on: ['n0', 'n1', 'n2', 'n3'] },
+        { t: ['Et souvent où. Une photo publiée telle quelle dit où vous habitez. Les réseaux sociaux effacent les EXIF ; un site perso, pas forcément.', 'And often where. A photo published as is says where you live. Social networks strip EXIF; a personal site, not necessarily.'], on: ['n4'] },
+      ],
+    },
+
+    'image-gif': {
+      k: 'dessin',
+      h: 140,
+      animDur: 700,
+      alt: ['Un GIF animé : quatre images affichées l’une après l’autre, en boucle', 'An animated GIF: four frames shown one after the other, in a loop'],
+      d: [
+        ['rect', 14, 20, 70, 70, { s: 'mute', r: 6 }],
+        ['circ', 49, 40, 10, { s: 'a' }],
+        ['rect', 98, 20, 70, 70, { s: 'mute', r: 6 }],
+        ['circ', 133, 60, 10, { s: 'a' }],
+        ['rect', 182, 20, 70, 70, { s: 'mute', r: 6 }],
+        ['circ', 217, 78, 10, { s: 'a' }],
+        ['rect', 266, 20, 70, 70, { s: 'mute', r: 6 }],
+        ['circ', 301, 60, 10, { s: 'a' }],
+        ['text', 49, 108, ['image 1', 'frame 1'], { sz: 9.5, s: 'mute' }],
+        ['text', 133, 108, ['image 2', 'frame 2'], { sz: 9.5, s: 'mute' }],
+        ['text', 217, 108, ['image 3', 'frame 3'], { sz: 9.5, s: 'mute' }],
+        ['text', 301, 108, ['image 4', 'frame 4'], { sz: 9.5, s: 'mute' }],
+        ['text', 180, 130, ['100 ms par image, en boucle · 256 couleurs par image, pas plus', '100 ms per frame, looping · 256 colors per frame, no more'], { sz: 10, s: 'mute', max: 340 }],
+      ],
+      anim: [
+        { t: ['Image 1 : la balle en haut.', 'Frame 1: the ball at the top.'], on: [0, 1, 8] },
+        { t: ['Image 2 : elle descend.', 'Frame 2: it comes down.'], on: [2, 3, 9] },
+        { t: ['Image 3 : elle touche le sol.', 'Frame 3: it hits the ground.'], on: [4, 5, 10] },
+        { t: ['Image 4 : elle remonte. Puis on recommence : lisez l’animation en boucle, c’est un GIF.', 'Frame 4: it bounces back up. Then it starts over: play the animation on a loop, that is a GIF.'], on: [6, 7, 11, 12] },
+      ],
+    },
+
+    'image-ratio': {
+      k: 'dessin',
+      h: 176,
+      alt: ['Quatre rapports largeur sur hauteur, à hauteur égale : 16:9, 4:3, 9:16 et 1:1', 'Four width-to-height ratios, at equal height: 16:9, 4:3, 9:16 and 1:1'],
+      d: [
+        ['rect', 8, 20, 160, 90, { s: 'a', t: '16:9', sz: 12 }],
+        ['rect', 176, 20, 120, 90, { s: 'v', t: '4:3', sz: 12 }],
+        ['rect', 302, 20, 50, 90, { s: 'warn', t: '9:16', sz: 10 }],
+        ['rect', 8, 124, 45, 45, { s: 'ok', t: '1:1', sz: 10 }],
+        ['text', 66, 140, ['Même hauteur, largeurs différentes. 16:9 = 1,78 (écrans, vidéo) · 4:3 = 1,33 · 1:1 = carré · 9:16 = vertical (téléphone).', 'Same height, different widths. 16:9 = 1.78 (screens, video) · 4:3 = 1.33 · 1:1 = square · 9:16 = vertical (phone).'], { a: 's', sz: 9.5, s: 'mute', max: 286 }],
+      ],
+      anim: [
+        { t: ['16:9 : seize unités de large pour neuf de haut. Les écrans, la vidéo.', '16:9: sixteen units wide for nine high. Screens, video.'], on: [0] },
+        { t: ['4:3 : plus carré, l’ancienne télévision. 1:1 : le carré, les avatars.', '4:3: squarer, the old television. 1:1: the square, avatars.'], on: [1, 3] },
+        { t: ['9:16 : le 16:9 tourné, le téléphone tenu droit. Recadrer sans respecter le rapport, c’est déformer.', '9:16: the 16:9 turned round, the phone held upright. Cropping without keeping the ratio means distorting.'], on: [2, 4] },
+      ],
+    },
+
+    'image-resolution': {
+      k: 'cases',
+      alt: ['La résolution d’une image : largeur fois hauteur en pixels, et la densité pour l’impression ou l’écran', 'An image’s resolution: width times height in pixels, and the density for print or screen'],
+      rows: [
+        { t: ['Largeur × hauteur', 'Width × height'], cells: ['1080', '×', '1920'], s: ['a', '', 'a'], w: 80, sz: 14, cap: [['pixels de large', 'pixels wide'], '', ['pixels de haut', 'pixels high']] },
+        { sep: ['= 2 073 600 pixels (2 mégapixels)', '= 2,073,600 pixels (2 megapixels)'], s: 'ok' },
+        { cells: [['300 ppp pour imprimer', '300 ppi for print'], ['72–96 ppp à l’écran', '72–96 ppi on screen']], s: ['v', 'v'], w: 150, sz: 10.5, mono: false },
+      ],
+      anim: [
+        { t: ['Une image de 1080 par 1920 pixels : deux millions de points, chacun avec sa couleur.', 'An image of 1080 by 1920 pixels: two million dots, each with its color.'], on: [0, 1] },
+        { t: ['La même image imprimée à 300 points par pouce fait 9 cm de large ; à l’écran, ce sont les pixels qui comptent, pas les centimètres.', 'The same image printed at 300 dots per inch is 9 cm wide; on screen, pixels count, not centimeters.'], on: [2] },
+      ],
+    },
+
   });
 })(window);

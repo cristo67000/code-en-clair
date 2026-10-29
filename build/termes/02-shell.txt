@@ -27,6 +27,8 @@ nom-fr: interpréteur de commandes
 alias: interpréteur de commandes, coquille, sh, ksh, fish, zsh
 fr: Programme qui sert d'interface entre vous et le système d'exploitation : il lit vos commandes, les exécute et affiche le résultat. Bash, Zsh, Fish et PowerShell sont des shells.
 en: A program that acts as an interface between you and the operating system: it reads your commands, runs them and displays the result. Bash, Zsh, Fish and PowerShell are shells.
++fr: Bash est le shell par défaut de la plupart des Linux, Zsh celui de macOS, PowerShell celui de Windows. Les commandes de base (cd, ls, cat) sont les mêmes dans les deux premiers ; PowerShell les accepte aussi, par des alias.
++en: Bash is the default shell on most Linux systems, Zsh on macOS, PowerShell on Windows. The basic commands (cd, ls, cat) are the same in the first two; PowerShell accepts them too, through aliases.
 voir: bash, terminal, cli, powershell
 schema: shell-terminal
 
@@ -36,6 +38,8 @@ nom: Terminal
 alias: console, émulateur de terminal, terminal emulator, tty, invite de commandes, cmd
 fr: Fenêtre dans laquelle on tape des commandes et où s'affichent leurs résultats. Le terminal ne comprend rien lui-même : il transmet le texte au shell qui tourne dedans.
 en: A window in which you type commands and where their results appear. The terminal understands nothing itself: it passes the text to the shell running inside it.
++fr: Terminal, console, invite de commandes, shell : on mélange les mots. Le terminal est la fenêtre ; le shell est le programme qui lit les commandes dedans.
++en: Terminal, console, command prompt, shell: the words get mixed up. The terminal is the window; the shell is the program reading the commands inside it.
 voir: shell, bash, cli, powershell
 schema: shell-terminal
 
@@ -53,6 +57,7 @@ ex: bash
 | npm --version
 | git status
 voir: terminal, shell, argument, script
+schema: shell-commande
 
 @ powershell
 cat: shell
@@ -67,6 +72,7 @@ ex-en: List the PNG files keeping only their name and size (object properties).
 attention-fr: Ses commandes s'écrivent Verbe-Nom (Get-ChildItem) et ne sont pas celles de Bash, même si certains alias comme ls existent.
 attention-en: Its commands are written Verb-Noun (Get-ChildItem) and are not Bash's, even though some aliases such as ls exist.
 voir: shell, bash, terminal, script
+schema: shell-terminal
 
 @ argument
 cat: shell
@@ -125,6 +131,8 @@ nom-fr: tube
 alias: tube, |, pipeline, chaîner des commandes, barre verticale
 fr: Opérateur « | » qui envoie la sortie d'une commande directement en entrée de la suivante. On construit ainsi un traitement complexe en enchaînant de petites commandes simples.
 en: The “|” operator that sends one command's output straight into the next command's input. A complex job is thus built by chaining small, simple commands.
++fr: Avec un tube, les commandes tournent en même temps : la seconde commence à lire dès que la première produit. tee écrit dans un fichier tout en passant le texte à la suivante.
++en: With a pipe, the commands run at the same time: the second starts reading as soon as the first produces. tee writes to a file while passing the text on to the next.
 ex: bash
 | cat journal.txt | grep ERREUR | sort | uniq -c
 ex-fr: Lire un journal, ne garder que les lignes contenant ERREUR, les trier, puis compter les doublons.
@@ -138,6 +146,8 @@ nom: Redirection
 alias: >, >>, <, chevron, rediriger, redirect output
 fr: Renvoi de l'entrée ou de la sortie d'une commande vers un fichier au lieu du clavier ou de l'écran. > écrit dans un fichier en l'écrasant, >> ajoute à la fin, < lit un fichier comme entrée.
 en: Sending a command's input or output to a file instead of the keyboard or the screen. > writes to a file, overwriting it, >> appends to the end, < reads a file as input.
++fr: >> ajoute à la fin d'un fichier au lieu de l'écraser ; 2>&1 envoie les erreurs au même endroit que la sortie ; > /dev/null jette la sortie.
++en: >> appends to a file instead of overwriting it; 2>&1 sends the errors to the same place as the output; > /dev/null throws the output away.
 ex: bash
 | echo "première ligne" > notes.txt
 | echo "seconde ligne" >> notes.txt
@@ -173,6 +183,8 @@ nom: PATH
 alias: variable PATH, $PATH, chemin de recherche, %PATH%
 fr: Variable d'environnement qui liste les dossiers où le shell cherche un programme quand vous tapez son nom. Elle explique pourquoi « commande introuvable » apparaît quand un outil n'est pas installé dans l'un d'eux.
 en: An environment variable listing the folders where the shell looks for a program when you type its name. It explains why “command not found” appears when a tool is not installed in one of them.
++fr: echo $PATH l'affiche ; which git (where sous Windows) dit quel fichier sera lancé. On ajoute un dossier au PATH dans .bashrc, .zshrc ou les variables d'environnement de Windows.
++en: echo $PATH shows it; which git (where on Windows) says which file will be run. You add a folder to PATH in .bashrc, .zshrc or Windows' environment variables.
 ex: bash
 | echo $PATH
 | which git
@@ -220,6 +232,7 @@ ex-en: Slash in a URL, backslash in a Windows path, backslash to escape a quote 
 attention-fr: Dans une URL ou un chemin Unix, on n'utilise jamais l'antislash ; l'inverse est toléré sous Windows.
 attention-en: In a URL or a Unix path, never use the backslash; the reverse is tolerated on Windows.
 voir: chemin, echappement, slash-command, url
+schema: shell-slash
 
 @ echappement
 cat: shell
@@ -235,6 +248,7 @@ ex: js
 ex-fr: Un guillemet et un saut de ligne échappés ; un antislash littéral doublé ; le caractère é écrit par son code Unicode.
 ex-en: An escaped quote and line break; a literal backslash doubled; the character é written by its Unicode code.
 voir: slash, regex, unicode, saut-de-ligne
+schema: shell-echappement
 
 @ script
 cat: shell
@@ -251,6 +265,7 @@ ex: bash
 ex-fr: Un petit script de build : il s'arrête à la première erreur (set -e), installe, teste, puis construit.
 ex-en: A small build script: it stops at the first error (set -e), installs, tests, then builds.
 voir: bash, shebang, cli, code-de-sortie
+schema: shell-script
 
 @ shebang
 cat: shell
@@ -266,6 +281,7 @@ ex-en: An executable Python script: env finds python3 in the PATH, wherever it i
 +fr: Pour que le script s'exécute directement, il faut aussi lui donner le droit d'exécution avec chmod +x.
 +en: For the script to run directly, it must also be given execute permission with chmod +x.
 voir: script, chmod, bash, path
+schema: shell-script
 
 @ chmod
 cat: shell
@@ -274,6 +290,8 @@ nom-fr: droits d'accès
 alias: permissions, droits, rwx, chmod +x, 755, 644, permissions unix, exécutable
 fr: Commande qui change les droits d'un fichier sous Unix : lire (r), écrire (w), exécuter (x), séparément pour le propriétaire, son groupe et les autres. Chaque droit vaut un chiffre : 4, 2, 1, additionnés.
 en: A command that changes a file's permissions on Unix: read (r), write (w), execute (x), separately for the owner, their group and everyone else. Each permission is a number: 4, 2, 1, added together.
++fr: chmod +x script.sh ajoute le droit d'exécution pour tout le monde ; chmod 600 cle rend un fichier lisible par son seul propriétaire, ce que SSH exige pour une clé privée.
++en: chmod +x script.sh adds the execute permission for everyone; chmod 600 key makes a file readable by its owner only, which SSH requires for a private key.
 ex: bash
 | chmod +x deploy.sh
 | chmod 644 index.html
@@ -297,6 +315,7 @@ ex-en: Update the system's package list, an operation reserved for the administr
 attention-fr: Ne collez jamais dans un terminal, avec sudo, une commande dont vous ne comprenez pas l'effet, surtout tirée d'une page web.
 attention-en: Never paste into a terminal, with sudo, a command whose effect you do not understand, especially one taken from a web page.
 voir: chmod, moindre-privilege, shell
+schema: shell-sudo
 
 @ glob
 cat: shell
@@ -314,6 +333,7 @@ ex-en: All PNGs in the folder, files photo-1.jpg to photo-9.jpg, all JS files un
 attention-fr: Un glob n'est pas une expression régulière : * y veut dire « n'importe quoi », alors qu'en regex il répète le signe précédent.
 attention-en: A glob is not a regular expression: * means “anything” there, whereas in a regex it repeats the previous character.
 voir: regex, grep, gitignore
+schema: shell-glob
 
 @ code-de-sortie
 cat: shell
@@ -329,6 +349,7 @@ ex: bash
 ex-fr: Lire le code de la dernière commande (0 si trouvé, 1 sinon) ; enchaîner selon la réussite (&&) ou l'échec (||).
 ex-en: Read the last command's code (0 if found, 1 otherwise); chain depending on success (&&) or failure (||).
 voir: script, ci-cd, hook, flux-standard
+schema: shell-code-sortie
 
 @ heredoc
 cat: shell
@@ -345,6 +366,7 @@ ex: bash
 ex-fr: Écrire un fichier de deux lignes ; les apostrophes autour de EOF empêchent l'interprétation de $USER.
 ex-en: Write a two-line file; the quotes around EOF prevent $USER from being interpreted.
 voir: redirection, script, echappement
+schema: shell-heredoc
 
 @ grep
 cat: shell
@@ -352,6 +374,8 @@ nom: grep
 alias: ripgrep, rg, findstr, recherche de texte, recherche dans les fichiers
 fr: Commande qui cherche dans des fichiers ou dans un flux les lignes contenant un motif (un texte ou une expression régulière) et les affiche.
 en: A command that searches files or a stream for lines containing a pattern (a text or a regular expression) and prints them.
++fr: grep -r cherche dans tout un dossier, -i ignore la casse, -n numérote les lignes, -v garde les lignes qui ne correspondent pas. ripgrep (rg) fait la même chose, beaucoup plus vite.
++en: grep -r searches a whole folder, -i ignores case, -n numbers the lines, -v keeps the lines that do not match. ripgrep (rg) does the same, much faster.
 ex: bash
 | grep -rn "TODO" src/
 | grep -i "erreur" journal.txt
@@ -359,6 +383,7 @@ ex: bash
 ex-fr: Chercher TODO dans tout src avec numéros de ligne ; sans tenir compte de la casse ; filtrer un historique Git.
 ex-en: Search for TODO throughout src with line numbers; ignoring case; filter a Git history.
 voir: regex, pipe, glob, flux-standard
+schema: shell-grep
 
 @ curl
 cat: shell
@@ -366,6 +391,8 @@ nom: curl
 alias: wget, requête en ligne de commande, télécharger, http client
 fr: Outil en ligne de commande qui envoie une requête vers une adresse (HTTP, HTTPS, FTP…) et affiche ou enregistre la réponse. Il sert à télécharger un fichier ou à tester une API.
 en: A command-line tool that sends a request to an address (HTTP, HTTPS, FTP…) and displays or saves the response. It is used to download a file or to test an API.
++fr: curl -I n'affiche que les en-têtes de la réponse ; curl -L suit les redirections ; curl -o fichier enregistre au lieu d'afficher. Beaucoup d'API documentent leurs exemples avec curl.
++en: curl -I shows only the response headers; curl -L follows redirects; curl -o file saves instead of printing. Many APIs document their examples with curl.
 ex: bash
 | curl -I https://exemple.org
 | curl -X POST -H "Content-Type: application/json" -d '{"nom":"Zoé"}' https://exemple.org/api
@@ -373,6 +400,7 @@ ex: bash
 ex-fr: Lire les en-têtes seuls, envoyer un JSON en POST, enregistrer la page dans un fichier.
 ex-en: Read only the headers, send JSON as a POST, save the page to a file.
 voir: http, methode-http, header, api
+schema: shell-curl
 
 @ ssh
 cat: shell
@@ -389,6 +417,7 @@ ex: bash
 ex-fr: Créer une paire de clés, puis se connecter à un serveur.
 ex-en: Create a key pair, then connect to a server.
 voir: cle-publique-privee, chiffrement, terminal, remote
+schema: shell-ssh
 
 @ cron
 cat: shell
@@ -401,6 +430,7 @@ ex: text
 ex-fr: Lancer le script de sauvegarde à 2 h 30, du lundi au vendredi.
 ex-en: Run the backup script at 02:30, Monday to Friday.
 voir: script, processus, ci-cd
+schema: shell-cron
 
 @ processus
 cat: shell
@@ -418,6 +448,7 @@ ex-en: List the node processes, stop process 4242, start a server in the backgro
 attention-fr: Un processus n'est pas un fil d'exécution (thread) : les threads d'un même processus partagent sa mémoire.
 attention-en: A process is not a thread: the threads of one process share its memory.
 voir: thread, shell, cron
+schema: shell-processus
 
 @ slash-command
 cat: shell
@@ -449,3 +480,163 @@ ex-fr: Une ligne de .gitattributes qui impose LF dans le dépôt, quel que soit 
 ex-en: A .gitattributes line that enforces LF in the repository, whatever each person's system.
 voir: gitattributes, echappement, ascii, encodage
 schema: data-saut-de-ligne
+
+# ── Ajoutés en 1.2.0 : les commandes de base ──────────────────────────────
+
+@ ls
+cat: shell
+nom: ls
+alias: lister, dir, liste des fichiers, ls -la, get-childitem
+fr: Commande qui liste le contenu d'un dossier. -l détaille chaque entrée (droits, taille, date), -a montre aussi les fichiers cachés (ceux qui commencent par un point), -h rend les tailles lisibles. Sous PowerShell : dir ou Get-ChildItem.
+en: A command that lists a folder's contents. -l details each entry (permissions, size, date), -a also shows hidden files (those starting with a dot), -h makes sizes readable. In PowerShell: dir or Get-ChildItem.
+ex: bash
+| ls -la
+| ls -lh src/
+ex-fr: Tout le dossier courant, fichiers cachés compris, en détail ; puis le dossier src avec des tailles en Ko et Mo.
+ex-en: The whole current folder, hidden files included, in detail; then the src folder with sizes in KB and MB.
+voir: chemin, cd, dotfile, chmod
+
+@ cd
+cat: shell
+nom: cd
+dev: change directory
+alias: changer de dossier, se déplacer, répertoire courant, cd .., cd -
+fr: Commande qui change le dossier courant, celui dans lequel les commandes suivantes agiront. cd .. remonte d'un niveau, cd seul (ou cd ~) ramène au dossier personnel, cd - revient au dossier précédent.
+en: A command that changes the current folder, the one the following commands will act in. cd .. goes up one level, cd alone (or cd ~) returns to the home folder, cd - goes back to the previous folder.
+ex: bash
+| cd projets/lexicode
+| cd ..
+| cd -
+ex-fr: Entrer dans le projet, remonter d'un dossier, revenir là où l'on était.
+ex-en: Enter the project, go up one folder, come back to where you were.
+voir: chemin, pwd, ls, slash
+
+@ pwd
+cat: shell
+nom: pwd
+dev: print working directory
+alias: dossier courant, où suis-je, répertoire courant, get-location
+fr: Commande qui affiche le chemin complet du dossier courant : « où suis-je ? ». Utile quand l'invite ne le montre pas, ou dans un script, pour s'assurer qu'on agit au bon endroit avant une commande qui supprime.
+en: A command that prints the full path of the current folder: “where am I?”. Useful when the prompt does not show it, or in a script, to make sure you are in the right place before a command that deletes.
+ex: bash
+| pwd
+| # /home/zoe/projets/lexicode
+ex-fr: Le chemin absolu du dossier où l'on se trouve.
+ex-en: The absolute path of the folder you are in.
+voir: cd, chemin, ls
+
+@ mkdir
+cat: shell
+nom: mkdir
+dev: make directory
+alias: créer un dossier, nouveau dossier, mkdir -p, new-item
+fr: Commande qui crée un dossier. Avec -p, elle crée aussi les dossiers intermédiaires manquants (mkdir -p a/b/c) et ne proteste pas si le dossier existe déjà : la forme sûre dans un script.
+en: A command that creates a folder. With -p, it also creates the missing intermediate folders (mkdir -p a/b/c) and does not complain if the folder already exists: the safe form in a script.
+ex: bash
+| mkdir -p src/schemas
+ex-fr: Créer src/schemas, et src avant s'il n'existait pas.
+ex-en: Create src/schemas, and src first if it did not exist.
+voir: chemin, ls, rm
+
+@ rm
+cat: shell
+nom: rm
+dev: remove
+alias: supprimer, effacer, rm -rf, rmdir, remove-item
+fr: Commande qui supprime des fichiers, sans corbeille ni confirmation. -r descend dans les dossiers, -f force sans demander : rm -rf dossier efface tout ce qu'il contient, définitivement. À relire deux fois avant d'appuyer sur Entrée.
+en: A command that deletes files, with no recycle bin and no confirmation. -r goes down into folders, -f forces without asking: rm -rf folder erases everything in it, for good. Read it twice before pressing Enter.
+ex: bash
+| rm notes.bak
+| rm -r build/
+| rm -rf node_modules
+ex-fr: Un fichier ; un dossier et son contenu ; un dossier qu'on sait pouvoir reconstruire, sans qu'aucune question soit posée.
+ex-en: A file; a folder and its contents; a folder you know you can rebuild, with no question asked.
+attention-fr: rm -rf / , ou rm -rf avec une variable vide (rm -rf $DOSSIER/), peut effacer le système entier : il n'y a pas de retour en arrière. Dans un dépôt Git, les fichiers suivis se récupèrent ; les autres, non.
+attention-en: rm -rf /, or rm -rf with an empty variable (rm -rf $DOSSIER/), can erase the whole system: there is no way back. In a Git repository, tracked files can be recovered; the others cannot.
+voir: ls, mkdir, glob, sudo
+
+@ cat
+cat: shell
+nom: cat
+dev: concatenate
+alias: afficher un fichier, lire un fichier, less, head, tail, tail -f
+fr: Commande qui affiche le contenu d'un ou plusieurs fichiers à la suite. Pour un long fichier, less le montre page par page ; head en montre le début, tail la fin — et tail -f suit un journal en direct, ligne après ligne.
+en: A command that prints the contents of one or more files one after the other. For a long file, less shows it page by page; head shows the beginning, tail the end — and tail -f follows a log live, line after line.
+ex: bash
+| cat .gitignore
+| head -n 20 journal.txt
+| tail -f journal.txt
+ex-fr: Afficher un petit fichier ; les vingt premières lignes d'un autre ; suivre un journal pendant qu'il s'écrit.
+ex-en: Print a small file; the first twenty lines of another; follow a log while it is being written.
+voir: pipe, redirection, grep, flux-standard
+
+@ man
+cat: shell
+nom: man
+dev: manual
+alias: manuel, aide d'une commande, --help, documentation d'une commande, page de manuel
+fr: Commande qui ouvre le manuel d'une autre : man grep décrit chaque option de grep. La plupart des programmes répondent aussi à --help, en plus court. On se déplace avec les flèches, on cherche avec /, on quitte avec q.
+en: A command that opens another command's manual: man grep describes every grep option. Most programs also answer --help, more briefly. You move with the arrows, search with /, quit with q.
+ex: bash
+| man grep
+| git --help
+| git commit -h
+ex-fr: Le manuel complet de grep ; l'aide générale de Git ; l'aide courte d'une sous-commande.
+ex-en: The full grep manual; Git's general help; a subcommand's short help.
+voir: cli, option, shell
+
+@ alias-shell
+cat: shell
+nom: Alias
+nom-fr: alias de commande
+alias: alias bash, raccourci de commande, .bashrc, .zshrc, alias git
+fr: Nom court défini dans le shell pour une commande longue : alias gs='git status'. Écrit dans .bashrc ou .zshrc, il est disponible dans chaque nouveau terminal. On gagne quelques lettres à chaque fois, des centaines de fois par jour.
+en: A short name defined in the shell for a long command: alias gs='git status'. Written in .bashrc or .zshrc, it is available in every new terminal. A few letters saved each time, hundreds of times a day.
+ex: bash
+| alias gs='git status'
+| alias ll='ls -lah'
+ex-fr: Deux alias classiques ; sans les écrire dans .bashrc, ils disparaissent à la fermeture du terminal.
+ex-en: Two classic aliases; unless written in .bashrc, they vanish when the terminal closes.
+attention-fr: Un alias Git (git config --global alias.co checkout) se définit dans la configuration de Git, et s'appelle git co ; ce n'est pas un alias du shell.
+attention-en: A Git alias (git config --global alias.co checkout) is defined in Git's configuration, and is called as git co; it is not a shell alias.
+voir: shell, dotfile, bash
+
+@ find
+cat: shell
+nom: find
+alias: chercher un fichier, trouver des fichiers, locate, fd, find -name
+fr: Commande qui cherche des fichiers par nom, taille, date ou type dans toute une arborescence, et peut exécuter une commande sur chacun. grep cherche dans le contenu des fichiers ; find cherche les fichiers eux-mêmes.
+en: A command that searches for files by name, size, date or type throughout a folder tree, and can run a command on each. grep searches inside file contents; find searches for the files themselves.
+ex: bash
+| find . -name "*.js" -not -path "./node_modules/*"
+| find . -type f -size +10M
+ex-fr: Tous les fichiers .js du projet, sauf dans node_modules ; tous les fichiers de plus de 10 Mo.
+ex-en: Every .js file in the project, except inside node_modules; every file larger than 10 MB.
+voir: grep, glob, chemin, xargs
+
+@ xargs
+cat: shell
+nom: xargs
+alias: passer en arguments, exécuter pour chaque ligne, xargs rm
+fr: Commande qui lit des lignes sur son entrée et les passe en arguments à une autre commande : find trouve des fichiers, xargs les donne à rm, à grep ou à git add. Le chaînon entre un flux de texte et une commande qui attend des arguments.
+en: A command that reads lines from its input and passes them as arguments to another command: find finds files, xargs hands them to rm, grep or git add. The link between a stream of text and a command that expects arguments.
+ex: bash
+| find . -name "*.tmp" | xargs rm
+| git ls-files | xargs wc -l
+ex-fr: Supprimer tous les fichiers temporaires trouvés ; compter les lignes de tous les fichiers suivis par Git.
+ex-en: Delete every temporary file found; count the lines of every file tracked by Git.
+voir: pipe, find, argument
+
+@ history
+cat: shell
+nom: history
+nom-fr: historique des commandes
+alias: historique, flèche haut, ctrl r, !!, commandes précédentes, recherche dans l'historique
+fr: Liste des commandes déjà tapées dans le shell, gardée d'une session à l'autre. Flèche haut les fait défiler, Ctrl R cherche dedans en tapant quelques lettres, !! répète la dernière — sudo !! la relance en administrateur quand on a oublié sudo.
+en: The list of commands already typed in the shell, kept from one session to the next. Up arrow scrolls through them, Ctrl R searches them as you type a few letters, !! repeats the last one — sudo !! reruns it as administrator when you forgot sudo.
+ex: bash
+| history | tail -n 20
+| sudo !!
+ex-fr: Les vingt dernières commandes ; relancer la précédente avec sudo.
+ex-en: The last twenty commands; rerun the previous one with sudo.
+voir: shell, sudo, terminal

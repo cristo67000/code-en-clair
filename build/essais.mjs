@@ -64,7 +64,9 @@ try {
   await demarrage();
   ok(await js('return Glossaire.termes.length') >= 300, 'le glossaire est chargé (' + await js('return Glossaire.termes.length') + ' termes)');
   ok(await js("return document.querySelectorAll('#liste .terme-ligne').length") === await js('return Glossaire.termes.length'), 'toute la liste est dessinée');
-  ok(await js("return document.querySelector('#compte').textContent") === '399 termes', 'le compteur dit « 399 termes »');
+  const nTous = await js('return Glossaire.termes.length');
+  const nGit = await js("return Glossaire.termes.filter((t) => t.c === 'git').length");
+  ok(await js("return document.querySelector('#compte').textContent") === nTous + ' termes', 'le compteur dit « ' + nTous + ' termes »');
   ok(await js("return document.getElementById('du-jour').hidden === false"), 'le terme du jour est affiché');
   ok(await js("return document.querySelectorAll('.lettre').length") > 15, 'des lettres séparent la liste');
   ok(await js("return document.documentElement.lang") === 'fr', 'langue française par défaut');
@@ -102,11 +104,11 @@ try {
 
   // ── Catégories ────────────────────────────────────────────────────────────
   await js("document.querySelectorAll('#filtres .filtre')[1].click(); return 1");
-  await attendre("document.getElementById('compte').textContent === '50 termes'", 3000, 'filtre Git : 50 termes');
-  ok(await js("return document.querySelectorAll('#liste .terme-ligne').length") === 50, 'le filtre Git montre 50 termes');
+  await attendre("document.getElementById('compte').textContent === '" + nGit + " termes'", 3000, 'filtre Git : ' + nGit + ' termes');
+  ok(await js("return document.querySelectorAll('#liste .terme-ligne').length") === nGit, 'le filtre Git montre ' + nGit + ' termes');
   ok(await js("return document.querySelectorAll('#filtres .filtre')[1].getAttribute('aria-pressed')") === 'true', 'la catégorie active est annoncée');
   await js("document.querySelectorAll('#filtres .filtre')[0].click(); return 1");
-  await attendre("document.getElementById('compte').textContent === '399 termes'", 3000, 'retour à tous les termes');
+  await attendre("document.getElementById('compte').textContent === '" + nTous + " termes'", 3000, 'retour à tous les termes');
 
   // ── Ce que la recherche montre et propose ─────────────────────────────────
   const tape = (texte) => js("const q = document.getElementById('q'); q.value = " + JSON.stringify(texte) + "; q.dispatchEvent(new Event('input')); return 1");
@@ -483,6 +485,23 @@ try {
   ok(/^lexicode-\d{4}-\d\d-\d\d\.json$/.test(exporte.telecharge && exporte.telecharge.nom), 'l’export nomme son fichier lexicode-AAAA-MM-JJ.json');
   ok(exporte.r.notes >= 2, 'l’export contient les notes');
 
+  // ── Les schémas animés dans la fiche ──────────────────────────────────────
+  await js("document.querySelector('#onglets [data-vue=glossaire]').click(); Fiche.ouvrir('git'); return 1");
+  await attendre("document.querySelector('#fiche figure.schema.anime .anim-barre')", 3000, 'schéma animé dans la fiche');
+  ok(await js("return document.querySelector('#fiche figure.schema .bloc-etiquette').textContent") === 'Schéma animé', 'la figure animée est annoncée comme telle');
+  const etape1 = await js("return document.querySelector('#fiche .anim-phrase').textContent");
+  await js("document.querySelector('#fiche .anim-suiv').click(); return 1");
+  ok(etape1.length > 10 && await js("return document.querySelector('#fiche .anim-phrase').textContent") !== etape1, 'l’étape suivante change le texte');
+  ok(await js("return document.querySelector('#fiche .anim-compte').textContent") === '2/5', 'le compteur suit l’étape');
+  ok(await js("return document.querySelectorAll('#fiche .schema-svg .a-on').length > 0 && document.querySelectorAll('#fiche .schema-svg.anime [data-a]:not(.a-on)').length > 0"), 'une étape allume certains éléments et estompe les autres');
+  ok(await js("return !!document.querySelector('#fiche .schema-svg .dpt animateMotion')"), 'un point circule sur la flèche en flux (SMIL)');
+  await js("document.querySelector('#fiche .schema-svg').dispatchEvent(new MouseEvent('click', { bubbles: true })); return 1");
+  ok(await js("return document.querySelector('#fiche .anim-compte').textContent") === '3/5', 'toucher la figure passe à l’étape suivante');
+  await js("document.querySelector('#fiche .anim-lire').click(); return 1");
+  ok(await js("return document.querySelector('#fiche .anim-lire').classList.contains('en-cours')"), 'la lecture automatique démarre');
+  await js('Fiche.fermer(); return 1');
+  await attendre('Fiche.ouverte === false', 3000);
+
   // ── Politique de confidentialité ─────────────────────────────────────────
   await ouvrir(BASE + 'confidentialite.html');
   ok(await js("return document.querySelectorAll('h1').length") === 2, 'la politique de confidentialité existe en deux langues');
@@ -513,9 +532,31 @@ try {
       }
       return { n: figures.length, erreurs, debordent: debordent.slice(0, 12), nb: debordent.length };
     `);
-    ok(bilanFigures.n >= 150, langue + ' : ' + bilanFigures.n + ' figures dessinées');
+    ok(bilanFigures.n >= 280, langue + ' : ' + bilanFigures.n + ' figures dessinées');
     ok(bilanFigures.erreurs.length === 0, langue + ' : figures en erreur : ' + bilanFigures.erreurs.join(', '));
     ok(bilanFigures.nb === 0, langue + ' : textes qui sortent du cadre : ' + bilanFigures.nb + ' — ' + bilanFigures.debordent.join(' ; '));
+    // les animations : chaque étape trouve ses adresses et allume quelque chose
+    const bilanAnims = await js(`
+      const r = { n: 0, erreurs: [], manquants: [], eteintes: [] };
+      for (const [nom, c] of Object.entries(window.Animations || {})) {
+        r.n += 1;
+        const spec = window.Schemas[nom];
+        try {
+          for (let i = 0; i < c.total; i += 1) {
+            c.aller(i);
+            const e = spec.anim[i];
+            if (!document.querySelector('#s-' + CSS.escape(nom) + ' .anim-phrase').textContent) r.erreurs.push(nom + ' : étape ' + i + ' sans texte');
+            if ((e.on || e.flux) && !c.allumes) r.eteintes.push(nom + ' : étape ' + i + ' n’allume rien');
+          }
+        } catch (e) { r.erreurs.push(nom + ' : ' + e.message); }
+        if (c.manquants.length) r.manquants.push(nom + ' : ' + [...new Set(c.manquants)].join(','));
+        c.aller(0);
+      }
+      return r;
+    `);
+    ok(bilanAnims.n >= 200, langue + ' : ' + bilanAnims.n + ' figures animées');
+    ok(bilanAnims.erreurs.length === 0 && bilanAnims.eteintes.length === 0, langue + ' : étapes en défaut : ' + bilanAnims.erreurs.concat(bilanAnims.eteintes).slice(0, 6).join(' ; '));
+    ok(bilanAnims.manquants.length === 0, langue + ' : adresses introuvables dans les animations : ' + bilanAnims.manquants.slice(0, 6).join(' ; '));
   }
 
   // ── Service worker et hors ligne réel ─────────────────────────────────────

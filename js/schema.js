@@ -27,12 +27,43 @@
  *
  * Les couleurs viennent de classes (`dn-a`, `dl-ok`, `dt-bad`…) que la feuille
  * de style relie aux variables du thème : clair et sombre sans une ligne ici.
+ *
+ * ── Les adresses, pour l'animation ─────────────────────────────────────────
+ *
+ * Chaque élément qu'une figure peut vouloir montrer à son tour — un nœud, une
+ * flèche, un commit, une case, une couche, un message — porte un attribut
+ * `data-a` : son adresse. Une figure animée (champ `anim`, voir
+ * js/animation.js) désigne par ces adresses ce que chaque étape allume ; le
+ * reste s'estompe. Les adresses sont celles que l'auteur de la figure a sous
+ * la main : l'identifiant d'un nœud, le rang d'une flèche (`e0`), d'un
+ * message (`m2`), d'une rangée (`r1`) ou d'une case (`r1:3`), d'une couche
+ * (`l0`, ou `p1l0` dans une seconde pile), d'un nœud d'arbre (`n3`, ou son
+ * `id`), d'une forme libre (`d4`, ou son `id`). Les traits portent aussi
+ * `data-d`, le chemin que suivra un point qui circule, et `data-s`, leur
+ * style, pour que ce point prenne leur couleur.
  */
 (function (racine) {
 
   const { svg } = Outils;
   const L = 360;               // largeur de la zone de dessin, en unités
   let compteur = 0;            // pour des identifiants de marqueurs uniques
+
+  /* Pose l'adresse d'un élément (voir l'en-tête), et pour un trait, le chemin
+   * du point qui circule et le style qu'il prendra. */
+  function marquer(noeud, adresse, style, d) {
+    if (!noeud) return noeud;
+    noeud.setAttribute('data-a', adresse);
+    if (style) noeud.setAttribute('data-s', style);
+    if (d) noeud.setAttribute('data-d', d);
+    return noeud;
+  }
+
+  /* Un groupe adressable : la forme et ses textes y sont rangés ensemble. */
+  function groupe(ctx, adresse, parent) {
+    const g = svg('g', { 'data-a': adresse });
+    (parent || ctx.g).appendChild(g);
+    return g;
+  }
 
   // ── Textes ────────────────────────────────────────────────────────────────
 
@@ -304,9 +335,10 @@
       if (a.n.id > b.n.id) dec = -dec;          // même côté pour un même sens
       if (e[0] === e[1]) {                        // boucle sur soi-même
         const x = a.cx + a.w / 2;
-        chemin(ctx, 'M' + (x - 10) + ',' + (a.cy - a.h / 2) + ' C' + (x + 26) + ',' + (a.cy - a.h / 2 - 22) + ' '
-          + (x + 30) + ',' + (a.cy + 6) + ' ' + x + ',' + (a.cy + 4), { s: style, fleche: true, dash: opts.includes('dash') });
-        if (e[2]) etiquettes.push({ x: x + 22, y: a.cy - a.h / 2 - 8, lignes: [tr(e[2], langue)], s: style, a: 'start' });
+        const d = 'M' + (x - 10) + ',' + (a.cy - a.h / 2) + ' C' + (x + 26) + ',' + (a.cy - a.h / 2 - 22) + ' '
+          + (x + 30) + ',' + (a.cy + 6) + ' ' + x + ',' + (a.cy + 4);
+        marquer(chemin(ctx, d, { s: style, fleche: true, dash: opts.includes('dash') }), 'e' + i, style, d);
+        if (e[2]) etiquettes.push({ x: x + 22, y: a.cy - a.h / 2 - 8, lignes: [tr(e[2], langue)], s: style, a: 'start', id: 'e' + i });
         return;
       }
       let dx = b.cx - a.cx;
@@ -316,10 +348,10 @@
       const py = (dx / n) * dec;
       const p1 = sortie(a.cx + px, a.cy + py, a.w + 4, a.h + 4, a.n.f, b.cx + px, b.cy + py);
       const p2 = sortie(b.cx + px, b.cy + py, b.w + 4, b.h + 4, b.n.f, a.cx + px, a.cy + py);
-      trait(ctx, p1[0], p1[1], p2[0], p2[1], {
+      marquer(trait(ctx, p1[0], p1[1], p2[0], p2[1], {
         s: style, dash: opts.includes('dash'),
         fleche: opts.includes('double') ? 'double' : (opts.includes('sans') ? 'aucune' : 'fin'),
-      });
+      }), 'e' + i, style, 'M' + p1[0] + ',' + p1[1] + ' L' + p2[0] + ',' + p2[1]);
       if (e[2]) {
         const mxp = (p1[0] + p2[0]) / 2;
         const myp = (p1[1] + p2[1]) / 2;
@@ -330,12 +362,12 @@
         const vertical = Math.abs(dy) > Math.abs(dx) * 1.5;
         if (vertical) {
           const cote = px < -0.5 ? -1 : 1;
-          etiquettes.push({ x: mxp + cote * 8, y: myp, lignes, s: style, a: cote > 0 ? 'start' : 'end' });
+          etiquettes.push({ x: mxp + cote * 8, y: myp, lignes, s: style, a: cote > 0 ? 'start' : 'end', id: 'e' + i });
         } else {
           const cote = py > 0.5 ? 1 : -1;
           const demi = ((lignes.length - 1) * 10.5 * 1.22) / 2;
           etiquettes.push({
-            x: mxp, y: cote < 0 ? myp - 8 - demi : myp + 10 + demi, lignes, s: style, a: 'middle',
+            x: mxp, y: cote < 0 ? myp - 8 - demi : myp + 10 + demi, lignes, s: style, a: 'middle', id: 'e' + i,
           });
         }
       }
@@ -344,15 +376,17 @@
     // nœuds, par-dessus les traits
     for (const v of info.values()) {
       const n = v.n;
-      forme(ctx, n.f || 'box', v.cx, v.cy, v.w, v.h, n.s, { dash: n.dash });
+      const g = groupe(ctx, n.id);
+      forme(ctx, n.f || 'box', v.cx, v.cy, v.w, v.h, n.s, { dash: n.dash, parent: g });
       // sous le couvercle d'un cylindre, pas dessus
       const descente = n.f === 'db' ? 4 : 0;
       const decal = v.sous.length ? (v.sous.length * 12) / 2 : 0;
-      ecrire(ctx.g, v.cx, v.cy - decal + descente, v.lignes, { sz: v.sz, s: n.s === 'mute' ? 'mute' : 'n', mono: n.mono, b: n.b });
-      if (v.sous.length) ecrire(ctx.g, v.cx, v.cy + (v.lignes.length * v.sz * 1.22) / 2 + 2 + descente, v.sous, { sz: 10, mono: true, s: 'mute' });
+      ecrire(g, v.cx, v.cy - decal + descente, v.lignes, { sz: v.sz, s: n.s === 'mute' ? 'mute' : 'n', mono: n.mono, b: n.b });
+      if (v.sous.length) ecrire(g, v.cx, v.cy + (v.lignes.length * v.sz * 1.22) / 2 + 2 + descente, v.sous, { sz: 10, mono: true, s: 'mute' });
     }
+    // les étiquettes des flèches, par-dessus tout, à l'adresse de leur flèche
     for (const et of etiquettes) {
-      ecrire(ctx.g, et.x, et.y, et.lignes, { sz: 10.5, s: et.s, a: et.a, halo: true, b: true });
+      marquer(ecrire(ctx.g, et.x, et.y, et.lignes, { sz: 10.5, s: et.s, a: et.a, halo: true, b: true }), et.id);
     }
     fixerHauteur(ctx, hauteur);
     return ctx.racine;
@@ -391,7 +425,7 @@
       if (noms[i]) ecrire(ctx.g, 6, y, [noms[i]], { sz: 10.5, a: 'start', mono: true, s: 'mute', b: true });
     });
 
-    // liens parent → enfant
+    // liens parent → enfant, à l'adresse de l'enfant : allumer un commit allume ce qui y mène
     for (const c of spec.c) {
       for (const pid of c.p || []) {
         const a = pos.get(pid);
@@ -400,27 +434,30 @@
         const style = c.s === 'old' ? 'mute' : (c.ls || (c.s === 'new' ? 'a' : 'n'));
         const dash = c.s === 'old' || c.dash;
         if (a.y === b.y) {
-          trait(ctx, a.x + rayon, a.y, b.x - rayon, b.y, { s: style, dash, fleche: 'aucune' });
+          const d = 'M' + (a.x + rayon) + ',' + a.y + ' L' + (b.x - rayon) + ',' + b.y;
+          marquer(trait(ctx, a.x + rayon, a.y, b.x - rayon, b.y, { s: style, dash, fleche: 'aucune' }), c.i, style, d);
         } else {
           const dx = Math.min(30, (b.x - a.x) / 2);
-          chemin(ctx, 'M' + (a.x + rayon * 0.7) + ',' + (a.y + Math.sign(b.y - a.y) * rayon * 0.7)
-            + ' C' + (a.x + dx + rayon) + ',' + a.y + ' ' + (b.x - dx - rayon) + ',' + b.y + ' ' + (b.x - rayon) + ',' + b.y,
-            { s: style, dash });
+          const d = 'M' + (a.x + rayon * 0.7) + ',' + (a.y + Math.sign(b.y - a.y) * rayon * 0.7)
+            + ' C' + (a.x + dx + rayon) + ',' + a.y + ' ' + (b.x - dx - rayon) + ',' + b.y + ' ' + (b.x - rayon) + ',' + b.y;
+          marquer(chemin(ctx, d, { s: style, dash }), c.i, style, d);
         }
       }
     }
     // pastilles
     for (const { c, x, y } of pos.values()) {
-      if (c.s === 'gap') { ecrire(ctx.g, x, y, ['…'], { sz: 16, s: 'mute', b: true }); continue; }
+      const g = groupe(ctx, c.i);
+      if (c.s === 'gap') { ecrire(g, x, y, ['…'], { sz: 16, s: 'mute', b: true }); continue; }
       const style = c.s === 'old' ? 'mute' : (c.s === 'new' ? 'a' : (c.s || 'n'));
-      forme(ctx, 'circ', x, y, rayon * 2, rayon * 2, style, { dash: c.s === 'old' });
-      ecrire(ctx.g, x, y, [tr(c.t === undefined ? c.i : c.t, langue)], { sz: 9.5, mono: true, s: c.s === 'old' ? 'mute' : 'n', b: true });
+      forme(ctx, 'circ', x, y, rayon * 2, rayon * 2, style, { dash: c.s === 'old', parent: g });
+      ecrire(g, x, y, [tr(c.t === undefined ? c.i : c.t, langue)], { sz: 9.5, mono: true, s: c.s === 'old' ? 'mute' : 'n', b: true });
     }
-    // étiquettes : au-dessus (branches, HEAD) ou en dessous (versions)
+    // étiquettes : au-dessus (branches, HEAD) ou en dessous (versions) ;
+    // `data-c` les attache à leur commit, pour s'allumer avec lui
     const pile = new Map();
-    for (const lab of spec.lab || []) {
+    (spec.lab || []).forEach((lab, i) => {
       const p = pos.get(lab.c);
-      if (!p) continue;
+      if (!p) return;
       const dessous = lab.dessous || lab.s === 'tag';
       const cle = lab.c + (dessous ? 'b' : 'h');
       const n = pile.get(cle) || 0;
@@ -430,9 +467,11 @@
       const y = dessous ? p.y + rayon + 12 + n * 18 : p.y - rayon - 12 - n * 18;
       const style = lab.s === 'tag' ? 'warn' : (lab.s === 'head' ? 'ok' : (lab.s || 'a'));
       let x = Math.min(L - w / 2 - 4, Math.max(w / 2 + 4, p.x));
-      ctx.g.appendChild(svg('rect', { x: x - w / 2, y: y - 8, width: w, height: 16, rx: 8, class: 'dn dn-' + style }));
-      ecrire(ctx.g, x, y, [t], { sz: 9.5, mono: true, s: style === 'a' ? 'a' : style, b: true });
-    }
+      const g = groupe(ctx, 't' + i);
+      g.setAttribute('data-c', lab.c);
+      g.appendChild(svg('rect', { x: x - w / 2, y: y - 8, width: w, height: 16, rx: 8, class: 'dn dn-' + style }));
+      ecrire(g, x, y, [t], { sz: 9.5, mono: true, s: style === 'a' ? 'a' : style, b: true });
+    });
     fixerHauteur(ctx, hauteur);
     return ctx.racine;
   }
@@ -443,16 +482,19 @@
     const ctx = nouveau(160, tr(spec.alt, langue));
     let y = 10;
     const mx = spec.mx === undefined ? 10 : spec.mx;
-    for (const rangee of spec.rows) {
+    for (let ri = 0; ri < spec.rows.length; ri += 1) {
+      const rangee = spec.rows[ri];
+      const gr = groupe(ctx, 'r' + ri);
       if (rangee.sep !== undefined) {
         // une flèche entre deux rangées, avec un commentaire
-        trait(ctx, L / 2, y, L / 2, y + 22, { s: rangee.s || 'mute' });
-        if (rangee.sep) ecrire(ctx.g, L / 2 + 10, y + 11, [tr(rangee.sep, langue)], { sz: 10.5, a: 'start', s: rangee.s || 'mute', b: true });
+        marquer(trait(ctx, L / 2, y, L / 2, y + 22, { s: rangee.s || 'mute', parent: gr }), 'r' + ri, rangee.s || 'mute',
+          'M' + (L / 2) + ',' + y + ' L' + (L / 2) + ',' + (y + 22));
+        if (rangee.sep) ecrire(gr, L / 2 + 10, y + 11, [tr(rangee.sep, langue)], { sz: 10.5, a: 'start', s: rangee.s || 'mute', b: true });
         y += 30;
         continue;
       }
       if (rangee.t) {
-        ecrire(ctx.g, mx, y + 6, [tr(rangee.t, langue)], { sz: 11, a: 'start', b: true, s: 'mute' });
+        ecrire(gr, mx, y + 6, [tr(rangee.t, langue)], { sz: 11, a: 'start', b: true, s: 'mute' });
         y += 16;
       }
       const cellules = rangee.cells.map((c) => tr(c, langue));
@@ -466,12 +508,15 @@
       let x = rangee.align === 'gauche' ? mx : (L - total) / 2;
       const centres = [];
       const styles = Array.isArray(rangee.s) ? rangee.s : cellules.map(() => rangee.s || '');
+      const cellulesG = [];
       cellules.forEach((c, i) => {
         const wCell = (rangee.ws && rangee.ws[i]) || w;
         if (rangee.ws) { /* largeur propre : on recalcule plus bas */ }
-        forme(ctx, 'box', x + wCell / 2, y + h / 2, wCell, h, styles[i] || undefined, { rx: 5 });
+        const gc = groupe(ctx, 'r' + ri + ':' + i, gr);
+        cellulesG.push(gc);
+        forme(ctx, 'box', x + wCell / 2, y + h / 2, wCell, h, styles[i] || undefined, { rx: 5, parent: gc });
         const lignes = envelopper(c, wCell - 4, rangee.sz || 13, rangee.mono !== false);
-        ecrire(ctx.g, x + wCell / 2, y + h / 2, lignes, { sz: rangee.sz || 13, mono: rangee.mono !== false, b: true });
+        ecrire(gc, x + wCell / 2, y + h / 2, lignes, { sz: rangee.sz || 13, mono: rangee.mono !== false, b: true });
         centres.push([x, x + wCell]);
         x += wCell + 3 + (ecart.includes(i) ? 8 : 0);
       });
@@ -480,15 +525,15 @@
         rangee.cap.forEach((c, i) => {
           if (!centres[i]) return;
           const t = tr(c, langue);
-          if (t) ecrire(ctx.g, (centres[i][0] + centres[i][1]) / 2, y + 10, [t], { sz: Math.min(10, w / 3.6 + 5), s: 'mute', mono: true });
+          if (t) ecrire(cellulesG[i] || gr, (centres[i][0] + centres[i][1]) / 2, y + 10, [t], { sz: Math.min(10, w / 3.6 + 5), s: 'mute', mono: true });
         });
         y += 18;
       }
       for (const acc of rangee.brace || []) {
         const x1 = centres[acc[0]][0];
         const x2 = centres[acc[1]][1];
-        chemin(ctx, 'M' + x1 + ',' + (y + 4) + ' V' + (y + 8) + ' H' + x2 + ' V' + (y + 4), { s: 'mute' });
-        if (acc[2]) ecrire(ctx.g, (x1 + x2) / 2, y + 20, [tr(acc[2], langue)], { sz: 10.5, s: 'mute', b: true });
+        chemin(ctx, 'M' + x1 + ',' + (y + 4) + ' V' + (y + 8) + ' H' + x2 + ' V' + (y + 4), { s: 'mute', parent: gr });
+        if (acc[2]) ecrire(gr, (x1 + x2) / 2, y + 20, [tr(acc[2], langue)], { sz: 10.5, s: 'mute', b: true });
         else y -= 8;
       }
       if (rangee.brace && rangee.brace.length) y += 30;
@@ -518,10 +563,11 @@
         const lignes = envelopper(tr(couche.t, langue), largeurPile - 16, 12, couche.mono);
         const detail = couche.d ? envelopper(tr(couche.d, langue), largeurPile - 16, 10, false) : [];
         const h = couche.h || Math.max(hCouche, lignes.length * 15 + detail.length * 12 + 12);
-        forme(ctx, 'box', x + largeurPile / 2, y + h / 2, largeurPile, h, couche.s, { rx: 6 });
+        const g = groupe(ctx, (k ? 'p' + k : '') + 'l' + i);
+        forme(ctx, 'box', x + largeurPile / 2, y + h / 2, largeurPile, h, couche.s, { rx: 6, parent: g });
         const decal = detail.length ? (detail.length * 12) / 2 : 0;
-        ecrire(ctx.g, x + largeurPile / 2, y + h / 2 - decal, lignes, { sz: 12, b: true, mono: couche.mono });
-        if (detail.length) ecrire(ctx.g, x + largeurPile / 2, y + h / 2 + (lignes.length * 15) / 2 + 1, detail, { sz: 10, s: 'mute' });
+        ecrire(g, x + largeurPile / 2, y + h / 2 - decal, lignes, { sz: 12, b: true, mono: couche.mono });
+        if (detail.length) ecrire(g, x + largeurPile / 2, y + h / 2 + (lignes.length * 15) / 2 + 1, detail, { sz: 10, s: 'mute' });
         rangees.push({ y: y + h / 2, x, w: largeurPile });
         y += h + petit;
       });
@@ -564,8 +610,11 @@
     const gy = spec.gy || 54;
     const hN = spec.h || 28;
     let suivant = 0;
+    let rang = 0;
     (function placer(n, niveau) {
       n.niveau = niveau;
+      n.adresse = n.id || 'n' + rang;       // adresse pour l'animation : l'id, ou le rang en préordre
+      rang += 1;
       if (!n.k || !n.k.length) { n.x = (suivant + 0.5) * pas; suivant += 1; }
       else {
         n.k.forEach((k) => placer(k, niveau + 1));
@@ -582,16 +631,18 @@
         const x2 = decalage + k.x;
         const y2 = 10 + k.niveau * gy;
         const my = (y1 + y2) / 2;
-        chemin(ctx, 'M' + x1 + ',' + y1 + ' V' + my + ' H' + x2 + ' V' + y2, { s: 'mute' });
+        const d = 'M' + x1 + ',' + y1 + ' V' + my + ' H' + x2 + ' V' + y2;
+        marquer(chemin(ctx, d, { s: 'mute' }), k.adresse, 'mute', d);
         lier(k);
       }
     })(spec.racine);
     (function dessiner(n) {
       const cx = decalage + n.x;
       const cy = 10 + n.niveau * gy + hN / 2;
-      forme(ctx, n.f || 'box', cx, cy, wNoeud, hN, n.s, { rx: 6 });
+      const g = groupe(ctx, n.adresse);
+      forme(ctx, n.f || 'box', cx, cy, wNoeud, hN, n.s, { rx: 6, parent: g });
       const lignes = envelopper(tr(n.t, langue), wNoeud - 6, sz, spec.mono !== false);
-      ecrire(ctx.g, cx, cy, lignes.slice(0, 2), { sz: lignes.length > 1 ? sz - 1.5 : sz, mono: spec.mono !== false, b: true });
+      ecrire(g, cx, cy, lignes.slice(0, 2), { sz: lignes.length > 1 ? sz - 1.5 : sz, mono: spec.mono !== false, b: true });
       (n.k || []).forEach(dessiner);
     })(spec.racine);
     fixerHauteur(ctx, hauteur);
@@ -610,31 +661,32 @@
     const inter = spec.lh || 24;
     const mx = 12;
     let y = 8;
-    lignes.forEach(({ n, niveau }) => {
+    lignes.forEach(({ n, niveau }, rang) => {
       const x = mx + niveau * 16;
       const cy = y + inter / 2;
+      const g = groupe(ctx, n.id || 'n' + rang);
       if (niveau > 0) {
-        chemin(ctx, 'M' + (x - 9) + ',' + cy + ' H' + (x - 2), { s: 'mute' });
-        chemin(ctx, 'M' + (x - 9) + ',' + (cy - inter / 2) + ' V' + cy, { s: 'mute' });
+        chemin(ctx, 'M' + (x - 9) + ',' + cy + ' H' + (x - 2), { s: 'mute', parent: g });
+        chemin(ctx, 'M' + (x - 9) + ',' + (cy - inter / 2) + ' V' + cy, { s: 'mute', parent: g });
       }
       const dossier = n.d || (n.k && n.k.length);
       if (dossier) {
-        ctx.g.appendChild(svg('path', {
+        g.appendChild(svg('path', {
           d: 'M' + x + ',' + (cy - 5) + ' h5 l2,2 h7 v9 h-14 z', class: 'dn dn-' + (n.s || 'a'),
         }));
       } else {
-        ctx.g.appendChild(svg('path', {
+        g.appendChild(svg('path', {
           d: 'M' + (x + 1) + ',' + (cy - 6) + ' h8 l4,4 v10 h-12 z', class: 'dn dn-' + (n.s || 'n'),
         }));
       }
       const nom = tr(n.t, langue);
-      ecrire(ctx.g, x + 20, cy, [nom], { sz: 12, a: 'start', mono: true, b: !!dossier, s: n.s === 'mute' ? 'mute' : 'n' });
+      ecrire(g, x + 20, cy, [nom], { sz: 12, a: 'start', mono: true, b: !!dossier, s: n.s === 'mute' ? 'mute' : 'n' });
       if (n.c) {
         const cw = largeur(nom, 12, true);
         const t = tr(n.c, langue);
         const dispo = L - 10 - (x + 26 + cw);
         // le commentaire va à droite, ou sous le nom s'il n'y a pas la place
-        ecrire(ctx.g, L - 10, cy, [t], { sz: 10.5, a: 'end', s: n.cs || 'a', b: false });
+        ecrire(g, L - 10, cy, [t], { sz: 10.5, a: 'end', s: n.cs || 'a', b: false });
         if (largeur(t, 10.5) > dispo) { /* trop serré : la revue visuelle le dira */ }
       }
       y += inter;
@@ -667,35 +719,42 @@
       ecrire(ctx.g, xs[i], 10 + hEntete / 2 - 4, lignes, { sz: lignes.length > 1 ? 10 : 11.5, b: true });
     });
     let y = hEntete + 20 + inter / 2 - 6;
-    for (const m of messages) {
+    messages.forEach((m, i) => {
+      const g = groupe(ctx, 'm' + i);
       if (m[0] === 'note') {
         const x1 = xs[m[1]] - 8;
         const x2 = xs[m[2]] + 8;
         const lignes = envelopper(tr(m[3], langue), x2 - x1 - 10, 10.5, false);
         const h = lignes.length * 13 + 10;
-        ctx.g.appendChild(svg('rect', { x: x1, y: y - h / 2, width: x2 - x1, height: h, rx: 5, class: 'dn dn-warn' }));
-        ecrire(ctx.g, (x1 + x2) / 2, y, lignes, { sz: 10.5 });
+        g.appendChild(svg('rect', { x: x1, y: y - h / 2, width: x2 - x1, height: h, rx: 5, class: 'dn dn-warn' }));
+        ecrire(g, (x1 + x2) / 2, y, lignes, { sz: 10.5 });
         y += inter;
-        continue;
+        return;
       }
       const de = xs[m[0]];
       const a = xs[m[1]];
       const opts = String(m[3] || '');
       const style = ['a', 'ok', 'warn', 'bad', 'mute'].find((s) => opts.split(' ').includes(s)) || 'n';
+      g.setAttribute('data-s', style);
       if (m[0] === m[1]) {
         /* Un message à soi-même : la boucle et son texte vont du côté où il y
          * a de la place — à gauche pour un acteur du bord droit. */
         const sens = de > L / 2 ? -1 : 1;
         const dispo = sens > 0 ? L - (de + 34) - 6 : de - 34 - 6;
-        chemin(ctx, 'M' + de + ',' + (y - 8) + ' h' + (26 * sens) + ' v16 h' + (-26 * sens), { s: style, fleche: true, dash: opts.includes('dash') });
-        ecrire(ctx.g, de + 32 * sens, y, envelopper(tr(m[2], langue), Math.min(150, dispo), 10.5, false), { sz: 10.5, a: sens > 0 ? 'start' : 'end', s: style, b: true });
+        const d = 'M' + de + ',' + (y - 8) + ' h' + (26 * sens) + ' v16 h' + (-26 * sens);
+        g.setAttribute('data-d', d);
+        chemin(ctx, d, { s: style, fleche: true, dash: opts.includes('dash'), parent: g });
+        ecrire(g, de + 32 * sens, y, envelopper(tr(m[2], langue), Math.min(150, dispo), 10.5, false), { sz: 10.5, a: sens > 0 ? 'start' : 'end', s: style, b: true });
       } else {
-        trait(ctx, de + (a > de ? 2 : -2), y, a + (a > de ? -2 : 2), y, { s: style, dash: opts.includes('dash') });
+        const x1 = de + (a > de ? 2 : -2);
+        const x2 = a + (a > de ? -2 : 2);
+        g.setAttribute('data-d', 'M' + x1 + ',' + y + ' L' + x2 + ',' + y);
+        trait(ctx, x1, y, x2, y, { s: style, dash: opts.includes('dash'), parent: g });
         const lignes = envelopper(tr(m[2], langue), Math.abs(a - de) - 8, 10.5, false);
-        ecrire(ctx.g, (de + a) / 2, y - 9 - (lignes.length - 1) * 6.5, lignes, { sz: 10.5, s: style, b: true, halo: true });
+        ecrire(g, (de + a) / 2, y - 9 - (lignes.length - 1) * 6.5, lignes, { sz: 10.5, s: style, b: true, halo: true });
       }
       y += inter;
-    }
+    });
     fixerHauteur(ctx, bas + 6);
     return ctx.racine;
   }
@@ -714,51 +773,56 @@
 
   function dessinerLibre(spec, langue) {
     const ctx = nouveau(spec.h || 160, tr(spec.alt, langue));
-    for (const p of spec.d) {
+    spec.d.forEach((p, i) => {
       const type = p[0];
       const o = p[p.length - 1] && typeof p[p.length - 1] === 'object' && !Array.isArray(p[p.length - 1]) ? p[p.length - 1] : {};
+      // chaque forme a son adresse : son `id`, ou son rang dans la liste
+      const g = groupe(ctx, o.id || 'd' + i);
+      if (o.s) g.setAttribute('data-s', o.s);
       switch (type) {
         case 'rect': {
-          forme(ctx, o.f || 'box', p[1] + p[3] / 2, p[2] + p[4] / 2, p[3], p[4], o.s, { rx: o.r, dash: o.dash, libre: !!o.fill });
-          peindre(ctx.g.lastChild, o);
+          forme(ctx, o.f || 'box', p[1] + p[3] / 2, p[2] + p[4] / 2, p[3], p[4], o.s, { rx: o.r, dash: o.dash, libre: !!o.fill, parent: g });
+          peindre(g.lastChild, o);
           if (o.t) {
-            const texte = ecrire(ctx.g, p[1] + p[3] / 2, p[2] + p[4] / 2, envelopper(tr(o.t, langue), p[3] - 6, o.sz || 11, o.mono), { sz: o.sz || 11, mono: o.mono, b: o.b !== false, s: o.ts });
+            const texte = ecrire(g, p[1] + p[3] / 2, p[2] + p[4] / 2, envelopper(tr(o.t, langue), p[3] - 6, o.sz || 11, o.mono), { sz: o.sz || 11, mono: o.mono, b: o.b !== false, s: o.ts });
             if (o.tf) texte.setAttribute('fill', o.tf);
           }
           break;
         }
         case 'circ': {
           const rond = svg('circle', { cx: p[1], cy: p[2], r: p[3], class: (o.fill ? 'dfree' : 'dn dn-' + (o.s || 'n')) + (o.dash ? ' dd' : '') });
-          ctx.g.appendChild(rond);
+          g.appendChild(rond);
           peindre(rond, o);
           if (o.t) {
-            const texte = ecrire(ctx.g, p[1], p[2], envelopper(tr(o.t, langue), p[3] * 1.6, o.sz || 11, o.mono), { sz: o.sz || 11, b: true, mono: o.mono, s: o.ts });
+            const texte = ecrire(g, p[1], p[2], envelopper(tr(o.t, langue), p[3] * 1.6, o.sz || 11, o.mono), { sz: o.sz || 11, b: true, mono: o.mono, s: o.ts });
             if (o.tf) texte.setAttribute('fill', o.tf);
           }
           break;
         }
         case 'ell':
-          ctx.g.appendChild(svg('ellipse', { cx: p[1], cy: p[2], rx: p[3], ry: p[4], class: 'dn dn-' + (o.s || 'n') + (o.dash ? ' dd' : '') }));
-          if (o.t) ecrire(ctx.g, p[1], p[2], envelopper(tr(o.t, langue), p[3] * 1.6, o.sz || 11, o.mono), { sz: o.sz || 11, b: true, mono: o.mono, s: o.ts });
+          g.appendChild(svg('ellipse', { cx: p[1], cy: p[2], rx: p[3], ry: p[4], class: 'dn dn-' + (o.s || 'n') + (o.dash ? ' dd' : '') }));
+          if (o.t) ecrire(g, p[1], p[2], envelopper(tr(o.t, langue), p[3] * 1.6, o.sz || 11, o.mono), { sz: o.sz || 11, b: true, mono: o.mono, s: o.ts });
           break;
         case 'line':
-          trait(ctx, p[1], p[2], p[3], p[4], { s: o.s, dash: o.dash, fleche: o.arrow ? (o.arrow === 2 ? 'double' : 'fin') : 'aucune' });
+          g.setAttribute('data-d', 'M' + p[1] + ',' + p[2] + ' L' + p[3] + ',' + p[4]);
+          trait(ctx, p[1], p[2], p[3], p[4], { s: o.s, dash: o.dash, fleche: o.arrow ? (o.arrow === 2 ? 'double' : 'fin') : 'aucune', parent: g });
           break;
         case 'text':
-          ecrire(ctx.g, p[1], p[2], envelopper(tr(p[3], langue), o.max || 300, o.sz || 11, o.mono), {
+          ecrire(g, p[1], p[2], envelopper(tr(p[3], langue), o.max || 300, o.sz || 11, o.mono), {
             sz: o.sz || 11, a: o.a === 's' ? 'start' : (o.a === 'e' ? 'end' : 'middle'), s: o.s, b: o.b, mono: o.mono, halo: o.halo,
           });
           break;
         case 'path':
-          chemin(ctx, p[1], { s: o.s, dash: o.dash, plein: o.plein, fleche: o.arrow });
+          if (!o.plein) g.setAttribute('data-d', p[1]);
+          chemin(ctx, p[1], { s: o.s, dash: o.dash, plein: o.plein, fleche: o.arrow, parent: g });
           break;
         case 'poly':
-          ctx.g.appendChild(svg('polygon', { points: p[1].join(','), class: 'dn dn-' + (o.s || 'n') + (o.dash ? ' dd' : '') }));
-          if (o.t) ecrire(ctx.g, o.tx, o.ty, [tr(o.t, langue)], { sz: o.sz || 11, b: true, s: o.ts });
+          g.appendChild(svg('polygon', { points: p[1].join(','), class: 'dn dn-' + (o.s || 'n') + (o.dash ? ' dd' : '') }));
+          if (o.t) ecrire(g, o.tx, o.ty, [tr(o.t, langue)], { sz: o.sz || 11, b: true, s: o.ts });
           break;
         default: break;
       }
-    }
+    });
     return ctx.racine;
   }
 
@@ -779,6 +843,8 @@
     dessiner, GENRES,
     titre: (spec, langue) => tr(spec.t, langue),
     legende: (spec, langue) => tr(spec.l, langue),
+    /* Vrai si la figure se joue par étapes (voir js/animation.js). */
+    animee: (spec) => Array.isArray(spec.anim) && spec.anim.length > 0,
   };
 
 })(window);

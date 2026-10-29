@@ -188,6 +188,8 @@ nom: git add
 alias: add, stage, mettre en attente, ajouter à l'index
 fr: Commande qui place des modifications dans l'index pour qu'elles fassent partie du prochain commit. Elle ne modifie pas les fichiers eux-mêmes.
 en: A command that places changes in the index so they become part of the next commit. It does not modify the files themselves.
++fr: git add -p découpe les modifications en morceaux et demande, pour chacun, s'il entre dans le commit : pour ne valider qu'une partie d'un fichier.
++en: git add -p cuts the changes into hunks and asks, for each one, whether it goes into the commit: to commit only part of a file.
 ex: bash
 | git add index.html
 | git add src/
@@ -205,6 +207,8 @@ nom: git status
 alias: status, état du dépôt
 fr: Commande qui indique l'état du projet : la branche courante, les fichiers modifiés, ceux qui sont dans l'index, et ceux que Git ne suit pas encore.
 en: A command that shows the project's state: the current branch, modified files, files in the index, and files Git does not track yet.
++fr: git status -s donne la version courte : deux lettres par fichier (M modifié, A ajouté, ?? non suivi), la première pour l'index, la seconde pour le dossier de travail.
++en: git status -s gives the short form: two letters per file (M modified, A added, ?? untracked), the first for the index, the second for the working tree.
 ex: bash
 | git status
 | git status --short
@@ -311,6 +315,7 @@ ex-en: Change branch, discard a file's changes, or create a branch and move onto
 attention-fr: git restore et git checkout -- fichier écrasent vos modifications non validées, sans retour possible.
 attention-en: git restore and git checkout -- file overwrite your uncommitted changes, with no way back.
 voir: branch, head, detached-head, working-tree, reset
+schema: git-checkout
 
 @ merge
 cat: git
@@ -319,6 +324,8 @@ nom-fr: fusion
 alias: git merge, fusionner, fusion
 fr: Opération qui réunit les modifications d'une branche dans une autre. Si les deux ont évolué, Git crée un commit de fusion à deux parents.
 en: An operation that brings one branch's changes into another. If both have moved on, Git creates a merge commit with two parents.
++fr: git merge --no-ff force un commit de fusion même quand un fast-forward serait possible, pour garder la trace de la branche ; git merge --abort annule une fusion en conflit.
++en: git merge --no-ff forces a merge commit even when a fast-forward would be possible, to keep a trace of the branch; git merge --abort cancels a conflicted merge.
 ex: bash
 | git switch main
 | git merge ma-fonction
@@ -335,6 +342,8 @@ nom: Fast-forward
 alias: ff, avance rapide, --ff-only, fast forward
 fr: Fusion sans nouveau commit : quand la branche visée n'a pas avancé, Git déplace simplement son pointeur jusqu'au bout de l'autre branche.
 en: A merge without a new commit: when the target branch has not moved, Git simply slides its pointer up to the tip of the other branch.
++fr: git merge --ff-only refuse la fusion si un fast-forward n'est pas possible : utile pour s'assurer que sa branche est bien à jour avant de la pousser.
++en: git merge --ff-only refuses the merge if a fast-forward is not possible: useful to make sure your branch is really up to date before pushing it.
 ex: bash
 | git merge --ff-only ma-fonction
 | git merge --no-ff ma-fonction
@@ -386,6 +395,8 @@ nom: Cherry-pick
 alias: git cherry-pick, cueillir, picorer
 fr: Commande qui copie un seul commit d'une branche sur la branche courante, sans fusionner le reste. Le résultat est un nouveau commit, avec une autre empreinte.
 en: A command that copies a single commit from one branch onto the current branch, without merging the rest. The result is a new commit, with a different hash.
++fr: Le commit copié garde le message et l'auteur d'origine, mais reçoit une nouvelle empreinte et une nouvelle date. git cherry-pick -x ajoute au message d'où il vient.
++en: The copied commit keeps the original message and author, but gets a new hash and a new date. git cherry-pick -x adds to the message where it came from.
 ex: bash
 | git cherry-pick 3f2a9c1
 ex-fr: Reprendre sur la branche courante uniquement le commit 3f2a9c1.
@@ -420,6 +431,8 @@ nom-fr: remisage, mettre de côté
 alias: git stash, remiser, planquer, stash pop
 fr: Mise de côté temporaire de vos modifications non validées : Git les range dans une pile et remet le dossier de travail à l'état du dernier commit, pour que vous puissiez changer de branche proprement.
 en: A temporary shelf for your uncommitted changes: Git stores them in a stack and resets the working tree to the last commit, so you can switch branches cleanly.
++fr: git stash list montre la pile ; git stash pop reprend le dernier et le retire de la pile, git stash apply le reprend en le gardant ; git stash -u inclut les fichiers non suivis.
++en: git stash list shows the pile; git stash pop takes the last one back and removes it from the pile, git stash apply takes it back and keeps it; git stash -u includes untracked files.
 ex: bash
 | git stash
 | git switch autre-branche

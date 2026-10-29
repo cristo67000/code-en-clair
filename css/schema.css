@@ -63,3 +63,61 @@
 .dmono { font-family: var(--mono); }
 .dbold { font-weight: 600; }
 .dhalo { paint-order: stroke; stroke: var(--carte); stroke-width: 3.5px; stroke-linejoin: round; }
+
+/* ── Les schémas animés (js/animation.js) ──────────────────────────────────
+ * Pendant une étape, ce qui n'est pas en cause s'estompe ; ce qui est allumé
+ * respire un peu ; un trait « en flux » s'écoule, et un point y circule. */
+.schema-svg.cliquable { cursor: pointer; }
+.schema-svg [data-a] { transition: opacity .35s ease; }
+.schema-svg.anime [data-a]:not(.a-on) { opacity: .2; }
+.schema-svg.anime .a-on > .dn:not(.dn-g) { animation: dpulse 1.6s ease-in-out infinite; }
+@keyframes dpulse { 50% { stroke-width: 2.6; } }
+.schema-svg line.a-flux, .schema-svg path.a-flux, .schema-svg g.a-flux > .dl {
+  stroke-dasharray: 6 5; animation: dcoule .7s linear infinite;
+}
+@keyframes dcoule { to { stroke-dashoffset: -22; } }
+.dpt { fill: var(--encre-douce); stroke: var(--carte); stroke-width: 2; }
+.dpt-a { fill: var(--accent); }
+.dpt-ok { fill: var(--ok); }
+.dpt-warn { fill: var(--warn); }
+.dpt-bad { fill: var(--bad); }
+.dpt-v { fill: var(--v); }
+.dpt-info { fill: var(--info); }
+.dpt-mute { fill: var(--encre-legere); }
+
+/* Le lecteur, sous la figure : lire, précédent, une pastille par étape, suivant. */
+.anim-barre { display: flex; align-items: center; gap: .35rem; margin: .55rem 0 0; }
+.anim-barre button { font: inherit; color: inherit; cursor: pointer; -webkit-tap-highlight-color: transparent; transition: transform .12s ease, background-color .15s ease, border-color .15s ease; }
+.anim-barre button:active { transform: scale(.94); }
+.anim-barre button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.anim-lire {
+  flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 2.6rem; height: 2.6rem; padding: 0; border: 0; border-radius: 50%;
+  background: var(--accent); color: var(--sur-accent);
+}
+.anim-lire:hover { background: var(--accent-fort); }
+.anim-lire .icone { width: 1.3rem; height: 1.3rem; fill: currentColor; stroke: currentColor; stroke-width: 2.2; stroke-linecap: round; stroke-linejoin: round; }
+.anim-lire.en-cours .icone { fill: none; }
+.anim-prec, .anim-suiv {
+  flex: none; width: 2.4rem; height: 2.4rem; padding: 0 0 .15rem; border-radius: 50%;
+  border: 1px solid var(--trait); background: var(--carte); color: var(--encre-douce); font-size: 1.35rem; line-height: 1;
+}
+.anim-prec:hover, .anim-suiv:hover { border-color: var(--accent); color: var(--accent); }
+.anim-points { flex: 1; display: flex; justify-content: center; gap: .3rem; margin: 0; padding: 0; list-style: none; }
+.anim-points button {
+  display: block; width: .55rem; height: .55rem; padding: 0; border: 0; border-radius: 50%;
+  background: var(--trait-fort); transition: transform .2s ease, background-color .2s ease;
+}
+.anim-points button.vue { background: var(--accent); opacity: .45; }
+.anim-points button[aria-current] { background: var(--accent); transform: scale(1.5); opacity: 1; }
+.anim-compte { flex: none; min-width: 2.2rem; text-align: right; font: 700 .75rem var(--mono); color: var(--encre-legere); }
+.anim-texte { margin: .55rem .1rem 0; font-size: .95rem; line-height: 1.45; color: var(--encre); }
+.anim-texte.change { animation: anim-monte .25s ease; }
+@keyframes anim-monte { from { opacity: 0; transform: translateY(.25rem); } }
+.anim-num { margin-right: .45rem; font: 700 .72rem var(--mono); color: var(--accent); }
+.schema.anime figcaption { color: var(--encre-legere); }
+
+@media (prefers-reduced-motion: reduce) {
+  .schema-svg [data-a], .anim-points button, .anim-barre button { transition: none; }
+  .schema-svg.anime .a-on > .dn, .schema-svg .a-flux, .schema-svg g.a-flux > .dl, .anim-texte.change { animation: none; }
+}

@@ -14,12 +14,15 @@
   h2 { font: 600 12px var(--mono); margin: 14px 0 4px; color: var(--encre-douce); }
   figure { margin: 0; padding: 8px; background: var(--carte); border: 1px solid var(--trait); border-radius: 12px; }
   figcaption { font-size: 12px; color: var(--encre-douce); margin: 4px 2px 0; }
+  .anim-texte { font-size: 13px; }
 </style>
 </head>
 <body>
 <main id="galerie"></main>
 <script src="../js/outils.js"></script>
+<script src="../js/i18n.js"></script>
 <script src="../js/schema.js"></script>
+<script src="../js/animation.js"></script>
 <script>
   const params = new URLSearchParams(location.search);
   const langue = params.get('l') || 'fr';
@@ -27,7 +30,11 @@
   const filtre = params.get('q') || '';
   const liste = params.get('n') ? params.get('n').split(',') : null;   // des noms exacts
   const fichiers = (params.get('f') || 'git,shell,web,reseau,data,secu,langage,outils,image,bdd,mobile,ia,qualite,archi').split(',');
+  const seulementAnimes = params.has('anim');   // ?anim : seulement les figures animées
+  const etape = params.get('etape');             // ?etape=2 : toutes les animations à cette étape
+  I18n.definir(langue);
   window.Schemas = {};
+  window.Animations = {};                        // nom → poignée du lecteur, pour les épreuves
   (async function () {
     for (const f of fichiers) {
       await new Promise((ok) => {
@@ -43,13 +50,19 @@
       if (filtre && !nom.includes(filtre)) continue;
       if (liste && !liste.includes(nom)) continue;
       const spec = window.Schemas[nom];
+      if (seulementAnimes && !Schema.animee(spec)) continue;
       const fig = document.createElement('figure');
       fig.id = 's-' + nom;
       const h = document.createElement('h2');
-      h.textContent = nom + '  (' + spec.k + ')';
+      h.textContent = nom + '  (' + spec.k + (Schema.animee(spec) ? ' · ' + spec.anim.length + ' étapes' : '') + ')';
       cible.appendChild(h);
       try {
-        fig.appendChild(Schema.dessiner(spec, langue));
+        const dessin = Schema.dessiner(spec, langue);
+        fig.appendChild(dessin);
+        if (Schema.animee(spec)) {
+          window.Animations[nom] = Animation.monter(fig, dessin, spec, langue);
+          if (etape !== null) window.Animations[nom].aller(Number(etape));
+        }
         const c = Schema.legende(spec, langue);
         if (c) { const cap = document.createElement('figcaption'); cap.textContent = c; fig.appendChild(cap); }
       } catch (e) {

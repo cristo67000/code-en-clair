@@ -42,7 +42,25 @@ for (const f of fs.readdirSync(path.join(RACINE, 'js', 'schemas')).filter((x) =>
   vm.runInContext(lire('js/schemas/' + f), contexte, { filename: f });
 }
 const schemas = contexte.window.Schemas;
-ok(Object.keys(schemas).length >= 100, 'au moins 100 schémas');
+ok(Object.keys(schemas).length >= 250, 'au moins 250 schémas (' + Object.keys(schemas).length + ')');
+
+// Les figures animées : chaque étape raconte quelque chose, dans les deux langues
+let animees = 0;
+const etapesMal = [];
+for (const [nom, s] of Object.entries(schemas)) {
+  if (!Array.isArray(s.anim)) continue;
+  animees += 1;
+  if (s.anim.length < 2) etapesMal.push(nom + ' : une seule étape');
+  s.anim.forEach((e, i) => {
+    if (!Array.isArray(e.t) || !e.t[0] || !e.t[1]) etapesMal.push(nom + ' ' + i + ' : texte manquant dans une langue');
+    else if (e.t[0] === e.t[1]) etapesMal.push(nom + ' ' + i + ' : même texte dans les deux langues');
+    for (const liste of [e.on, e.flux]) {
+      if (liste !== undefined && !Array.isArray(liste)) etapesMal.push(nom + ' ' + i + ' : on/flux doit être une liste');
+    }
+  });
+}
+ok(animees >= 200, 'au moins 200 figures animées (' + animees + ')');
+ok(etapesMal.length === 0, 'chaque étape d’animation est bien formée : ' + etapesMal.slice(0, 5).join(' ; '));
 
 /* U+FFFD (le « � » d'un mauvais décodage), NUL et autres signes de contrôle
  * hors saut de ligne et tabulation, séparateurs de ligne U+2028 et U+2029. */

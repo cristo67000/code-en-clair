@@ -22,6 +22,7 @@ en: The number of pixels in an image or screen, given as width × height (1080 �
 attention-fr: Le « DPI » enregistré dans un fichier n'ajoute aucun détail : seul compte le nombre de pixels. Le DPI ne sert qu'à l'impression.
 attention-en: The “DPI” stored in a file adds no detail: only the pixel count matters. DPI only matters for printing.
 voir: pixel, densite-ecran, ratio-aspect, compression
+schema: image-resolution
 
 @ densite-ecran
 cat: image
@@ -120,6 +121,8 @@ dev: Portable Network Graphics
 alias: portable network graphics, .png, png-8, png-24, png-32, sans perte, lossless png, apng
 fr: Format d'image sans perte, avec transparence : chaque pixel est conservé exactement. Il convient aux logos, icônes, captures d'écran et schémas ; pour les photos, il donne des fichiers très lourds.
 en: A lossless image format with transparency: every pixel is kept exactly. It suits logos, icons, screenshots and diagrams; for photos, it produces very heavy files.
++fr: PNG-8 se limite à 256 couleurs, comme GIF, mais en plus compact ; PNG-24 garde toutes les couleurs, PNG-32 ajoute l'alpha. Pour une photo, un PNG pèse dix fois un JPEG : réservez-le aux aplats, aux captures et aux logos.
++en: PNG-8 is limited to 256 colors, like GIF, but more compact; PNG-24 keeps all colors, PNG-32 adds alpha. For a photo, a PNG weighs ten times a JPEG: keep it for flat colors, screenshots and logos.
 voir: jpeg, webp, gif, canal-alpha, compression
 schema: image-formats
 
@@ -130,6 +133,8 @@ dev: Joint Photographic Experts Group
 alias: jpg, .jpg, .jpeg, joint photographic experts group, compression jpeg, artefacts, qualité jpeg, progressive jpeg
 fr: Format d'image avec perte, conçu pour les photographies : il élimine des détails peu visibles pour réduire fortement le poids. Il n'a pas de transparence, et une qualité trop basse fait apparaître des blocs et des halos.
 en: A lossy image format designed for photographs: it discards barely visible details to reduce weight strongly. It has no transparency, and too low a quality makes blocks and halos appear.
++fr: Le réglage « qualité » (0 à 100) règle la perte : 80 est souvent indiscernable de l'original pour un fichier trois fois plus petit. JPEG ne gère pas la transparence ; pour un logo ou une capture, PNG ou WebP.
++en: The “quality” setting (0 to 100) sets the loss: 80 is often indistinguishable from the original for a file three times smaller. JPEG has no transparency; for a logo or a screenshot, PNG or WebP.
 attention-fr: Chaque nouvel enregistrement en JPEG dégrade un peu plus l'image : on garde l'original et on n'exporte qu'à la fin.
 attention-en: Each new save as JPEG degrades the image a little more: keep the original and only export at the end.
 voir: png, webp, avif, exif, compression
@@ -159,6 +164,7 @@ alias: graphics interchange format, .gif, gif animé, animated gif, 256 couleurs
 fr: Format d'image limité à 256 couleurs, qui gère l'animation et une transparence tout ou rien. Il est resté populaire pour les courtes boucles animées, bien que le WebP ou la vidéo fassent la même chose en beaucoup plus léger.
 en: An image format limited to 256 colors that handles animation and all-or-nothing transparency. It has remained popular for short animated loops, although WebP or video do the same thing much lighter.
 voir: png, webp, canal-alpha, compression
+schema: image-gif
 
 @ avif
 cat: image
@@ -177,6 +183,8 @@ dev: Scalable Vector Graphics
 alias: scalable vector graphics, .svg, image vectorielle, vector image, path, viewbox, dessin vectoriel
 fr: Format d'image vectoriel, écrit en texte XML : il décrit des formes (traits, courbes, cercles) et non des pixels. Il reste net à n'importe quelle taille, pèse très peu pour des icônes et des schémas, et se stylise avec du CSS.
 en: A vector image format, written in XML text: it describes shapes (lines, curves, circles) rather than pixels. It stays sharp at any size, weighs very little for icons and diagrams, and can be styled with CSS.
++fr: Un SVG se stylise en CSS, s'anime, et pèse quelques centaines d'octets pour une icône. Dans une page, inline (<svg> dans le HTML) pour le styler, ou en <img> pour le mettre en cache. Les schémas de Lexicode sont des SVG dessinés par JavaScript.
++en: An SVG can be styled with CSS, animated, and weighs a few hundred bytes for an icon. In a page, inline (<svg> in the HTML) to style it, or as <img> to cache it. Lexicode's diagrams are SVGs drawn by JavaScript.
 ex: xml
 | <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
 |   <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/>
@@ -211,6 +219,7 @@ ex: css
 ex-fr: Une image toujours en 16:9, qui remplit la largeur en étant recadrée plutôt que déformée.
 ex-en: An image always at 16:9, filling the width by being cropped rather than distorted.
 voir: resolution, responsive, pixel
+schema: image-ratio
 
 @ favicon
 cat: image
@@ -249,6 +258,7 @@ en: Metadata embedded in a photo by the camera: date, model, settings, orientati
 attention-fr: Une photo publiée telle quelle peut révéler où vous habitez : retirez les métadonnées avant de partager (exiftool -all= photo.jpg).
 attention-en: A photo published as-is can reveal where you live: strip the metadata before sharing (exiftool -all= photo.jpg).
 voir: jpeg, profil-icc, canal-alpha
+schema: image-exif
 
 @ hex-couleur
 cat: image
@@ -264,6 +274,7 @@ ex: css
 ex-fr: Un bleu ; un blanc en notation courte ; le même bleu avec 8 chiffres, où les deux derniers (80) donnent l'opacité (50 %).
 ex-en: A blue; a white in short notation; the same blue with 8 digits, where the last two (80) give the opacity (50%).
 voir: rgb, hexadecimal, hsl, srgb
+schema: image-hex
 
 @ hsl
 cat: image
@@ -299,3 +310,41 @@ fr: Rapport de luminosité entre un texte et son fond, de 1:1 (identiques) à 21
 en: The brightness ratio between a text and its background, from 1:1 (identical) to 21:1 (black on white). The WCAG accessibility rules require at least 4.5:1 for regular text and 3:1 for large text, so that it stays readable for everyone.
 voir: accessibilite, hsl, rgb
 schema: image-contraste
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ compression-image
+cat: image
+nom: Compression avec ou sans perte
+nom-en: lossy and lossless compression
+alias: lossy, lossless, avec perte, sans perte, qualité jpeg, compression d'image, taux de compression
+fr: Sans perte (PNG, WebP lossless, zip) : l'image décompressée est identique à l'original, pixel pour pixel. Avec perte (JPEG, WebP, AVIF) : on jette des détails que l'œil distingue mal, et le fichier est bien plus petit — mais ce qui est jeté ne revient pas, et chaque réenregistrement en jette un peu plus.
+en: Lossless (PNG, lossless WebP, zip): the decompressed image is identical to the original, pixel for pixel. Lossy (JPEG, WebP, AVIF): details the eye barely sees are thrown away, and the file is much smaller — but what is thrown away does not come back, and every re-save throws away a bit more.
+attention-fr: Un JPEG rouvert et réenregistré dix fois a perdu dix fois : gardez l'original (ou un PNG) pour travailler, exportez en JPEG à la fin.
+attention-en: A JPEG reopened and re-saved ten times has lost ten times: keep the original (or a PNG) to work on, export as JPEG at the end.
+voir: jpeg, png, webp, compression, avif
+schema: data-compression
+
+@ dpi
+cat: image
+nom: DPI / PPP
+dev: dots per inch / points par pouce
+alias: ppp, ppi, points par pouce, pixels par pouce, 300 dpi, 72 dpi, densité d'impression
+fr: Densité d'une image imprimée ou d'un écran : combien de points tiennent dans un pouce (2,54 cm). Il faut 300 ppp pour une impression nette ; à l'écran, seule la taille en pixels compte, et le « 72 dpi » enregistré dans le fichier n'y change rien.
+en: The density of a printed image or a screen: how many dots fit in an inch (2.54 cm). 300 ppi is needed for a sharp print; on screen, only the size in pixels matters, and the “72 dpi” stored in the file changes nothing.
++fr: Une image de 1 200 pixels de large imprimée à 300 ppp fait 10 cm ; la même à 100 ppp fait 30 cm, mais floue. Changer le dpi dans le fichier ne change pas les pixels : ce n'est qu'une consigne pour l'imprimante.
++en: An image 1,200 pixels wide printed at 300 ppi is 10 cm; the same at 100 ppi is 30 cm, but blurry. Changing the dpi in the file does not change the pixels: it is only an instruction for the printer.
+voir: resolution, densite-ecran, pixel
+schema: image-resolution
+
+@ sprite
+cat: image
+nom: Sprite
+alias: feuille de sprites, spritesheet, sprite css, atlas de textures, sprite sheet
+fr: Image unique qui rassemble plusieurs petites images (icônes, poses d'un personnage de jeu) : on n'affiche à la fois que la portion voulue, par décalage. Une seule requête au lieu de cinquante, et une animation en changeant de case. Avec HTTP/2 et les icônes SVG, moins indispensable qu'avant.
+en: A single image that gathers several small ones (icons, a game character's poses): only the wanted portion is shown at a time, by offset. One request instead of fifty, and an animation by switching cells. With HTTP/2 and SVG icons, less essential than it used to be.
+ex: css
+| .icone { width: 32px; height: 32px; background: url(sprites.png) -64px 0; }
+ex-fr: La troisième icône d'une feuille : on décale le fond de 64 pixels vers la gauche.
+ex-en: The third icon of a sheet: the background is shifted 64 pixels to the left.
+voir: png, svg, gif, http2-3

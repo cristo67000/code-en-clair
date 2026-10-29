@@ -6,6 +6,8 @@ nom: Variable
 alias: affectation, assignation, let, var, déclaration, declare, assign, identifiant de variable
 fr: Nom qui désigne une valeur gardée en mémoire et pouvant changer au fil du programme. On la déclare, on lui donne une valeur (l'affectation), puis on la relit ou on la modifie par son nom.
 en: A name that designates a value kept in memory and able to change as the program runs. You declare it, give it a value (assignment), then read or change it by its name.
++fr: let déclare une variable qui peut changer, const un lien qui ne change plus, var est l'ancienne forme, à éviter. Un nom en camelCase (prixTotal) pour les variables, en MAJUSCULES pour les constantes globales.
++en: let declares a variable that can change, const a binding that never changes again, var is the old form, to avoid. A camelCase name (prixTotal) for variables, UPPERCASE for global constants.
 ex: js
 | let score = 0;
 | score = score + 10;
@@ -13,6 +15,7 @@ ex: js
 ex-fr: Déclarer score à 0, y ajouter 10, puis afficher 10.
 ex-en: Declare score as 0, add 10 to it, then print 10.
 voir: constante, type, portee, mutabilite
+schema: langage-variable
 
 @ constante
 cat: langage
@@ -29,6 +32,7 @@ ex-en: The second line throws an error: a constant cannot be reassigned.
 attention-fr: const empêche de réaffecter le nom, pas de modifier un objet ou un tableau qu'il désigne : on peut toujours y ajouter des éléments.
 attention-en: const prevents reassigning the name, not modifying an object or array it designates: you can still add elements to it.
 voir: variable, mutabilite, type
+schema: langage-variable
 
 @ type
 cat: langage
@@ -45,6 +49,7 @@ ex: js
 ex-fr: number, string ; puis « 51 » (le nombre est converti en texte) et 10 (le texte est converti en nombre) : la coercition de JavaScript.
 ex-en: number, string; then “51” (the number is converted to text) and 10 (the text is converted to a number): JavaScript's coercion.
 voir: variable, string, null, nombre-flottant
+schema: langage-type
 
 @ fonction
 cat: langage
@@ -64,6 +69,7 @@ ex-en: A regular function, an arrow function, then their use: 16 + 8 = 24.
 +fr: Une fonction est dite « pure » quand son résultat ne dépend que de ses paramètres et qu'elle ne modifie rien autour d'elle (pas d'effet de bord) : elle est plus facile à tester.
 +en: A function is called “pure” when its result depends only on its parameters and it changes nothing around it (no side effects): it is easier to test.
 voir: parametre, portee, callback, closure, recursion
+schema: langage-fonction
 
 @ parametre
 cat: langage
@@ -81,6 +87,7 @@ ex: js
 ex-fr: Un paramètre a une valeur par défaut : « Bonjour Zoé » puis « Salut Zoé ».
 ex-en: A parameter has a default value: “Bonjour Zoé” then “Salut Zoé”.
 voir: fonction, argument, portee
+schema: langage-fonction
 
 @ portee
 cat: langage
@@ -110,6 +117,8 @@ nom-fr: fermeture
 alias: fermeture, clôture, lexical scope, portée lexicale, fonction interne
 fr: Fonction qui garde l'accès aux variables de l'endroit où elle a été créée, même quand ce dernier a fini de s'exécuter. C'est ce qui permet à une fonction de « se souvenir » d'un état privé.
 en: A function that keeps access to the variables of the place where it was created, even after that place has finished running. It is what lets a function “remember” a private state.
++fr: Chaque fonction JavaScript est une closure : elle capture les variables de son entourage. C'est ce qui permet à un callback de se souvenir d'où il vient — et ce qui garde en mémoire des variables qu'on croyait libérées.
++en: Every JavaScript function is a closure: it captures the variables around it. That is what lets a callback remember where it came from — and what keeps in memory variables you thought were freed.
 ex: js
 | function compteur() {
 |   let n = 0;
@@ -176,6 +185,7 @@ ex-en: The same chain as with promises, but readable from top to bottom, with tr
 attention-fr: Asynchrone ne veut pas dire « en parallèle » : en JavaScript, le code reste sur un seul fil, mais il ne l'occupe pas pendant qu'il attend.
 attention-en: Asynchronous does not mean “in parallel”: in JavaScript the code stays on a single thread, but does not occupy it while waiting.
 voir: promesse, callback, event-loop, fetch
+schema: langage-async-await
 
 @ event-loop
 cat: langage
@@ -199,6 +209,7 @@ en: A sequence of instructions that runs independently inside a process. Several
 +fr: Deux threads qui modifient la même donnée sans coordination créent une « condition de concurrence » (race condition) aux résultats imprévisibles. On l'évite avec des verrous (mutex) ou en partageant le moins possible.
 +en: Two threads modifying the same data without coordination create a “race condition” with unpredictable results. It is avoided with locks (mutexes) or by sharing as little as possible.
 voir: processus, event-loop, web-worker, async-await
+schema: langage-thread
 
 @ boucle
 cat: langage
@@ -239,6 +250,7 @@ ex-en: A classic if/else, then the same thing on one line with the ternary opera
 attention-fr: En JavaScript, 0, "", null, undefined et NaN sont « faux » dans une condition ; utilisez === plutôt que == pour comparer sans conversion.
 attention-en: In JavaScript, 0, "", null, undefined and NaN are “falsy” in a condition; use === rather than == to compare without conversion.
 voir: boucle, type, operateur
+schema: langage-condition
 
 @ operateur
 cat: langage
@@ -255,6 +267,7 @@ ex: js
 ex-fr: Le reste de 7 ÷ 3 (1) ; égalité stricte (false) ; égalité avec conversion (true) ; valeur par défaut si null (« défaut »).
 ex-en: The remainder of 7 ÷ 3 (1); strict equality (false); loose equality (true); default value if null (“défaut”).
 voir: condition, variable, type
+schema: langage-operateur
 
 @ recursion
 cat: langage
@@ -296,6 +309,7 @@ ex: js
 ex-fr: La recherche dichotomique : on coupe l'intervalle en deux à chaque étape, comme git bisect.
 ex-en: Binary search: the interval is cut in two at each step, like git bisect.
 voir: complexite, boucle, recursion, bisect
+schema: langage-algorithme
 
 @ complexite
 cat: langage
@@ -398,6 +412,8 @@ nom-en: object
 alias: object, poo, programmation orientée objet, oop, propriété, property, méthode, attribut, this, encapsulation
 fr: Ensemble regroupant des données (ses propriétés) et des fonctions qui agissent dessus (ses méthodes). La programmation orientée objet organise un programme en objets qui collaborent, plutôt qu'en une longue suite d'instructions.
 en: A bundle grouping data (its properties) and the functions that act on it (its methods). Object-oriented programming organizes a program as collaborating objects, rather than one long sequence of instructions.
++fr: En JavaScript, presque tout est objet, et un objet se crée sans classe, entre accolades : { nom: 'Zoé', age: 34 }. JSON est une photo de ce genre d'objet.
++en: In JavaScript, almost everything is an object, and an object is created without a class, between braces: { nom: 'Zoé', age: 34 }. JSON is a snapshot of that kind of object.
 ex: js
 | const chien = {
 |   nom: 'Rex',
@@ -407,6 +423,7 @@ ex: js
 ex-fr: Un objet avec une propriété (nom) et une méthode (aboyer) qui utilise this pour lire l'objet lui-même.
 ex-en: An object with a property (nom) and a method (aboyer) that uses this to read the object itself.
 voir: classe, instance, heritage, dictionnaire
+schema: langage-classe
 
 @ classe
 cat: langage
@@ -415,6 +432,8 @@ nom-en: class
 alias: class, constructeur, constructor, poo, modèle d'objet, extends, new
 fr: Plan qui décrit comment fabriquer des objets d'un même type : les propriétés qu'ils auront et les méthodes qu'ils sauront exécuter. On crée ensuite autant d'objets, appelés instances, que nécessaire avec new.
 en: A blueprint describing how to build objects of the same kind: the properties they will have and the methods they will be able to run. You then create as many objects, called instances, as needed with new.
++fr: En JavaScript, class est une écriture commode par-dessus les prototypes : un objet hérite d'un autre objet. Une classe n'est pas obligatoire — un objet littéral et des fonctions suffisent souvent.
++en: In JavaScript, class is a convenient notation on top of prototypes: an object inherits from another object. A class is not mandatory — an object literal and functions are often enough.
 ex: js
 | class Chien {
 |   constructor(nom) { this.nom = nom; }
@@ -448,6 +467,8 @@ nom-en: inheritance
 alias: inheritance, extends, super, sous-classe, subclass, classe mère, superclass, classe fille, prototype, chaîne de prototypes
 fr: Mécanisme par lequel une classe reprend les propriétés et les méthodes d'une autre, et peut en ajouter ou les modifier. Un Chien et un Chat, classes filles, héritent de la classe mère Animal ce qu'ils ont en commun.
 en: A mechanism by which a class takes over the properties and methods of another, and may add to or change them. A Dog and a Cat, child classes, inherit from the parent class Animal what they have in common.
++fr: L'héritage profond devient vite rigide : une modification dans la classe mère se répercute partout. On préfère souvent la composition — un objet qui en contient d'autres — à l'héritage.
++en: Deep inheritance quickly becomes rigid: a change in the parent class ripples everywhere. Composition — an object that contains others — is often preferred to inheritance.
 ex: js
 | class Animal { manger() { return 'miam'; } }
 | class Chat extends Animal {
@@ -469,6 +490,7 @@ alias: polymorphism, surcharge, override, redéfinition, overloading, duck typin
 fr: Capacité d'objets différents à répondre au même appel de façon adaptée à chacun. Appeler parler() sur un Chien produit « ouaf », sur un Chat « miaou », sans que l'appelant ait à connaître leur type exact.
 en: The ability of different objects to answer the same call in a way suited to each. Calling parler() on a Dog produces “woof”, on a Cat “meow”, without the caller needing to know their exact type.
 voir: heritage, interface, classe
+schema: langage-interface
 
 @ interface
 cat: langage
@@ -487,6 +509,7 @@ ex-en: In TypeScript, an interface describes a term's shape: two required fields
 attention-fr: Ne pas confondre avec l'interface utilisateur (UI), ce que la personne voit à l'écran.
 attention-en: Not to be confused with the user interface (UI), what the person sees on screen.
 voir: classe, api, heritage, polymorphisme
+schema: langage-interface
 
 @ module
 cat: langage
@@ -504,6 +527,7 @@ ex: js
 ex-fr: outils.js exporte une fonction ; app.js l'importe et s'en sert : « GIT ».
 ex-en: outils.js exports a function; app.js imports it and uses it: “GIT”.
 voir: bibliotheque, paquet, dependance, portee
+schema: langage-module
 
 @ bibliotheque
 cat: langage
@@ -515,6 +539,7 @@ en: A set of already-written functions that a program calls so as not to reinven
 attention-fr: « Librairie » est un faux ami de library : en français correct, c'est un magasin de livres. Une bibliothèque ne vous impose pas sa structure, contrairement à un framework.
 attention-en: A library does not impose its structure on your program, unlike a framework, which calls your code.
 voir: framework, paquet, dependance, npm, module
+schema: archi-framework
 
 @ paquet-logiciel
 cat: langage
@@ -529,6 +554,7 @@ ex: bash
 ex-fr: Installer un paquet JavaScript, puis un paquet Python.
 ex-en: Install a JavaScript package, then a Python package.
 voir: npm, dependance, bibliotheque, semver
+schema: outils-npm
 
 @ dependance
 cat: langage
@@ -540,6 +566,7 @@ en: A library or package a project needs in order to work. Dependencies have dep
 +fr: Chaque dépendance est du code qu'on n'a pas écrit et qu'on ne relit pas : il faut les tenir à jour et se méfier d'un paquet douteux, car une faille ou un code malveillant y arrive dans votre projet.
 +en: Each dependency is code you did not write and do not review: keep them up to date and beware of a dubious package, since a flaw or malicious code gets into your project through it.
 voir: npm, paquet-logiciel, vulnerabilite, lockfile, package-json
+schema: outils-npm
 
 @ compilation
 cat: langage
@@ -573,6 +600,7 @@ alias: code intermédiaire, jvm, java virtual machine, machine virtuelle, .class
 fr: Code intermédiaire, plus compact que le texte et indépendant du processeur, qu'une machine virtuelle exécute. Java compile en bytecode pour la JVM ; Python enregistre le sien dans des fichiers .pyc.
 en: Intermediate code, more compact than text and independent of the processor, which a virtual machine runs. Java compiles to bytecode for the JVM; Python saves its own in .pyc files.
 voir: compilation, interpretation, runtime, apk
+schema: langage-compilation
 
 @ runtime
 cat: langage
@@ -582,6 +610,7 @@ alias: environnement d'exécution, execution environment, moteur, jvm, node.js, 
 fr: Environnement qui exécute un programme et lui fournit ce dont il a besoin : gestion de la mémoire, entrées-sorties, bibliothèques de base. Node.js est un runtime JavaScript, la JVM un runtime Java. « À l'exécution » s'oppose à « à la compilation ».
 en: The environment that runs a program and supplies what it needs: memory management, input/output, base libraries. Node.js is a JavaScript runtime, the JVM a Java runtime. “At runtime” is opposed to “at compile time”.
 voir: nodejs, compilation, bytecode, garbage-collector
+schema: outils-nodejs
 
 @ garbage-collector
 cat: langage
@@ -593,6 +622,7 @@ en: A mechanism that automatically frees the memory of objects a program no long
 attention-fr: Il ne prévient pas les fuites de mémoire : un objet encore référencé quelque part (une liste globale, un écouteur oublié) n'est jamais libéré.
 attention-en: It does not prevent memory leaks: an object still referenced somewhere (a global list, a forgotten listener) is never freed.
 voir: pointeur, runtime, mutabilite
+schema: langage-garbage
 
 @ mutabilite
 cat: langage
@@ -610,6 +640,7 @@ ex: js
 ex-fr: b désigne le même tableau que a : a vaut [1, 2, 3] ; c en est une copie indépendante.
 ex-en: b designates the same array as a: a is [1, 2, 3]; c is an independent copy of it.
 voir: constante, pointeur, variable, garbage-collector
+schema: langage-mutabilite
 
 @ pointeur
 cat: langage
@@ -619,6 +650,7 @@ alias: pointer, reference, référence, adresse mémoire, memory address, déré
 fr: Un pointeur (ou une référence) est une valeur qui désigne l'emplacement en mémoire d'une autre donnée, au lieu de la contenir. Deux variables qui référencent le même objet voient toutes les deux ses modifications.
 en: A pointer (or reference) is a value that designates the location in memory of another piece of data, instead of containing it. Two variables referencing the same object both see its changes.
 voir: mutabilite, liste-chainee, null, garbage-collector
+schema: langage-pointeur
 
 @ exception
 cat: langage
@@ -626,6 +658,8 @@ nom: Exception
 alias: erreur, error, try catch, throw, lever une exception, throw new error, finally, gestion d'erreurs, error handling, stack trace
 fr: Événement qui interrompt le déroulement normal d'un programme quand une erreur survient. On « lève » (throw) une exception ; le code peut l'« attraper » (catch) pour réagir, faute de quoi le programme s'arrête.
 en: An event that interrupts a program's normal flow when an error occurs. An exception is “thrown”; the code can “catch” it to react, otherwise the program stops.
++fr: Lancer une exception pour une situation attendue (fichier absent, saisie vide) est souvent un abus : renvoyer une valeur (null, un résultat vide) est plus simple. Réservez throw à ce qui ne devrait pas arriver.
++en: Throwing an exception for an expected situation (missing file, empty input) is often an abuse: returning a value (null, an empty result) is simpler. Keep throw for what should not happen.
 ex: js
 | try {
 |   JSON.parse('{oups}');
@@ -637,6 +671,7 @@ ex: js
 ex-fr: try tente l'opération, catch gère l'échec, finally s'exécute dans tous les cas.
 ex-en: try attempts the operation, catch handles the failure, finally runs in every case.
 voir: debogage, promesse, code-de-sortie, async-await
+schema: langage-exception
 
 @ regex
 cat: langage
@@ -657,6 +692,7 @@ ex-en: Validate a postal code (true); extract the three numbers of a version num
 attention-fr: Une regex n'est pas un glob : dans un glob, * signifie « n'importe quoi » ; en regex, il répète le signe précédent.
 attention-en: A regex is not a glob: in a glob, * means “anything”; in a regex, it repeats the previous character.
 voir: grep, glob, string, parsing
+schema: langage-regex
 
 @ syntaxe
 cat: langage
@@ -668,6 +704,7 @@ en: The set of rules defining how a valid program is written in a language: wher
 attention-fr: La syntaxe est la forme ; la sémantique est le sens. Un programme peut être syntaxiquement correct et pourtant faire autre chose que ce qu'on voulait.
 attention-en: Syntax is form; semantics is meaning. A program can be syntactically correct and still do something other than what was intended.
 voir: parsing, token, compilation, debogage
+schema: langage-tokens
 
 @ commentaire
 cat: langage
@@ -692,6 +729,7 @@ alias: keyword, mot réservé, reserved word, if, else, for, while, class, funct
 fr: Mot que le langage réserve pour sa propre syntaxe (if, for, return, class) et qu'on ne peut donc pas utiliser comme nom de variable. La liste change d'un langage à l'autre.
 en: A word that the language reserves for its own syntax (if, for, return, class) and which therefore cannot be used as a variable name. The list changes from one language to another.
 voir: syntaxe, variable, token
+schema: langage-tokens
 
 @ lambda
 cat: langage
@@ -706,3 +744,157 @@ ex: js
 ex-fr: Doubler chaque élément (2, 4, 6), puis ne garder que ceux supérieurs à 1 (2, 3).
 ex-en: Double each element (2, 4, 6), then keep only those greater than 1 (2, 3).
 voir: fonction, callback, closure
+schema: langage-callback
+
+# ── Ajoutés en 1.2.0 : des langages, et quelques outils du langage ────────
+
+@ typescript
+cat: langage
+nom: TypeScript
+alias: ts, .ts, tsc, typage statique, javascript typé
+fr: Langage de Microsoft qui ajoute des types à JavaScript : on annote variables et fonctions, le compilateur tsc vérifie tout avant l'exécution, puis retire les types pour produire du JavaScript ordinaire. Les erreurs de type apparaissent dans l'éditeur, pas chez l'utilisateur.
+en: Microsoft's language that adds types to JavaScript: you annotate variables and functions, the tsc compiler checks everything before execution, then strips the types to produce ordinary JavaScript. Type errors show up in the editor, not for the user.
+ex: ts
+| function aire(largeur: number, hauteur: number): number {
+|   return largeur * hauteur;
+| }
+| aire(3, "4");   // erreur : "4" n'est pas un number
+ex-fr: Deux paramètres typés, un résultat typé ; passer une chaîne est refusé avant même de lancer le programme.
+ex-en: Two typed parameters, a typed result; passing a string is refused before the program even runs.
++fr: Tout JavaScript valide est du TypeScript valide : on peut typer un projet petit à petit. Le typage est structurel, par la forme : un objet qui a les bonnes propriétés convient, quel que soit son nom.
++en: All valid JavaScript is valid TypeScript: a project can be typed little by little. Typing is structural, by shape: an object with the right properties fits, whatever its name.
+voir: js, type, transpilation, interface, generiques
+schema: outils-transpilation
+
+@ python
+cat: langage
+nom: Python
+alias: py, .py, pip, pytest, langage python, python3
+fr: Langage généraliste, lisible, où l'indentation délimite les blocs à la place des accolades. Interprété, avec un immense écosystème : science des données, IA, automatisation, serveurs web (Django, Flask, FastAPI). Souvent le premier langage qu'on apprend.
+en: A general-purpose, readable language where indentation delimits blocks instead of braces. Interpreted, with a huge ecosystem: data science, AI, automation, web servers (Django, Flask, FastAPI). Often the first language people learn.
+ex: py
+| def aire(largeur, hauteur):
+|     return largeur * hauteur
+|
+| print(aire(3, 4))   # 12
+ex-fr: Une fonction, définie par def, dont le corps est reconnu par son indentation.
+ex-en: A function, defined with def, whose body is recognized by its indentation.
+attention-fr: Python 2 est abandonné depuis 2020 : tout ce que vous lisez doit être du Python 3. Et l'indentation n'est pas cosmétique : un bloc mal indenté est une erreur de syntaxe.
+attention-en: Python 2 has been abandoned since 2020: everything you read should be Python 3. And indentation is not cosmetic: a misindented block is a syntax error.
+voir: interpretation, js, paquet-logiciel, ia
+
+@ kotlin
+cat: langage
+nom: Kotlin
+alias: kt, .kt, langage kotlin, android kotlin, kotlin multiplatform
+fr: Langage de JetBrains, officiel pour Android depuis 2017 : concis, avec des types qui distinguent ce qui peut être null de ce qui ne le peut pas, et compatible avec tout le code Java existant. Compilé en bytecode pour la machine virtuelle Java.
+en: JetBrains' language, official for Android since 2017: concise, with types that tell apart what may be null from what may not, and compatible with all existing Java code. Compiled to bytecode for the Java virtual machine.
+ex: kotlin
+| fun aire(largeur: Int, hauteur: Int) = largeur * hauteur
+| val nom: String? = null   // peut être null, et le compilateur le sait
+ex-fr: Une fonction en une ligne ; un type suivi de ? accepte null, sans lui, jamais.
+ex-en: A one-line function; a type followed by ? accepts null, without it, never.
+voir: java, android, bytecode, null, activity
+
+@ java
+cat: langage
+nom: Java
+alias: jvm, jdk, .java, langage java, machine virtuelle java
+fr: Langage compilé en bytecode exécuté par la machine virtuelle Java (JVM), la même sur tous les systèmes : « écrit une fois, tourne partout ». Orienté objet, verbeux mais robuste, très présent dans les entreprises, et le langage historique d'Android.
+en: A language compiled to bytecode run by the Java virtual machine (JVM), the same on every system: “write once, run anywhere”. Object-oriented, verbose but robust, very common in companies, and the historical language of Android.
+ex: java
+| public class Rectangle {
+|   public static int aire(int largeur, int hauteur) { return largeur * hauteur; }
+| }
+ex-fr: Tout est dans une classe, chaque type est déclaré : la même fonction qu'ailleurs, en plus de mots.
+ex-en: Everything lives in a class, every type is declared: the same function as elsewhere, with more words.
+attention-fr: Java et JavaScript n'ont en commun que le nom, choisi pour des raisons commerciales en 1995. Ce sont deux langages sans rapport.
+attention-en: Java and JavaScript only share the name, picked for marketing reasons in 1995. They are two unrelated languages.
+voir: kotlin, bytecode, classe, compilation, garbage-collector
+schema: langage-compilation
+
+@ rust
+cat: langage
+nom: Rust
+alias: cargo, .rs, langage rust, ownership, propriété
+fr: Langage compilé, aussi rapide que le C, dont le compilateur garantit l'absence d'erreurs de mémoire (pointeur invalide, accès concurrent) grâce à son système de propriété : chaque valeur a un unique propriétaire, et le compilateur refuse ce qui pourrait mal tourner. Exigeant à apprendre, apprécié pour les outils en ligne de commande, les serveurs et WebAssembly.
+en: A compiled language, as fast as C, whose compiler guarantees the absence of memory errors (invalid pointer, concurrent access) thanks to its ownership system: every value has a single owner, and the compiler refuses what could go wrong. Demanding to learn, valued for command-line tools, servers and WebAssembly.
+ex: bash
+| cargo new mon-outil
+| cargo build --release
+ex-fr: Créer un projet avec cargo, l'outil tout-en-un de Rust, puis le compiler en version optimisée.
+ex-en: Create a project with cargo, Rust's all-in-one tool, then compile it in optimized mode.
+voir: compilation, pointeur, thread, webassembly, garbage-collector
+
+@ generiques
+cat: langage
+nom: Génériques
+nom-en: generics
+alias: generic, type générique, template, paramètre de type, <T>
+fr: Fonction ou classe écrite pour un type « à remplir » plus tard, noté <T> : une liste de T marche pour des nombres, des chaînes ou des objets, sans copier le code ni perdre la vérification des types. Le compilateur déduit T de ce qu'on lui passe.
+en: A function or class written for a type “to be filled in” later, written <T>: a list of T works for numbers, strings or objects, without copying the code or losing type checking. The compiler infers T from what you pass.
+ex: ts
+| function premier<T>(liste: T[]): T { return liste[0]; }
+| premier([1, 2, 3]);       // T = number
+| premier(['a', 'b']);      // T = string
+ex-fr: Une seule fonction, et le type du résultat suit celui de la liste.
+ex-en: A single function, and the result's type follows the list's.
+voir: type, typescript, fonction, interface
+
+@ iterateur
+cat: langage
+nom: Itérateur
+nom-en: iterator
+alias: iterator, iterable, for of, générateur, generator, yield, parcourir
+fr: Objet qui donne les éléments d'une collection un par un, à la demande, par un appel next() : c'est ce que la boucle for…of utilise sous le capot pour parcourir un tableau, une Map ou une chaîne. Un générateur (function*, yield) en écrit un sans effort, et peut produire une suite infinie sans jamais la stocker.
+en: An object that hands out a collection's elements one at a time, on demand, through a next() call: it is what the for…of loop uses under the hood to walk an array, a Map or a string. A generator (function*, yield) writes one effortlessly, and can produce an infinite sequence without ever storing it.
+ex: js
+| function* compter() { let i = 0; while (true) yield i++; }
+| for (const n of compter()) { if (n > 2) break; console.log(n); }   // 0 1 2
+ex-fr: Un générateur infini ; la boucle en prend ce qu'elle veut et s'arrête.
+ex-en: An infinite generator; the loop takes what it wants and stops.
+voir: boucle, tableau, fonction, stream
+
+@ ternaire
+cat: langage
+nom: Opérateur ternaire
+nom-en: ternary operator
+alias: ternaire, condition ? a : b, ternary, expression conditionnelle
+fr: Condition en une seule expression : test ? valeurSiVrai : valeurSiFaux. Le seul opérateur à trois opérandes, d'où son nom. Pratique pour choisir une valeur en une ligne ; illisible dès qu'on en imbrique plusieurs — un if est alors plus clair.
+en: A condition in a single expression: test ? valueIfTrue : valueIfFalse. The only operator with three operands, hence its name. Handy to pick a value in one line; unreadable as soon as several are nested — an if is then clearer.
+ex: js
+| const libelle = n > 1 ? 'termes' : 'terme';
+ex-fr: Le pluriel ou le singulier, selon n, en une ligne.
+ex-en: Plural or singular, depending on n, in one line.
+voir: condition, operateur, truthy-falsy
+
+@ destructuring
+cat: langage
+nom: Destructuration
+nom-en: destructuring
+alias: destructuring, déstructuration, affectation par décomposition, spread, rest, opérateur ...
+fr: Syntaxe qui extrait d'un coup plusieurs valeurs d'un tableau ou d'un objet dans des variables : const { nom, age } = personne. L'opérateur ... fait l'inverse (spread : éclater un tableau ou un objet dans un autre) ou ramasse « le reste » (rest).
+en: A syntax that extracts several values from an array or an object into variables at once: const { nom, age } = personne. The ... operator does the reverse (spread: expanding an array or object into another) or gathers “the rest” (rest).
+ex: js
+| const { nom, age } = personne;
+| const [premier, ...autres] = liste;
+| const copie = { ...personne, age: 35 };
+ex-fr: Deux propriétés extraites ; le premier élément et le reste ; une copie de l'objet avec un âge changé.
+ex-en: Two properties extracted; the first element and the rest; a copy of the object with a changed age.
+voir: objet, tableau, variable, js
+
+@ truthy-falsy
+cat: langage
+nom: Truthy et falsy
+alias: truthy, falsy, valeur fausse, coercition, conversion implicite, valeur vide, valeurs falsy
+fr: En JavaScript, toute valeur placée dans une condition est convertie en booléen. Six valeurs sont « falsy » : false, 0, "" (chaîne vide), null, undefined et NaN. Tout le reste est « truthy » — y compris "0", [] et {}.
+en: In JavaScript, any value placed in a condition is converted to a boolean. Six values are “falsy”: false, 0, "" (empty string), null, undefined and NaN. Everything else is “truthy” — including "0", [] and {}.
+ex: js
+| if (liste.length) { … }    // 0 est falsy : liste vide → on n'entre pas
+| if (nom) { … }             // "" ou undefined → on n'entre pas
+ex-fr: Deux tests courants qui reposent sur ces conversions.
+ex-en: Two common tests that rely on those conversions.
+attention-fr: Un tableau vide [] est truthy : if ([]) entre dans le bloc. Testez sa longueur, pas le tableau.
+attention-en: An empty array [] is truthy: if ([]) enters the block. Test its length, not the array.
+voir: booleen, condition, null, operateur
+schema: data-null

@@ -18,6 +18,8 @@ dev: Android Package
 alias: android package, .apk, fichier apk, installer un apk, dex, classes.dex, apksigner, zipalign
 fr: Fichier d'installation d'une application Android : une archive qui contient le code compilé (DEX), les ressources, le manifeste et la signature. On peut l'installer directement sur un appareil, sans passer par un magasin.
 en: An Android app's installation file: an archive containing the compiled code (DEX), the resources, the manifest and the signature. It can be installed straight onto a device, without going through a store.
++fr: Un APK est une archive zip : on peut l'ouvrir et y voir les ressources, le manifeste et le code compilé (classes.dex). Sur le téléphone, l'installer hors du Play Store demande d'autoriser les « sources inconnues ».
++en: An APK is a zip archive: you can open it and see the resources, the manifest and the compiled code (classes.dex). On the phone, installing it outside the Play Store requires allowing “unknown sources”.
 ex: bash
 | adb install app-debug.apk
 | unzip -l app-debug.apk
@@ -83,6 +85,8 @@ nom: WebView
 alias: android webview, wkwebview, vue web, navigateur intégré, custom tabs, chrome custom tabs
 fr: Composant d'une application mobile qui affiche des pages web à l'intérieur de l'application, avec le moteur du navigateur. Beaucoup d'applications hybrides ne sont qu'une WebView autour d'un site.
 en: A component of a mobile app that displays web pages inside the app, using the browser's engine. Many hybrid apps are just a WebView around a site.
++fr: Une WebView n'est pas Chrome : elle partage son moteur mais pas sa barre d'adresse ni son service worker complet. Une TWA, elle, ouvre le vrai Chrome.
++en: A WebView is not Chrome: it shares its engine but neither its address bar nor its full service worker. A TWA, on the other hand, opens the real Chrome.
 attention-fr: Une WebView n'est pas une TWA : elle n'a pas les fonctions d'un vrai navigateur (cookies partagés, service worker, mises à jour de sécurité) au même niveau.
 attention-en: A WebView is not a TWA: it does not have a real browser's features (shared cookies, service worker, security updates) at the same level.
 voir: twa, pwa, navigateur, android
@@ -95,6 +99,8 @@ nom-fr: magasin de clés
 alias: magasin de clés, jks, pkcs12, .keystore, keytool, clé d'importation, upload key, clé de signature, signing key, clé de publication
 fr: Fichier protégé par mot de passe qui contient les clés privées servant à signer une application Android. Sans sa clé, plus personne ne peut publier de mise à jour de l'application : il faut donc la sauvegarder en lieu sûr et ne jamais la publier.
 en: A password-protected file containing the private keys used to sign an Android app. Without its key, nobody can publish an update to the app: it must therefore be backed up safely and never published.
++fr: Perdre le keystore d'une application publiée, c'est ne plus pouvoir la mettre à jour sous le même nom — sauf avec Play App Signing, où Google garde la clé finale. Sauvegardez-le, et son mot de passe, hors du dépôt.
++en: Losing a published app's keystore means never updating it under the same name again — except with Play App Signing, where Google keeps the final key. Back it up, and its password, outside the repository.
 ex: bash
 | keytool -genkeypair -v -keystore android.keystore -alias cle -keyalg RSA -keysize 2048 -validity 10000
 ex-fr: Créer un magasin de clés avec une clé RSA de 2048 bits valable 10 000 jours ; l'outil demande des mots de passe.
@@ -131,6 +137,7 @@ alias: version code, version name, versionname, code de version, numéro de vers
 fr: Deux numéros de version d'une application Android : versionCode, un entier qui doit augmenter à chaque envoi sur le Play Store, et versionName, le texte affiché aux utilisateurs (1.2.0). Le premier sert à la machine, le second à l'humain.
 en: Two version numbers of an Android app: versionCode, an integer that must increase with each upload to the Play Store, and versionName, the text shown to users (1.2.0). The first is for the machine, the second for humans.
 voir: semver, gradle, release, aab
+schema: mobile-versioncode
 
 @ sdk-versions
 cat: mobile
@@ -141,6 +148,7 @@ en: Three Android API levels declared in a project: minSdk, the oldest Android o
 attention-fr: Le Play Store exige chaque année un targetSdk récent pour les nouvelles applications et leurs mises à jour : un niveau trop ancien bloque la publication.
 attention-en: The Play Store requires a recent targetSdk every year for new apps and their updates: a level that is too old blocks publication.
 voir: android, gradle, play-console, manifest
+schema: mobile-sdk
 
 @ play-console
 cat: mobile
@@ -151,6 +159,7 @@ en: The website where the developer manages their Google Play apps: store listin
 +fr: Les comptes personnels créés récemment doivent d'abord mener un test fermé avec au moins 12 testeurs pendant 14 jours consécutifs avant de demander l'accès à la production. Les comptes d'organisation en sont dispensés.
 +en: Recently created personal accounts must first run a closed test with at least 12 testers for 14 consecutive days before requesting production access. Organization accounts are exempt.
 voir: aab, play-store, data-safety, play-app-signing, test-ferme
+schema: mobile-apk-aab
 
 @ test-ferme
 cat: mobile
@@ -186,6 +195,7 @@ ex: bash
 ex-fr: Lister les appareils, installer un APK, puis suivre les messages du navigateur.
 ex-en: List the devices, install an APK, then follow the browser's messages.
 voir: apk, emulateur, android, debugger
+schema: mobile-adb
 
 @ emulateur
 cat: mobile
@@ -234,6 +244,7 @@ en: A permission an app declares in its manifest to access a protected resource 
 +fr: Moins une application demande de permissions, plus elle inspire confiance et moins elle pose de questions à la revue du Play Store : ne déclarer que le strict nécessaire est le principe du moindre privilège.
 +en: The fewer permissions an app requests, the more trust it inspires and the fewer questions it raises at Play Store review: declaring only what is strictly necessary is the principle of least privilege.
 voir: manifest, moindre-privilege, sandbox, data-safety
+schema: mobile-permission
 
 @ intent
 cat: mobile
@@ -242,6 +253,7 @@ alias: intent android, intent filter, deep link, lien profond, app link, startac
 fr: Message par lequel une application Android demande une action : ouvrir un écran, partager du texte, afficher un lien. Un filtre d'intention (intent filter) déclare ce qu'une application sait traiter, par exemple les liens d'un site web (deep link).
 en: A message by which an Android app asks for an action: opening a screen, sharing text, showing a link. An intent filter declares what an app can handle, for example a website's links (deep link).
 voir: activity, manifest, twa, assetlinks
+schema: mobile-intent
 
 @ activity
 cat: mobile
@@ -251,6 +263,7 @@ alias: activité android, écran android, onCreate, onResume, cycle de vie, life
 fr: Composant qui représente un écran d'une application Android. Elle a un cycle de vie (création, affichage, pause, destruction) que le système pilote : une TWA n'en contient qu'une, qui affiche le site.
 en: A component that represents one screen of an Android app. It has a lifecycle (creation, display, pause, destruction) that the system drives: a TWA contains just one, which displays the site.
 voir: intent, manifest, twa
+schema: mobile-activity
 
 @ play-store
 cat: mobile
@@ -262,6 +275,7 @@ en: Android's official app store. Each app is reviewed before publication and mu
 +fr: L'équivalent d'Apple s'appelle l'App Store. Une application qui n'est qu'un site sans valeur propre est refusée : c'est le rôle du « minimum de fonctionnalités ».
 +en: Apple's equivalent is called the App Store. An app that is merely a website with no value of its own is refused: this is what the “minimum functionality” rule is for.
 voir: play-console, aab, data-safety, sideload, ios
+schema: mobile-apk-aab
 
 @ sideload
 cat: mobile
@@ -271,6 +285,7 @@ alias: sideload, installer un apk, sources inconnues, unknown sources, installat
 fr: Installation d'une application Android à partir d'un fichier APK obtenu hors du Play Store. Elle demande d'autoriser les sources inconnues et prive des contrôles du magasin : on ne le fait qu'avec un fichier dont on connaît l'origine.
 en: Installing an Android app from an APK file obtained outside the Play Store. It requires allowing unknown sources and forgoes the store's checks: only do it with a file whose origin you know.
 voir: apk, play-store, adb, signature-numerique
+schema: mobile-adb
 
 @ ios
 cat: mobile
@@ -279,3 +294,35 @@ alias: iphone, ipad, app store, swift, apple, xcode, ipados, wkwebview
 fr: Système d'exploitation mobile d'Apple (iPhone, iPad). Ses applications s'écrivent surtout en Swift, avec Xcode, et se distribuent par l'App Store. Les PWA s'y installent depuis Safari, mais sans équivalent de la TWA pour les publier dans le magasin.
 en: Apple's mobile operating system (iPhone, iPad). Its apps are mostly written in Swift, with Xcode, and distributed through the App Store. PWAs install there from Safari, but with no TWA equivalent to publish them in the store.
 voir: android, pwa, play-store, webview
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ cross-platform
+cat: mobile
+nom: Multiplateforme
+nom-en: cross-platform
+alias: cross platform, react native, flutter, capacitor, ionic, kotlin multiplatform, une seule base de code
+fr: Approche où un seul code produit une application pour Android et iOS (et parfois le web) : Flutter, React Native, Kotlin Multiplatform, ou une application web emballée dans une coquille native (Capacitor, TWA). Moins de travail que deux applications natives, au prix d'un accès parfois retardé aux nouveautés de chaque plateforme.
+en: An approach where a single codebase produces an app for Android and iOS (and sometimes the web): Flutter, React Native, Kotlin Multiplatform, or a web app wrapped in a native shell (Capacitor, TWA). Less work than two native apps, at the cost of sometimes delayed access to each platform's new features.
+voir: android, ios, pwa, twa, webview
+schema: mobile-webview
+
+@ push-notification
+cat: mobile
+nom: Notification push
+nom-en: push notification
+alias: push, notifications, fcm, firebase cloud messaging, web push, apns
+fr: Message envoyé par un serveur et affiché par le téléphone même quand l'application est fermée, via le service de la plateforme (FCM sur Android, APNs sur iOS, Web Push dans un navigateur). L'application demande d'abord la permission, et le serveur garde un jeton par appareil pour savoir à qui parler.
+en: A message sent by a server and displayed by the phone even when the app is closed, through the platform's service (FCM on Android, APNs on iOS, Web Push in a browser). The app first asks for permission, and the server keeps one token per device to know whom to talk to.
+voir: permission-android, service-worker, token, android
+schema: mobile-permission
+
+@ deep-link
+cat: mobile
+nom: Lien profond
+nom-en: deep link
+alias: deep link, app link, universal link, lien vers une application, intent filter, ouvrir dans l'application
+fr: Adresse qui ouvre directement un écran précis d'une application installée plutôt que le navigateur : https://exemple.org/notes/42 ouvre la note 42 dans l'application. Sur Android, un « App Link » vérifié par assetlinks.json ; sur iOS, un « Universal Link ». Sans l'application, la même adresse ouvre le site : rien n'est perdu.
+en: An address that directly opens a specific screen of an installed app rather than the browser: https://exemple.org/notes/42 opens note 42 in the app. On Android, an “App Link” verified through assetlinks.json; on iOS, a “Universal Link”. Without the app, the same address opens the site: nothing is lost.
+voir: assetlinks, intent, url, twa
+schema: mobile-assetlinks

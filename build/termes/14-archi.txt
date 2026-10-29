@@ -34,6 +34,7 @@ ex: http
 ex-fr: Les quatre actions de base sur la ressource « article ».
 ex-en: The four basic actions on the “article” resource.
 voir: api, methode-http, json, crud, endpoint
+schema: archi-rest
 
 @ endpoint
 cat: archi
@@ -43,6 +44,7 @@ alias: point d'accès, point de terminaison, route, url d'api, api endpoint, che
 fr: Adresse précise d'une API qui répond à un type de demande, par exemple https://api.exemple.org/articles. Une API est faite d'un ensemble d'endpoints, chacun avec ses méthodes HTTP et ses paramètres.
 en: The precise address of an API that answers one kind of request, for example https://api.example.org/articles. An API is made of a set of endpoints, each with its HTTP methods and parameters.
 voir: api, rest, url, methode-http
+schema: archi-endpoint
 
 @ sdk
 cat: archi
@@ -53,6 +55,7 @@ alias: software development kit, kit de développement, android sdk, java sdk, c
 fr: Ensemble d'outils fournis par un éditeur pour développer pour sa plateforme ou son service : bibliothèques, documentation, exemples, outils de compilation. Le SDK Android permet de construire des applications Android.
 en: A set of tools provided by a vendor to develop for its platform or service: libraries, documentation, examples, build tools. The Android SDK lets you build Android apps.
 voir: api, bibliotheque, android, gradle
+schema: archi-sdk
 
 @ client-serveur
 cat: archi
@@ -91,6 +94,7 @@ alias: fullstack, développeur full stack, pile complète, stack, lamp, mern, me
 fr: Se dit d'une personne, ou d'un projet, qui couvre à la fois le front-end et le back-end. Une « stack » désigne aussi l'ensemble des technologies d'un projet (par exemple JavaScript, Node.js et PostgreSQL).
 en: Said of a person, or a project, that covers both front-end and back-end. A “stack” also refers to the set of technologies of a project (for example JavaScript, Node.js and PostgreSQL).
 voir: front-end, back-end, framework
+schema: archi-full-stack
 
 @ framework
 cat: archi
@@ -99,9 +103,12 @@ nom-fr: cadriciel
 alias: cadriciel, cadre de développement, react, vue, angular, svelte, django, laravel, spring, express, next.js, inversion de contrôle
 fr: Ensemble de code qui impose la structure générale d'une application et appelle votre code aux bons moments : « ne nous appelez pas, nous vous appellerons ». Il fournit les bases (routage, sécurité, accès aux données) pour ne coder que ce qui est propre au projet.
 en: A body of code that imposes an application's general structure and calls your code at the right moments: “don't call us, we'll call you”. It supplies the basics (routing, security, data access) so you only code what is specific to the project.
++fr: React, Vue, Angular, Svelte côté front ; Express, Django, Spring, Rails côté back. Un framework impose ses conventions : on perd de la liberté, on gagne une structure, une communauté et des réponses toutes prêtes.
++en: React, Vue, Angular, Svelte on the front; Express, Django, Spring, Rails on the back. A framework imposes its conventions: you lose some freedom, you gain a structure, a community and ready-made answers.
 attention-fr: Une bibliothèque, c'est vous qui l'appelez ; un framework, c'est lui qui vous appelle. Choisir l'un, c'est en adopter les conventions et suivre ses évolutions.
 attention-en: A library is something you call; a framework is something that calls you. Choosing one means adopting its conventions and following its changes.
 voir: bibliotheque, spa, module, mvc
+schema: archi-framework
 
 @ mvc
 cat: archi
@@ -177,6 +184,7 @@ alias: sans serveur, faas, function as a service, aws lambda, cloud functions, c
 fr: Modèle où l'on ne gère aucun serveur : on dépose de petites fonctions chez un fournisseur cloud, qui les exécute à la demande et ne facture que le temps d'exécution. Il y a bien des serveurs, mais ils ne sont pas votre affaire.
 en: A model where you manage no server: you upload small functions to a cloud provider, which runs them on demand and only bills for execution time. There are servers, of course, but they are not your concern.
 voir: cloud, api, microservices, deploiement
+schema: archi-serverless
 
 @ cloud
 cat: archi
@@ -188,6 +196,7 @@ en: Use of computing resources (servers, storage, databases, software) rented re
 attention-fr: « Le cloud, c'est l'ordinateur de quelqu'un d'autre » : ce qu'on y met dépend de ses conditions, de sa localisation et de sa fiabilité.
 attention-en: “The cloud is someone else's computer”: what you put there depends on its terms, its location and its reliability.
 voir: serverless, docker, deploiement, saas
+schema: archi-cloud
 
 @ saas
 cat: archi
@@ -198,6 +207,7 @@ alias: software as a service, logiciel en ligne, application en ligne, abonnemen
 fr: Logiciel qu'on utilise en ligne, par abonnement, sans rien installer ni maintenir : la messagerie web, un traitement de texte en ligne, GitHub. Le fournisseur s'occupe des serveurs et des mises à jour.
 en: Software you use online, by subscription, with nothing to install or maintain: web mail, an online word processor, GitHub. The provider takes care of servers and updates.
 voir: cloud, github, pwa
+schema: archi-cloud
 
 @ open-source
 cat: archi
@@ -209,6 +219,7 @@ en: Software whose source code is public, and which the license allows you to re
 attention-fr: « Open source » ne veut pas dire « sans règles » : chaque licence en fixe, et les ignorer peut être illégal.
 attention-en: “Open source” does not mean “no rules”: every license sets some, and ignoring them can be illegal.
 voir: licence, github, fork, dependance
+schema: archi-licence
 
 @ licence
 cat: archi
@@ -220,6 +231,7 @@ en: A contract by which the author of software or content says what others may d
 +fr: Sans licence, un code public reste protégé par le droit d'auteur : on ne peut pas le réutiliser. On joint donc un fichier LICENSE à un projet qu'on partage, et on lit celle des bibliothèques qu'on emploie.
 +en: Without a license, public code remains protected by copyright: it cannot be reused. A LICENSE file is therefore added to a project you share, and you read the licenses of the libraries you use.
 voir: open-source, github, dependance
+schema: archi-licence
 
 @ scalabilite
 cat: archi
@@ -229,6 +241,7 @@ alias: scalability, passage à l'échelle, scaling, scale up, scale out, mise à
 fr: Capacité d'un système à supporter une charge croissante. On monte en puissance soit en renforçant une machine (verticalement), soit en ajoutant des machines (horizontalement), ce que permettent le répartiteur de charge et les services sans état.
 en: A system's ability to handle a growing load. You scale up either by strengthening one machine (vertically) or by adding machines (horizontally), which load balancers and stateless services make possible.
 voir: load-balancer, microservices, cache, cloud
+schema: archi-scalabilite
 
 @ spof
 cat: archi
@@ -239,6 +252,7 @@ alias: single point of failure, point unique de défaillance, redondance, redund
 fr: Élément dont la panne arrête tout le système, parce que rien ne peut le remplacer : un seul serveur, une seule base, un seul compte. On le supprime par la redondance : plusieurs exemplaires prêts à prendre le relais.
 en: An element whose failure stops the whole system, because nothing can replace it: a single server, a single database, a single account. It is removed through redundancy: several copies ready to take over.
 voir: load-balancer, scalabilite, sauvegarde-backup
+schema: archi-spof
 
 @ design-pattern
 cat: archi
@@ -256,6 +270,7 @@ alias: instance unique, patron singleton, unique instance, anti-pattern, état g
 fr: Patron de conception qui garantit qu'une classe n'a qu'une seule instance, accessible de partout : une connexion à la base, une configuration. Pratique, mais c'est un état global caché, qui rend le code plus difficile à tester.
 en: A design pattern that guarantees a class has only one instance, accessible from everywhere: a database connection, a configuration. Convenient, but it is a hidden global state, which makes code harder to test.
 voir: design-pattern, instance, classe, portee
+schema: archi-singleton
 
 @ observer
 cat: archi
@@ -288,6 +303,7 @@ ex: js
 ex-fr: Un middleware Express : il journalise chaque requête, puis passe au maillon suivant avec next().
 ex-en: An Express middleware: it logs each request, then moves to the next link with next().
 voir: http, framework, authentification, design-pattern
+schema: archi-middleware
 
 @ machine-a-etats
 cat: archi
@@ -318,3 +334,74 @@ en: A copy of data made separately so it can be restored after a failure, a mist
 attention-fr: Git n'est pas une sauvegarde de vos secrets ni de vos fichiers hors dépôt ; et une clé de signature perdue ne se restaure pas : sauvegardez-la en deux exemplaires chiffrés.
 attention-en: Git is not a backup of your secrets or of your files outside the repository; and a lost signing key cannot be restored: back it up in two encrypted copies.
 voir: git, keystore, spof, cloud
+schema: archi-backup
+
+# ── Ajoutés en 1.2.0 ──────────────────────────────────────────────────────
+
+@ monolithe
+cat: archi
+nom: Monolithe
+nom-en: monolith
+alias: monolith, application monolithique, tout dans un seul programme, monolithe modulaire
+fr: Application livrée comme un seul programme : interface, logique et accès aux données dans le même code, déployés ensemble. Simple à développer, à tester et à déployer ; c'est le bon point de départ, et les microservices ne valent la peine qu'une fois le monolithe devenu trop gros pour une seule équipe.
+en: An application shipped as a single program: interface, logic and data access in the same code, deployed together. Simple to develop, test and deploy; it is the right starting point, and microservices are only worth it once the monolith has grown too big for a single team.
+voir: microservices, back-end, deploiement, scalabilite
+schema: archi-microservices
+
+@ dry
+cat: archi
+nom: DRY
+dev: Don't Repeat Yourself
+nom-fr: ne vous répétez pas
+alias: dont repeat yourself, duplication, kiss, yagni, principes de conception, code dupliqué
+fr: Principe : chaque connaissance ne doit exister qu'à un seul endroit du code. Du code copié-collé, c'est un bug à corriger deux fois, et un jour, une seule fois. Ses cousins : KISS (restez simple) et YAGNI (n'écrivez pas ce dont vous n'avez pas besoin aujourd'hui).
+en: A principle: every piece of knowledge should exist in only one place in the code. Copy-pasted code is a bug to fix twice, and one day, only once. Its cousins: KISS (keep it simple) and YAGNI (do not write what you do not need today).
++fr: DRY se trompe parfois de cible : deux morceaux de code qui se ressemblent aujourd'hui mais changent pour des raisons différentes doivent rester séparés. On factorise une connaissance, pas une coïncidence.
++en: DRY sometimes aims at the wrong target: two pieces of code that look alike today but change for different reasons should stay apart. You factor out knowledge, not coincidence.
+voir: refactoring, fonction, dette-technique, design-pattern
+schema: bdd-normalisation
+
+@ solid
+cat: archi
+nom: SOLID
+alias: principes solid, responsabilité unique, single responsibility, ouvert fermé, substitution de liskov, inversion des dépendances
+fr: Cinq principes de conception orientée objet, un par lettre : une classe n'a qu'une seule raison de changer (S) ; ouverte à l'extension, fermée à la modification (O) ; une sous-classe doit pouvoir remplacer sa classe mère sans surprise (L) ; des interfaces petites et ciblées (I) ; dépendre d'abstractions, pas de détails (D).
+en: Five object-oriented design principles, one per letter: a class has only one reason to change (S); open for extension, closed for modification (O); a subclass must be able to replace its parent without surprise (L); small, focused interfaces (I); depend on abstractions, not on details (D).
+voir: classe, interface, heritage, injection-de-dependances, design-pattern
+
+@ injection-de-dependances
+cat: archi
+nom: Injection de dépendances
+nom-en: dependency injection
+alias: dependency injection, di, inversion de contrôle, ioc, conteneur d'injection
+fr: Au lieu qu'un objet fabrique lui-même ce dont il a besoin (une connexion à la base, un client HTTP), on le lui donne de l'extérieur, en paramètre. Le code dépend d'une interface, pas d'une implémentation : en test, on lui passe une doublure ; en production, la vraie.
+en: Instead of an object building what it needs itself (a database connection, an HTTP client), it is handed to it from outside, as a parameter. The code depends on an interface, not an implementation: in a test, you pass it a stand-in; in production, the real thing.
+ex: js
+| async function listerNotes(base) {       // la base est injectée
+|   return base.lire('notes');
+| }
+| listerNotes(fausseBase);                  // en test
+ex-fr: La fonction ne crée pas sa connexion : elle la reçoit. Un test lui donne une fausse base.
+ex-en: The function does not create its connection: it receives it. A test hands it a fake database.
+voir: mock, interface, solid, singleton
+schema: qualite-mock
+
+@ couplage
+cat: archi
+nom: Couplage et cohésion
+nom-en: coupling and cohesion
+alias: couplage faible, cohésion forte, loose coupling, high cohesion, dépendances entre modules, découplage
+fr: Le couplage mesure à quel point deux modules dépendent l'un de l'autre ; la cohésion, à quel point ce qui est dans un module va ensemble. On vise un couplage faible et une cohésion forte : changer un module sans toucher aux autres, et trouver tout ce qui concerne un sujet au même endroit.
+en: Coupling measures how much two modules depend on each other; cohesion, how much what is inside a module belongs together. The aim is low coupling and high cohesion: changing a module without touching the others, and finding everything about one subject in the same place.
+voir: module, microservices, interface, dry, solid
+schema: langage-module
+
+@ event-driven
+cat: archi
+nom: Architecture événementielle
+nom-en: event-driven architecture
+alias: event driven, événements, bus d'événements, pub/sub, publish subscribe, publication abonnement
+fr: Organisation où les composants ne s'appellent pas directement : l'un publie un événement (« commande payée »), les autres y réagissent s'ils y sont abonnés — envoyer un reçu, préparer l'expédition, mettre à jour les statistiques. Chacun ignore les autres ; on en ajoute un sans toucher aux existants. Le patron observateur, à l'échelle d'un système.
+en: An organization where components do not call each other directly: one publishes an event (“order paid”), the others react if they are subscribed — send a receipt, prepare shipping, update statistics. Each ignores the others; one can be added without touching the existing ones. The observer pattern, at the scale of a system.
+voir: observer, file-attente-messages, webhook, evenement, microservices
+schema: archi-observer
